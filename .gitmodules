@@ -1,3 +1,6 @@
 [submodule "design-system"]
 	path = design-system
 	url = https://github.com/nickchrys/PoseidonDesignSys.git
+[submodule "Poseidon-Design-System"]
+	path = Poseidon-Design-System
+	url = https://github.com/nickchrys/PoseidonDesignSys.git
