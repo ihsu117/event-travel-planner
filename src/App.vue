@@ -7,8 +7,8 @@ import {
   PFlight,
   PProfilePic,
   PFinanceBlock 
-} from '@poseidon/lib/components'
-import '@poseidon/lib/styles/index.css'
+} from '@poseidon-components'
+import '@poseidon-styles/index.css'
 </script>
 
 <template>
@@ -90,7 +90,10 @@ import '@poseidon/lib/styles/index.css'
         <p>design="small"</p>
         <PProfilePic design="small"
           profileImage='https://m.media-amazon.com/images/M/MV5BYzQ1ZDljZGEtNTliZC00ODkyLTgxODctNDQxNDRiZmI3ZmMyXkEyXkFqcGc@._V1_.jpg' />
-        <p>design="big"</p>
+          <PProfilePic design="small"
+          profileImage='https://m.mediasdasda-amazon.com/images/M/MV5BYzQ1ZDljZGEtNTliZC00ODkyLTgxODctNDQxNDRiZmI3ZmMyXkEyXkFqcGc@._V1_.jpg' />
+        
+          <p>design="big"</p>
         <PProfilePic design="big"
           profileImage='https://m.media-amazon.com/images/M/MV5BYzQ1ZDljZGEtNTliZC00ODkyLTgxODctNDQxNDRiZmI3ZmMyXkEyXkFqcGc@._V1_.jpg' />
       </div>
