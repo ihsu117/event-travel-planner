@@ -1,0 +1,20 @@
+{
+    "data": {
+        "cabin_class": "economy", 
+        "max_connections": 0, 
+        "passengers": [
+            {
+                "family_name": "Earhart", 
+                "given_name": "Amelia",
+                "type": "adult"
+            }
+        ],
+        "slices":[
+            {
+                "origin": "JFK", 
+                "destination": "ATL", 
+                "departure_date": "2025-02-10"
+            }
+        ]
+    }
+}
