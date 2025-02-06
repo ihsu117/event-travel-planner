@@ -9,3 +9,7 @@ import {
   PFinanceBlock
 } from '@poseidon-components'
 import '@poseidon-styles/index.css'
+
+<template>
+
+</template>

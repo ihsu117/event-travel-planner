@@ -27,11 +27,15 @@
   margin-top: 41px;
 }
 
-.login-input p {
-  color: var(--pos-yellow);
+.forgot-pass p {
   margin-top: 6px;
   margin-right: 210px;
-  margin-left: 26px;
+  margin-left: 26px; 
+}
+
+.forgot-pass a {
+  color: var(--pos-yellow);
+  text-decoration: none;
   font-size: 12px;
 }
 
@@ -42,6 +46,50 @@
 .login-button a {
   text-decoration: none;
   color: var(--pos-yellow);
+}
+
+.phone-container {
+  position: relative;;
+  padding: 10px;
+  border: 5px solid #000000;
+  max-width: 393px;
+}
+
+.p-event__container {
+  height: 621px;
+  gap: 7px;
+}
+
+.home { 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 393px;
+  background-color: #FFFFE2;
+  padding-bottom: 20px;
+}
+
+.home-header {
+  margin-right: 200px;
+  margin-top: 10px;
+}
+
+.home-header p {
+  margin: 0;
+  margin-bottom: 5px;
+  color: var(--pos-dark-grey);
+  font-size: 13px;
+}
+
+.home h1 {
+  margin-top: 11px;
+  margin-bottom: 14px;
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 32px;
 }
 
 #app {

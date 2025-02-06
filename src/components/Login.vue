@@ -1,26 +1,23 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { PButton, PTextField } from '@poseidon-components'
 import '@poseidon-styles/index.css'
 
 const username = ref('')
 const password = ref('')
 const errors = ref({ username: '', password: '' })
+const router = useRouter() 
 
-
-const validateForm = () => {
-  let isValid = true
-}
- 
 const loginUser = async () => {
   console.log('Attempting login with:', {
         username: username.value,
         password: password.value
       })
     try {
-      // Here you would typically make an API call
-      
-      await fetch('http://localhost:3000/api/auth/login', {
+
+      //API call to backend to check for user credentials
+      const apiResponse = await fetch('http://localhost:3000/api/auth/login', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -30,13 +27,14 @@ const loginUser = async () => {
           email: username.value,
           password: password.value
         })
-      }).then(response => {
-        if (response.ok) {
+      })
+
+        if (apiResponse.ok) {
           console.log('Login successful')
+          await router.push('/home')
         } else {
           throw new Error('Invalid username or password')
         }
-      })
       //await authService.login(username.value, password.value)
     } catch (error) {
       errors.value.password = 'Invalid username or password'
@@ -51,9 +49,9 @@ const loginUser = async () => {
     <div class="login-form">
       <div class="login-input">
         <PTextField v-model="username" design="p-textfield" label="Enter Username" />
-        <div>
+        <div class="forgot-pass">
           <PTextField v-model="password" design="p-textfield" label="Enter Password" />
-          <p>Forgot Password?</p>
+          <p><a href="#">Forgot Password?</a></p>
         </div>
       </div>
       <div class="login-button">
