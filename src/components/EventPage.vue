@@ -1,9 +1,11 @@
 <script setup>
 import { useEventStore } from '../stores/eventStore'
+import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
 import { PEvent, PButton } from '@poseidon-components'
 
 const eventStore = useEventStore()
+const flightStore = useFlightStore()
 const router = useRouter()
 
 const handleBack = () => {
@@ -11,9 +13,21 @@ const handleBack = () => {
 }
 
 const toFlightSearch = () => {
-    router.push({
-        name: 'Flight'
-    })
+    const flightData = await fetch('http://localhost:3000/api/flights/search', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        origin: "ATL",
+        destination: "NYC",
+        departure_date: "2025-03-10"
+      })
+    });
+
+    flightStore.getFlights(flightData);
+    router.push({ name: 'Flight' });
 }
 
 </script>
