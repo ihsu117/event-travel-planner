@@ -12,7 +12,7 @@ const handleBack = () => {
     router.back()
 }
 
-const toFlightSearch = () => {
+const toFlightSearch = async () => {
     const flightData = await fetch('http://localhost:3000/api/flights/search', {
       method: 'POST',
       credentials: 'include',
@@ -26,7 +26,7 @@ const toFlightSearch = () => {
       })
     });
 
-    flightStore.getFlights(flightData);
+    flightStore.setFlightResults(flightData);
     router.push({ name: 'Flight' });
 }
 
