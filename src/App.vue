@@ -10,12 +10,10 @@ import {
 } from '@poseidon-components'
 import '@poseidon-styles/index.css'
 import Login from './components/Login.Vue'
+import Home from './components/Home.Vue'
 
 </script>
 
 <template>
- 
- <Login></Login>
-
-
+ <router-view></router-view>
 </template>
