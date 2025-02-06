@@ -45,7 +45,7 @@ const loginUser = async () => {
 
 <template>
   <div class="login-container">
-    <img v-model="username" src="@poseidon-assets/img/AppLogo.png" alt="Poseidon Logo" />
+    <img src="@poseidon-assets/img/AppLogo.png" alt="Poseidon Logo" />
     <div class="login-form">
       <div class="login-input">
         <PTextField design="p-textfield" label="Enter Username" />
