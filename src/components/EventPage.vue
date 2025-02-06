@@ -12,8 +12,8 @@ const handleBack = () => {
     router.back()
 }
 
-const toFlightSearch = async () => {
-    const flightData = await fetch('http://localhost:3000/api/flights/search', {
+const toFlightSearch = () => {
+    return fetch('http://localhost:3000/api/flights/search', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -24,10 +24,11 @@ const toFlightSearch = async () => {
         destination: "NYC",
         departure_date: "2025-03-10"
       })
-    });
-
-    flightStore.setFlightResults(flightData);
-    router.push({ name: 'Flight' });
+    }).then(
+        response => flightStore.setFlightResults(response.json())
+    ).then(
+        router.push({ name: 'Flight' })
+    )
 }
 
 </script>

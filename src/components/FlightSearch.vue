@@ -3,6 +3,7 @@ import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
 import { PEvent, PButton, PDropDown, PFlight } from '@poseidon-components'
+import { onMounted } from 'vue'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
@@ -11,10 +12,6 @@ const router = useRouter()
 const handleBack = () => {
   router.back()
 }
-
-onMounted(() => {
-  searchFlights()
-})
 
 </script>
 
@@ -45,8 +42,24 @@ onMounted(() => {
           flightClass="Economy"
           :price="230" />
 
-          <PFlight v-for="flight in flightStore.flightResults" :key="flight.origin + flight.flightDep" design="block" v-bind="flight" /> 
-      </div>
+          <PFlight 
+      v-for="flight in flightStore.flightResults" 
+      :key="flight.origin + flight.flightDepTime"
+      design="block"
+      :flightDate="flight.flightDate"
+      :origin="flight.origin"
+      :destination="flight.destination" 
+      :flightDepTime="flight.flightDepTime"
+      :flightArrTime="flight.flightArrTime"
+      :seatNumber="flight.seatNumber"
+      :seatAvailable="flight.seatAvailable"
+      :price="flight.price"
+      :flightType="flight.flightType"
+      :flightClass="flight.flightClass"
+      :flightGate="flight.flightGate"
+      :airline="flight.airline"
+    />
+  </div>
 
     </div>
   </div>
