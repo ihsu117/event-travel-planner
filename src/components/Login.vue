@@ -7,40 +7,42 @@ const username = ref('')
 const password = ref('')
 const errors = ref({ username: '', password: '' })
 
+
 const validateForm = () => {
   let isValid = true
-  errors.value = { username: '', password: '' }
-
-  if (!username.value) {
-    errors.value.username = 'Username is required'
-    isValid = false
-  }
-
-  if (!password.value) {
-    errors.value.password = 'Password is required'
-    isValid = false
-  } else if (password.value.length < 6) {
-    errors.value.password = 'Password must be at least 6 characters'
-    isValid = false
-  }
-
-  return isValid
 }
-
+ 
 const loginUser = async () => {
-  if (validateForm()) {
-    try {
-      // Here you would typically make an API call
-      console.log('Attempting login with:', {
+  console.log('Attempting login with:', {
         username: username.value,
         password: password.value
       })
-      // await authService.login(username.value, password.value)
+    try {
+      // Here you would typically make an API call
+      
+      await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: username.value,
+          password: password.value
+        })
+      }).then(response => {
+        if (response.ok) {
+          console.log('Login successful')
+        } else {
+          throw new Error('Invalid username or password')
+        }
+      })
+      //await authService.login(username.value, password.value)
     } catch (error) {
       errors.value.password = 'Invalid username or password'
     }
   }
-}
+
 </script>
 
 <template>
@@ -48,9 +50,9 @@ const loginUser = async () => {
     <img src="@poseidon-assets/img/AppLogo.png" alt="Poseidon Logo" />
     <div class="login-form">
       <div class="login-input">
-        <PTextField design="p-textfield" label="Enter Username" />
+        <PTextField v-model="username" design="p-textfield" label="Enter Username" />
         <div>
-          <PTextField design="p-textfield" label="Enter Password" />
+          <PTextField v-model="password" design="p-textfield" label="Enter Password" />
           <p>Forgot Password?</p>
         </div>
       </div>
