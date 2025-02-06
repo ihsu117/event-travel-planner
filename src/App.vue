@@ -16,7 +16,6 @@ import Login from './components/Login.Vue'
 <template>
  
  <Login>
-
  </Login>
 
 </template>
