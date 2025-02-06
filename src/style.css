@@ -1,4 +1,49 @@
 
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-container img{
+  height: 236px;
+  width: 236px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 41px;
+}
+
+.login-input p {
+  color: var(--pos-yellow);
+  margin-top: 6px;
+  margin-right: 210px;
+  margin-left: 26px;
+  font-size: 12px;
+}
+
+.login-button p {
+  font-size: 12px;
+}
+
+.login-button a {
+  text-decoration: none;
+  color: var(--pos-yellow);
+}
+
 #app {
   max-width: 1280px;
   margin: 0 auto;
