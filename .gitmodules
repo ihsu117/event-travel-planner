@@ -6,4 +6,3 @@
 [submodule "backend"]
 	path = backend
 	url = https://github.com/gsm1298/event-travel-planner-backend
-	branch = basic-beta
