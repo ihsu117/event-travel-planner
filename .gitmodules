@@ -1,0 +1,9 @@
+
+[submodule "Poseidon-Design-System"]
+	path = Poseidon-Design-System
+	url = https://github.com/nickchrys/PoseidonDesignSys.git
+  
+[submodule "backend"]
+	path = backend
+	url = https://github.com/gsm1298/event-travel-planner-backend
+	branch = basic-beta
