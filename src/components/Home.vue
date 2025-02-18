@@ -41,13 +41,14 @@ const handleEventClick = (eventData) => {
     <div class="phone-container">
         <div class="home">
             <div class="home-header">
-                <p>{{ userStore.firstName }} {{ userStore.lastName }} - {{ userStore.organization }} - {{ userStore.role }}</p>
+                <p>{{ userStore.firstName }} {{ userStore.lastName }} - {{ userStore.organization }} - {{ userStore.role
+                    }}</p>
                 <PProfilePic design="small" :profileImage='userStore.profileImage' />
             </div>
             <h1>Upcoming Events</h1>
             <div class="p-event__container">
-                <PEvent organization="Poseidon" name="Gate Review 1" :startDate="new Date(2025, 1, 11)"
-                    :endDate="new Date(2025, 1, 13)"
+                <PEvent organization="Poseidon" name="Gate Review 1" :startDate="new Date(2025, 4, 11)"
+                    :endDate="new Date(2025, 4, 13)"
                     pictureLink="https://media.licdn.com/dms/image/v2/C5612AQGdAK3zSKJB5w/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1595251630672?e=2147483647&v=beta&t=9n9Ggoe-68JFjOG9OSHgGdAJBxTHCjOpJLhuCwzRCrU"
                     design="block" @event-click="handleEventClick" />
 

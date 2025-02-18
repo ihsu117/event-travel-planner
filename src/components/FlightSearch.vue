@@ -3,15 +3,35 @@ import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
 import { PEvent, PButton, PDropDown, PFlight } from '@poseidon-components'
-import { onMounted } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
 const router = useRouter()
+const sortPrice = ref('none')
 
 const handleBack = () => {
   router.back()
 }
+
+// const handlePriceSort = (option) => {
+//   sortPrice.value = option
+// }
+
+// const sortedFlights = computed(() => {
+//   if (!flightStore.flightResults) return []
+
+//   const flights = [...flightStore.flightResults]
+
+//   switch (sortPrice.value) {
+//     case 'Lowest':
+//       return flights.sort((a, b) => a.price - b.price)
+//     case 'Highest':
+//       return flights.sort((a, b) => b.price - a.price)
+//     case 'Price':
+//       return flights
+//   }
+// })
 
 </script>
 
@@ -41,7 +61,6 @@ const handleBack = () => {
           :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
           :flightGate="flight.flightGate" :airline="flight.airline" />
       </div>
-
     </div>
   </div>
 </template>
