@@ -2,13 +2,15 @@
 import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
-import { PEvent, PButton, PFinanceBlock, PDropDown } from '@poseidon-components'
+import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField } from '@poseidon-components'
 import { computed, ref } from 'vue'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
 const router = useRouter()
 const searchDate = ref(null)
+const arrivalDate = ref(null)
+const zipcode = ref('')
 
 const handleDateSelect = (date) => {
     const [month, day, year] = date.split('/').map(Number);
@@ -81,8 +83,13 @@ const toFlightSearch = () => {
                 <div>
                     <h1>Flight Information</h1>
                     <div class="p-dropdown__container">
-                        <PDropDown design="p-dropdown" dropDownLabel="Departure Date" :options="dateOptions" @option-selected="handleDateSelect" v-model="searchDate">
+                        <PDropDown design="event" dropDownLabel="Departure Date" :options="dateOptions"
+                            @option-selected="handleDateSelect" v-model="searchDate">
                         </PDropDown>
+                        <PDropDown design="event" dropDownLabel="Arrival Date" :options="dateOptions"
+                            @option-selected="" v-model="arrivalDate">
+                        </PDropDown>
+                        <PTextField design="small" v-model="zipcode" label="Zip Code"></PTextField>
                     </div>
                     <PButton design="gradient" label="Book Your Flight Here Now!" @click="toFlightSearch" />
                 </div>
