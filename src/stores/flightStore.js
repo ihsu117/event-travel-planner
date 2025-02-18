@@ -46,7 +46,8 @@ export const useFlightStore = defineStore('flight', {
                 flightType: 'Nonstop',
                 flightClass: 'Economy',
                 flightGate: flight.terminal || 'TBD',
-                airline: flight.airline
+                airline: flight.airline,
+                logoURL: flight.logo
             }));
 
             console.log('Processed flights:', this.flightResults);
