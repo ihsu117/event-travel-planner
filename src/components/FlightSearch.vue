@@ -14,6 +14,10 @@ const handleBack = () => {
   router.back()
 }
 
+const handleFlightClick = (flight) => {
+  console.log('Selected flight offer ID:', flight.offer_id)
+}
+
 // const handlePriceSort = (option) => {
 //   sortPrice.value = option
 // }
@@ -51,15 +55,12 @@ const handleBack = () => {
       </div>
 
       <div class="p-event__container">
-        <PFlight design="block" :flightDate="new Date(2025, 1, 12)" airline="United" origin="LAX" destination="JFK"
-          seatNumber="3A" flightType="Nonstop" flightGate="C1" flightClass="Economy" :price="230" />
-
         <PFlight v-for="(flight, index) in flightStore.flightResults"
           :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="block" :flightDate="flight.flightDate"
           :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
           :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
           :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
-          :flightGate="flight.flightGate" :airline="flight.airline" />
+          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" @click="handleFlightClick(flight)"/>
       </div>
     </div>
   </div>

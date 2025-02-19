@@ -14,7 +14,9 @@ export const useFlightStore = defineStore('flight', {
             flightType: '',
             flightClass: '',
             flightGate: '',
-            airline: ''
+            airline: '',
+            logoURL: '',
+            offer_id: ''
         },
         flightResults: []
     }),
@@ -47,7 +49,8 @@ export const useFlightStore = defineStore('flight', {
                 flightClass: 'Economy',
                 flightGate: flight.terminal || 'TBD',
                 airline: flight.airline,
-                logoURL: flight.logo
+                logoURL: flight.logo,
+                offer_id: flight.offer_id
             }));
 
             console.log('Processed flights:', this.flightResults);
