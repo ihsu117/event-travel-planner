@@ -4,6 +4,7 @@ import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
 import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField } from '@poseidon-components'
 import { computed, ref } from 'vue'
+import api from '../assets/scripts/api.js'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
@@ -44,7 +45,7 @@ const handleBack = () => {
 }
 
 const toFlightSearch = () => {
-    return fetch('http://localhost:3000/api/flights/search', {
+    return api.apiFetch('/flights/search', {
         method: 'POST',
         credentials: 'include',
         headers: {
