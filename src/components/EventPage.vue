@@ -51,7 +51,6 @@ const toFlightSearch = () => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            origin: "ATL",
             destination: "NYC",
             departure_date: searchDate.value || eventStore.currentEvent.startDate,
         })
