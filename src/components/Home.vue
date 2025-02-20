@@ -10,6 +10,7 @@ import { useEventStore } from '../stores/eventStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
+import api from '../assets/scripts/api.js'
 
 const eventStore = useEventStore()
 const userStore = useUserStore()
@@ -18,7 +19,7 @@ const events = ref([])
 
 onMounted(async () => {
     try {
-        const response = await fetch('http://localhost:3000/api/events', {
+        const response = await api.apiFetch('/events', {
             credentials: 'include'
         })
         if (response.ok) {

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/userStore'
 import { PButton, PTextField } from '@poseidon-components'
 import '@poseidon-styles/index.css'
+import api from '../assets/scripts/api.js'
 
 const email = ref('')
 const password = ref('')
@@ -19,7 +20,7 @@ const loginUser = async () => {
   try {
 
     //API call to backend to check for user credentials
-    const apiResponse = await fetch('http://localhost:3000/api/auth/login', {
+    const apiResponse = await api.apiFetch('/auth/login', {
       method: 'POST',
       credentials: 'include',
       headers: {
