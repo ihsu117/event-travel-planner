@@ -1,43 +1,48 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '../stores/userStore'
 import { PButton, PTextField } from '@poseidon-components'
 import '@poseidon-styles/index.css'
+import api from '../assets/scripts/api.js'
 
-const username = ref('')
+const email = ref('')
 const password = ref('')
-const errors = ref({ username: '', password: '' })
+const errors = ref({ email: '', password: '' })
 const router = useRouter()
+const userStore = useUserStore()
 
 const loginUser = async () => {
   console.log('Attempting login with:', {
-    username: username.value,
+    email: email.value,
     password: password.value
   })
   try {
 
     //API call to backend to check for user credentials
-    const apiResponse = await fetch('http://localhost:3000/api/auth/login', {
+    const apiResponse = await api.apiFetch('/auth/login', {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: username.value,
+        email: email.value,
         password: password.value,
       })
     })
 
     if (apiResponse.ok) {
       console.log('Login successful')
-      await router.push({name: 'Home'})
+      //const user = await apiResponse.json()
+      //userStore.setUser(user)
+      await router.push({ name: 'Home' })
     } else {
-      throw new Error('Invalid username or password')
+      throw new Error('Invalid email or password')
     }
-    //await authService.login(username.value, password.value)
+    //await authService.login(email.value, password.value)
   } catch (error) {
-    errors.value.password = 'Invalid username or password'
+    errors.value.password = 'Invalid email or password'
   }
 }
 
@@ -48,9 +53,9 @@ const loginUser = async () => {
     <img src="@poseidon-assets/img/AppLogo.png" alt="Poseidon Logo" />
     <div class="login-form">
       <div class="login-input">
-        <PTextField v-model="username" design="p-textfield" label="Enter Username" />
+        <PTextField v-model="email" label="Enter Email" />
         <div class="forgot-pass">
-          <PTextField v-model="password" design="p-textfield" label="Enter Password" />
+          <PTextField v-model="password" label="Enter Password" />
           <p><a href="#">Forgot Password?</a></p>
         </div>
       </div>
