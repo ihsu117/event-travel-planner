@@ -1,5 +1,3 @@
-index.js
-
 import { createRouter, createWebHistory } from 'vue-router'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import Login from '../components/Login.vue'
