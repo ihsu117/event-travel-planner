@@ -9,8 +9,6 @@ import {
   PFinanceBlock
 } from '@poseidon-components'
 import '@poseidon-styles/index.css'
-import Login from './components/Login.Vue'
-import Home from './components/Home.Vue'
 
 </script>
 
