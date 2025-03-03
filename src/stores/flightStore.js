@@ -62,7 +62,7 @@ export const useFlightStore = defineStore('flight', {
                     destination: flight.destination_airport,
                     flightDepTime: flight.departure_time,
                     flightArrTime: flight.arrival_time,
-                    seatNumber: '',
+                    seatNumber: '' || 'TBD',
                     seatAvailable: 1,
                     price: Math.round(flight.price),
                     flightType: 'Nonstop',

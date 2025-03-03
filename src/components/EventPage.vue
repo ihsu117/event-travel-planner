@@ -40,8 +40,8 @@ const dateOptions = computed(() => {
     return dates
 })
 
-const handleBack = () => {
-    router.back()
+const handleBack = (targetRoute) => {
+    router.push({ name: targetRoute });
 }
 
 const toFlightSearch = () => {
@@ -54,6 +54,7 @@ const toFlightSearch = () => {
         body: JSON.stringify({
             destination: "NYC",
             departure_date: searchDate.value || eventStore.currentEvent.startDate,
+            zip: zipcode.value
         })
     }).then(
         response => flightStore.setFlightResults(response.json())
@@ -69,7 +70,7 @@ const toFlightSearch = () => {
             <div>
                 <PEvent :organization="eventStore.currentEvent.organization" :name="eventStore.currentEvent.name"
                     :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
-                    :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="handleBack" />
+                    :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Home')" />
             </div>
             <div>
                 <h1>Description</h1>

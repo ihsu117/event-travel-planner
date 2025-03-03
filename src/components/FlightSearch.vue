@@ -10,8 +10,8 @@ const flightStore = useFlightStore()
 const router = useRouter()
 const sortPrice = ref('none')
 
-const handleBack = () => {
-  router.back()
+const handleBack = (targetRoute) => {
+  router.push({ name: targetRoute });
 }
 
 const handleFlightClick = (flight) => {
@@ -47,7 +47,7 @@ const handleFlightClick = (flight) => {
       <div>
         <PEvent :organization="eventStore.currentEvent.organization" :name="eventStore.currentEvent.name"
           :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
-          :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="handleBack" />
+          :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Event')" />
       </div>
 
       <h1>Upcoming Flights</h1>

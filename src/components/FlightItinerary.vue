@@ -1,25 +1,36 @@
 <script setup>
-import { PButton, PFlight } from '@poseidon-components'
+import { PButton, PFlight, PEvent } from '@poseidon-components'
 import { useFlightStore } from '../stores/flightStore'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const flightStore = useFlightStore()
+
+const handleBack = (targetRoute) => {
+    router.push({ name: targetRoute });
+}
+
 </script>
 
 <template>
-    <div class="flight-itinerary">
+    <div class="phone-container">
+        <div class="flight-itinerary">
 
-        <div class="flight-itinerary-header">
-            <img :src="flightStore.currentFlight.logoURL" alt="Airline Logo" />
-            <h3>{{ flightStore.currentFlight.airline }}</h3>
+            <PEvent design="itinerary-header" :organization="flightStore.currentFlight.airline"
+                :name="'Flight Itinerary'" :pictureLink="flightStore.currentFlight.logoURL"
+                @back-click="() => handleBack('Flight')" />
+
+            <div class="flight-itinerary-status">
+                <h3>Flight Confimation Status</h3>
+                <h2>Pending</h2>
+            </div>
+
+            <div class="p-event__container">
+                <PFlight design="itinerary" v-bind="flightStore.currentFlight"></PFlight>
+            </div>
+            <div class="flight-itinerary-button">
+                <PButton design="shop" label="Hold" :price="flightStore.currentFlight.price" :offerId="flightStore.currentFlight.offer_id"></PButton>
+            </div>
         </div>
-
-        <h3>Flight Confimation Status</h3>
-        <h2></h2>
-
-        <div class="p-event__container">
-            <PFlight design="itinerary" v-bind="flightStore.currentFlight"></PFlight>
-        </div>
-        <PButton design="shop" label="Buy"></PButton>
     </div>
-
 </template>

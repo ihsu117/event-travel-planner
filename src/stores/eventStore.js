@@ -34,6 +34,14 @@ export const useEventStore = defineStore('event', {
         financeMan: eventData.financeMan,
         inviteLink: eventData.inviteLink
       }
+      localStorage.setItem('currentEvent', JSON.stringify(this.currentEvent));
+    },
+
+    loadCurrentEvent() {
+      const eventData = localStorage.getItem('currentEvent');
+      if (eventData) {
+        this.currentEvent = JSON.parse(eventData);
+      }
     }
   }
 })
