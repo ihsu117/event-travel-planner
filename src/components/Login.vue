@@ -36,11 +36,12 @@ const loginUser = async () => {
       console.log('Login successful')
       //const user = await apiResponse.json()
       //userStore.setUser(user)
+      //console.log('User:', user)
       await router.push({ name: 'Home' })
     } else {
       throw new Error('Invalid email or password')
     }
-    //await authService.login(email.value, password.value)
+  
   } catch (error) {
     errors.value.password = 'Invalid email or password'
   }

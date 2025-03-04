@@ -2,21 +2,23 @@ import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    firstName: '',
-    lastName: '',
-    organization: '',
-    role: '',
-    profileImage: '',
+    user_id: null,
+    first_name: '',
+    last_name: '',
+    org_id: '',
+    role_id: '',
+    profile_picture: '',
     email: ''
   }),
 
   actions: {
     setUser(userData) {
-      this.firstName = userData.first_name
-      this.lastName = userData.last_name
-      this.organization = userData.org_id
-      this.role = userData.role_id
-      this.profileImage = userData.profile_picture
+      this.user_id = userData.id
+      this.first_name = userData.first_name
+      this.last_name = userData.last_name
+      this.org_id = userData.org_id
+      this.role_id = userData.role_id
+      this.profile_picture = userData.profile_picture
       this.email = userData.email
     }
   }

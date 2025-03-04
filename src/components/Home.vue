@@ -9,13 +9,15 @@ import '@poseidon-styles/index.css'
 import { useEventStore } from '../stores/eventStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import api from '../assets/scripts/api.js'
 
 const eventStore = useEventStore()
 const userStore = useUserStore()
 const router = useRouter()
 const events = ref([])
+
+console.log("First Name: " + userStore.first_name + " Last Name: " + userStore.last_name + " Org:" + userStore.org_id + " Role:" + userStore.role_id);
 
 onMounted(async () => {
     try {
@@ -36,35 +38,58 @@ const handleEventClick = (eventData) => {
     router.push({ name: 'Event' })
 }
 
+userStore.role_id = 1;
+
+const isAttendee = computed(() => userStore.role_id === 1)
+const isFinance = computed(() => userStore.role_id === 2)
+
 </script>
 
 <template>
-    <div class="phone-container">
-        <div class="home">
-            <div class="home-header">
-                <p>{{ userStore.firstName }} {{ userStore.lastName }} - {{ userStore.organization }} - {{ userStore.role
-                    }}</p>
-                <PProfilePic design="small" :profileImage='userStore.profileImage' />
-            </div>
-            <h1>Upcoming Events</h1>
-            <div class="p-event__container">
-                <PEvent organization="Poseidon" name="Gate Review 1" :startDate="new Date(2025, 4, 11)"
-                    :endDate="new Date(2025, 4, 13)"
-                    pictureLink="https://media.licdn.com/dms/image/v2/C5612AQGdAK3zSKJB5w/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1595251630672?e=2147483647&v=beta&t=9n9Ggoe-68JFjOG9OSHgGdAJBxTHCjOpJLhuCwzRCrU"
-                    design="block" @event-click="handleEventClick" />
 
-                <PEvent organization="Poseidon" name="Gate Review 2" :startDate="new Date(2025, 2, 25)"
-                    :endDate="new Date(2025, 2, 27)"
-                    pictureLink="https://cdn.rit.edu/images/news/2021-07/MAN-SHED-DJI_0448.jpg" design="block"
-                    description="This is the description lol" @event-click="handleEventClick" />
+    <!--Home Page for Attendee-->
+    <template v-if="isAttendee">
+        <div class="phone-container">
+            <div class="home">
+                <div class="home-header">
+                    <p>{{ userStore.firstName }} {{ userStore.lastName }} - {{ userStore.organization }} - {{
+                        userStore.role }}</p>
+                    <PProfilePic design="small" :profileImage='userStore.profileImage' />
+                </div>
+                <h1>Upcoming Events</h1>
+                <div class="p-event__container">
+                    <!--Dynamic Events-->
+                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                        :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                        :pictureLink="event.pictureLink" :description="event.description"
+                        :currentBudget="event.currentBudget" design="block" @event-click="handleEventClick" />
 
-                <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
-                    :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
-                    :pictureLink="event.pictureLink" :description="event.description"
-                    :currentBudget="event.currentBudget" design="block" @event-click="handleEventClick" />
-
+                </div>
             </div>
         </div>
-    </div>
+    </template>
+
+    <!--Home Page for Finance-->
+    <template v-if="isFinance">
+        <div class="phone-container">
+            <div class="home">
+                <div class="home-header">
+                    <p>{{ userStore.firstName }} {{ userStore.lastName }} - {{ userStore.organization }} - {{
+                        userStore.role
+                        }}
+                    </p>
+                    <PProfilePic design="small" :profileImage='userStore.profileImage' />
+                </div>
+                <h1>Upcoming Events</h1>
+                <div class="p-event__container">
+                    <!--Dynamic Events-->
+                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                        :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                        :pictureLink="event.pictureLink" :description="event.description"
+                        :currentBudget="event.currentBudget" design="block" @event-click="handleEventClick" />
+                </div>
+            </div>
+        </div>
+    </template>
 
 </template>

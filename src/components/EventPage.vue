@@ -15,7 +15,7 @@ const zipcode = ref('')
 
 const handleDateSelect = (date) => {
     const [month, day, year] = date.split('/').map(Number);
-    searchDate.value = new Date(year, month - 1, day);
+    searchDate.value = new Date(year, month - 1, day + 1);
     console.log("Date: ", searchDate.value)
     console.log("Event Date: ", eventStore.currentEvent.startDate)
 }
@@ -52,7 +52,7 @@ const toFlightSearch = () => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            destination: "NYC",
+            destination: "JFK",
             departure_date: searchDate.value || eventStore.currentEvent.startDate,
             zip: zipcode.value
         })
