@@ -10,6 +10,7 @@ import { useEventStore } from '../stores/eventStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
+import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
 
 const eventStore = useEventStore()
@@ -21,6 +22,7 @@ console.log("First Name: " + userStore.first_name + " Last Name: " + userStore.l
 
 //Fetch events from the API
 onMounted(async () => {
+    checkAuth()
     try {
         const response = await api.apiFetch('/events', {
             credentials: 'include'
@@ -37,11 +39,12 @@ onMounted(async () => {
 
 //The role_id is hardcoded for now, but will be dynamic in the future
 //1 = Attendee, 2 = Finance
-userStore.role_id = 2;
+
 
 //Computed properties to check the role of the user
-const isAttendee = computed(() => userStore.role_id === 1)
-const isFinance = computed(() => userStore.role_id === 2)
+const isAttendee = computed(() => userStore.role_id === 'Attendee')
+const isFinance = computed(() => userStore.role_id === 'Finance Manager')
+const isEventPlanner = computed(() => userStore.role_id === 'Event Planner')
 
 const handleEventClick = (eventData) => {
     eventStore.setCurrentEvent(eventData)
@@ -52,18 +55,22 @@ const handleEventClick = (eventData) => {
     }
 }
 
-</script>
+console.log('Profile Image URL:', userStore.profile_picture);
 
+</script>
 <template>
 
     <!--Home Page for Attendee-->
-    <template v-if="isAttendee">
+    <template v-if="isAttendee || isEventPlanner">
         <div class="phone-container">
             <div class="home">
                 <div class="home-header">
-                    <p>{{ userStore.firstName }} {{ userStore.lastName }} - {{ userStore.organization }} - {{
-                        userStore.role }}</p>
-                    <PProfilePic design="small" :profileImage='userStore.profileImage' />
+
+                    <div class="home-header__text">
+                        <p>Welcome, {{ userStore.first_name }} {{ userStore.last_name }}</p>
+                        <p class="role-bubble">{{ userStore.role_id }}</p>
+                    </div>
+                    <PProfilePic design="small" :profileImage='userStore.profile_picture' />
                 </div>
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
@@ -83,9 +90,9 @@ const handleEventClick = (eventData) => {
         <div class="phone-container">
             <div class="home">
                 <div class="home-header">
-                    <p>{{ userStore.firstName }} {{ userStore.lastName }} - {{ userStore.organization }} - {{
+                    <p>{{ userStore.first_name }} {{ userStore.last_name }} - {{ userStore.org_id }} - {{
                         userStore.role
-                    }}
+                        }}
                     </p>
                     <PProfilePic design="small" :profileImage='userStore.profileImage' />
                 </div>

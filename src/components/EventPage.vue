@@ -3,7 +3,7 @@ import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
 import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField } from '@poseidon-components'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 
 const eventStore = useEventStore()
@@ -67,6 +67,20 @@ const toFlightSearch = () => {
         router.push({ name: 'Flight' })
     )
 }
+
+// Function to check and load event data from localStorage
+const checkAndLoadEvent = () => {
+    const eventData = localStorage.getItem('currentEvent');
+    if (eventData) {
+        eventStore.loadCurrentEvent();
+    }
+}
+
+// Call the function when the component is mounted
+onMounted(() => {
+    checkAndLoadEvent();
+});
+
 </script>
 
 <template>
