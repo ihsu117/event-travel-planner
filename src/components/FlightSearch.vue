@@ -10,10 +10,12 @@ const flightStore = useFlightStore()
 const router = useRouter()
 const sortPrice = ref('none')
 
+//Function to handle the back button
 const handleBack = (targetRoute) => {
   router.push({ name: targetRoute });
 }
 
+//Function to handle the flight click
 const handleFlightClick = (flight) => {
   console.log('Selected flight offer ID:', flight.offer_id)
   flightStore.setCurrentFlight(flight)

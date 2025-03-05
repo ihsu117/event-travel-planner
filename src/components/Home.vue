@@ -19,6 +19,7 @@ const events = ref([])
 
 console.log("First Name: " + userStore.first_name + " Last Name: " + userStore.last_name + " Org:" + userStore.org_id + " Role:" + userStore.role_id);
 
+//Fetch events from the API
 onMounted(async () => {
     try {
         const response = await api.apiFetch('/events', {
@@ -26,6 +27,7 @@ onMounted(async () => {
         })
         if (response.ok) {
             const eventsData = await response.json()
+            console.log('Events:', eventsData)
             events.value = eventsData
         }
     } catch (error) {
@@ -33,15 +35,22 @@ onMounted(async () => {
     }
 })
 
-const handleEventClick = (eventData) => {
-    eventStore.setCurrentEvent(eventData)
-    router.push({ name: 'Event' })
-}
+//The role_id is hardcoded for now, but will be dynamic in the future
+//1 = Attendee, 2 = Finance
+userStore.role_id = 2;
 
-userStore.role_id = 1;
-
+//Computed properties to check the role of the user
 const isAttendee = computed(() => userStore.role_id === 1)
 const isFinance = computed(() => userStore.role_id === 2)
+
+const handleEventClick = (eventData) => {
+    eventStore.setCurrentEvent(eventData)
+    if (isAttendee.value) {
+        router.push({ name: 'Event' })
+    } else if (isFinance.value) {
+        router.push({ name: 'Finance' })
+    }
+}
 
 </script>
 
@@ -76,7 +85,7 @@ const isFinance = computed(() => userStore.role_id === 2)
                 <div class="home-header">
                     <p>{{ userStore.firstName }} {{ userStore.lastName }} - {{ userStore.organization }} - {{
                         userStore.role
-                        }}
+                    }}
                     </p>
                     <PProfilePic design="small" :profileImage='userStore.profileImage' />
                 </div>
@@ -86,7 +95,7 @@ const isFinance = computed(() => userStore.role_id === 2)
                     <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" design="block" @event-click="handleEventClick" />
+                        :currentBudget="event.currentBudget" design="block-finance" @event-click="handleEventClick" />
                 </div>
             </div>
         </div>

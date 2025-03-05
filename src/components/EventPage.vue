@@ -13,6 +13,7 @@ const searchDate = ref(null)
 const arrivalDate = ref(null)
 const zipcode = ref('')
 
+//Function to handle the date selection
 const handleDateSelect = (date) => {
     const [month, day, year] = date.split('/').map(Number);
     searchDate.value = new Date(year, month - 1, day + 1);
@@ -20,6 +21,7 @@ const handleDateSelect = (date) => {
     console.log("Event Date: ", eventStore.currentEvent.startDate)
 }
 
+//Function to format the date
 const formatDate = (date) => {
     return date.toLocaleDateString('en-US', {
         month: '2-digit',
@@ -28,6 +30,7 @@ const formatDate = (date) => {
     })
 }
 
+//Creates an array of dates for the dropdown
 const dateOptions = computed(() => {
     const dates = []
     const startDate = new Date(eventStore.currentEvent.startDate)
@@ -40,10 +43,12 @@ const dateOptions = computed(() => {
     return dates
 })
 
+//Function to handle the back button
 const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
 
+//Function to search for flights with Duffel API
 const toFlightSearch = () => {
     return api.apiFetch('/flights/search', {
         method: 'POST',
@@ -70,17 +75,20 @@ const toFlightSearch = () => {
             <div>
                 <PEvent :organization="eventStore.currentEvent.organization" :name="eventStore.currentEvent.name"
                     :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
-                    :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Home')" />
+                    :pictureLink="eventStore.currentEvent.pictureLink" design="header"
+                    @back-click="() => handleBack('Home')" />
             </div>
             <div>
                 <h1>Description</h1>
-                <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
-
+                <div class="event-description">
+                    <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
+                </div>
                 <h1>Budget</h1>
-                <p>Company will list budget here.</p>
-
-                <p> Plane Ticket - $230</p>
-                <p> Current Budget - ${{ eventStore.currentEvent.currentBudget }}</p>
+                <div class="event-budget">
+                    <p>Company will list budget here.</p>
+                    <p> Plane Ticket - $230</p>
+                    <p> Current Budget - ${{ eventStore.currentEvent.currentBudget }}</p>
+                </div>
                 <div>
                     <h1>Flight Information</h1>
                     <div class="p-dropdown__container">
