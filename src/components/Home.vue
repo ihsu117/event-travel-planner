@@ -18,8 +18,6 @@ const userStore = useUserStore()
 const router = useRouter()
 const events = ref([])
 
-console.log("First Name: " + userStore.first_name + " Last Name: " + userStore.last_name + " Org:" + userStore.org_id + " Role:" + userStore.role_id);
-
 //Fetch events from the API
 onMounted(async () => {
     checkAuth()
@@ -37,10 +35,6 @@ onMounted(async () => {
     }
 })
 
-//The role_id is hardcoded for now, but will be dynamic in the future
-//1 = Attendee, 2 = Finance
-
-
 //Computed properties to check the role of the user
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
 const isFinance = computed(() => userStore.role_id === 'Finance Manager')
@@ -55,7 +49,38 @@ const handleEventClick = (eventData) => {
     }
 }
 
-console.log('Profile Image URL:', userStore.profile_picture);
+const isModalVisible = ref(false)
+
+// Function to open the modal
+const openModal = () => {
+    isModalVisible.value = true
+    console.log('Modal opened')
+}
+
+// Function to close the modal
+const closeModal = () => {
+    isModalVisible.value = false
+}
+
+// Function to handle modal option selection
+const handleModalOption = async (option) => {
+    console.log(`Selected option: ${option}`)
+    if (option === 'Logout') {
+        try {
+            const response = await api.apiFetch('/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                userStore.$reset() // Reset the user store
+                router.push({ name: 'Login' }) // Redirect to login page
+            }
+        } catch (error) {
+            console.error('Failed to logout:', error)
+        }
+    }
+    closeModal()
+}
 
 </script>
 <template>
@@ -70,7 +95,7 @@ console.log('Profile Image URL:', userStore.profile_picture);
                         <p>Welcome, {{ userStore.first_name }} {{ userStore.last_name }}</p>
                         <p class="role-bubble">{{ userStore.role_id }}</p>
                     </div>
-                    <PProfilePic design="small" :profileImage='userStore.profile_picture' />
+                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
                 </div>
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
@@ -94,7 +119,7 @@ console.log('Profile Image URL:', userStore.profile_picture);
                         userStore.role
                         }}
                     </p>
-                    <PProfilePic design="small" :profileImage='userStore.profileImage' />
+                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
                 </div>
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
@@ -103,6 +128,55 @@ console.log('Profile Image URL:', userStore.profile_picture);
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
                         :currentBudget="event.currentBudget" design="block-finance" @event-click="handleEventClick" />
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template v-if="isModalVisible">
+        <div class="phone-container">
+            <div class="modal-overlay" @click="closeModal"></div>
+            <div class="modal-profile">
+
+                <div class="modal-profile-img-name">
+                    <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
+                    <PProfilePic design="big" :profileImage='userStore.profile_picture' />
+                    <div class="modal-profile-title-org">
+                        <h5>{{ userStore.role_id }}</h5>
+                        <p>{{ userStore.org_id }}</p>
+                    </div>
+                </div>
+
+                <div class="modal-profile-info-container">
+                    <div class="modal-profile-info">
+                        <div class="profile-content">
+                            <h5>Email</h5>
+                            <p>{{ userStore.email }}</p>
+                        </div>
+                        <div class="profile-content">
+                            <h5>Phone</h5>
+                            <p><!--{{ userStore.phone }}-->246-123-5124</p>
+                        </div>
+                        <div class="profile-content">
+                            <h5>Known Travel Number</h5>
+                            <p><!--{{ userStore.ktn }}-->98884256</p>
+                        </div>
+                        <div class="profile-content">
+                            <h5>Gender</h5>
+                            <p><!--{{ userStore.gender }}-->Male</p>
+                        </div>
+                        <div class="profile-content">
+                            <h5>Date of Birth</h5>
+                            <p><!--{{ userStore.dob }}-->12/12/1990</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-profile-options">
+                    <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')">Edit
+                    </PButton>
+                    <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')">Logout
+                    </PButton>
                 </div>
             </div>
         </div>
