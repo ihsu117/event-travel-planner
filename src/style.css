@@ -48,10 +48,6 @@
   font-size: 12px;
 }
 
-.login-button p {
-  font-size: 12px;
-}
-
 .login-button a {
   text-decoration: none;
   color: var(--pos-yellow);
