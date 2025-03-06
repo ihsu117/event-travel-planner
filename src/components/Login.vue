@@ -12,6 +12,8 @@ const errors = ref({ email: '', password: '' })
 const router = useRouter()
 const userStore = useUserStore()
 
+
+//Function to login the user
 const loginUser = async () => {
   console.log('Attempting login with:', {
     email: email.value,
@@ -34,9 +36,8 @@ const loginUser = async () => {
 
     if (apiResponse.ok) {
       console.log('Login successful')
-      //const user = await apiResponse.json()
-      //userStore.setUser(user)
-      //console.log('User:', user)
+      const user = await apiResponse.json()
+      userStore.setUser(user)
       await router.push({ name: 'Home' })
     } else {
       throw new Error('Invalid email or password')
@@ -56,7 +57,7 @@ const loginUser = async () => {
       <div class="login-input">
         <PTextField v-model="email" label="Enter Email" />
         <div class="forgot-pass">
-          <PTextField v-model="password" label="Enter Password" />
+          <PTextField v-model="password" type="password" label="Enter Password" />
           <p><a href="#">Forgot Password?</a></p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import Home from '../components/Home.vue'
 import EventPage from '../components/EventPage.vue'
 import FlightSearch from '../components/FlightSearch.vue'
 import FlightItinerary from '../components/FlightItinerary.vue'
+import FinanceDashboard from '../components/FinanceDashboard.vue'
 
 const routes = [
   {
@@ -36,6 +37,12 @@ const routes = [
     path: '/flight/itinerary',
     name: 'FlightItinerary',
     component: FlightItinerary,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/finance/',
+    name: 'Finance',
+    component: FinanceDashboard,
     meta: { requiresAuth: true }
   }
 

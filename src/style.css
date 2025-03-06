@@ -1,3 +1,12 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .login-container {
   display: flex;
   flex-direction: column;
@@ -69,16 +78,53 @@
 }
 
 .home-header {
-  margin-right: 200px;
-  margin-top: 10px;
+  background: var(--top-gradient);
+  display: flex;
+  justify-content: space-between; /* Distributes space between items */
+  align-items: center;
+  margin: 0;
+  margin-bottom: 15px;
+  color: var(--pos-white);
+  font-size: 13px;
+  min-width: 393px;
+  max-width: 393px;
+  height: 75px;
 }
 
 .home-header p {
   margin: 0;
-  margin-bottom: 5px;
-  color: var(--pos-dark-grey);
-  font-size: 13px;
+  margin-left: 20px;
+  max-width: 300px;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+.home-header__text {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+}
+
+.home-header .p-profilepic--small {
+  margin-right: 20px;
+}
+
+.home-header .role-bubble {
+  color: var(--pos-green);
+  background-color: #BBF7D0;
+  border-radius: 40px;
+  border: var(--pos-green) 1px solid;
+  font-size: 11px;
+  padding: 4px 8px;
+  margin-right: 30px;
+  margin-left: 0;
+  font-weight: 600;
+}
+
 
 .home h1 {
   margin-top: 11px;
@@ -101,30 +147,37 @@
 }
 
 .event-page h1 {
-  text-align: left;
   background: var(--top-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font-size: 24px;
-  margin-left: 27px;
+  text-align: left;
+  margin-left: 0;
+  padding-left: 15px;
   margin-bottom: 12px;
 }
 
-.event-page p {
-  text-align: left;
+.event-description, .event-budget {
+  text-align: center;
   color: black;
   font-size: 14px;
-  margin-left: 40px;
-  margin-right: 40px;
   margin-top: 0px;
   margin-bottom: 24px;
+  max-width: 500px; 
+  
+}
+
+.event-description {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 330px;
+  margin: 0 auto;
 }
 
 .event-page .p-dropdown__container {
   margin-left: 5px;
   margin-bottom: 15px;
-
   max-width: 380px;
 }
 
@@ -140,6 +193,7 @@
   max-width: 393px;
   background-color: var(--pos-outer-yellow);
   padding-bottom: 20px;
+  
 }
 
 .flight-page h1 {
@@ -206,6 +260,141 @@
   margin-left: 200px;
 }
 
+.finance-dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 393px;
+  background-color: var(--pos-outer-yellow);
+  padding-bottom: 20px;
+}
+
+.finance-dashboard p{
+  color: black;
+}
+
+.finance-dashboard h1 {
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 24px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  margin-left: 0;
+  
+}
+
+.finance-dashboard .flight-container h3{
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 24px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  text-align: left;
+  margin-left: 0;
+}
+
+.flight-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.budget-container {
+  flex-grow: 1;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  gap: 25px;
+  border: 1px solid var(--pos-yellow);
+  border-radius: 3px;
+}
+
+.budget-container h1 {
+  margin: 0;
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  transform: translate(-50%, -50%);
+  background: var(--pos-inner-yellow);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: var(--drop-shadow);
+  z-index: 1000;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+.modal-options {
+  cursor: pointer;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+
+.modal-approve, .modal-deny {
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-bottom: 0px;
+  margin-top: 5px;
+  
+}
+
+.modal-approve {
+  color: var(--pos-green);
+  border: 1px solid var(--pos-green);
+  
+}
+
+.modal-deny {
+  color: var(--pos-red);
+  border: 1px solid var(--pos-red);
+}
+
+.modal .p-flight--finance {
+  width: 300px;
+}
+
+.modal .p-flight--finance .p-flight__price {
+  padding-left: 0px;
+  margin-right: 5px;
+}
+
+.modal .p-flight--finance .p-flight__info {
+  min-width: 145px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999; 
+}
 
 #app {
   max-width: 1280px;
