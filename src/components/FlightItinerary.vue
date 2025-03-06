@@ -2,6 +2,7 @@
 import { PButton, PFlight, PEvent } from '@poseidon-components'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
+import api from '../assets/scripts/api.js'
 
 const router = useRouter()
 const flightStore = useFlightStore()
@@ -10,7 +11,25 @@ const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
 
-
+const confirmPurchase = async () => {
+  alert('Purchase confirmed - Offer ID: ' + flightStore.currentFlight.offer_id + ' Passenger ID: ' + flightStore.currentFlight.passID);
+    console.log(flightStore.currentFlight.offer_id + ' ' + flightStore.currentFlight.passID)
+  return api.apiFetch('/flights/hold', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      offerID: flightStore.currentFlight.offer_id,
+      passID: flightStore.currentFlight.passID
+    })
+  }).then(
+    response => console.log(response)
+  ).then(
+    router.push({ name: 'Event' })
+  )
+}
 
 </script>
 
@@ -31,7 +50,7 @@ const handleBack = (targetRoute) => {
                 <PFlight design="itinerary" v-bind="flightStore.currentFlight"></PFlight>
             </div>
             <div class="flight-itinerary-button">
-                <PButton design="shop" label="Hold" :price="flightStore.currentFlight.price" :offerId="flightStore.currentFlight.offer_id"></PButton>
+                <PButton design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()"></PButton>
             </div>
         </div>
     </div>

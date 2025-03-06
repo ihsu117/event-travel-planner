@@ -6,6 +6,7 @@ import EventPage from '../components/EventPage.vue'
 import FlightSearch from '../components/FlightSearch.vue'
 import FlightItinerary from '../components/FlightItinerary.vue'
 import FinanceDashboard from '../components/FinanceDashboard.vue'
+import PlannerEvent from '../components/PlannerEvent.vue'
 
 const routes = [
   {
@@ -43,6 +44,12 @@ const routes = [
     path: '/finance/',
     name: 'Finance',
     component: FinanceDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/planner/',
+    name: 'Planner',
+    component: PlannerEvent,
     meta: { requiresAuth: true }
   }
 
