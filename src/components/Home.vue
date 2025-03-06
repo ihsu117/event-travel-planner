@@ -17,6 +17,7 @@ const eventStore = useEventStore()
 const userStore = useUserStore()
 const router = useRouter()
 const events = ref([])
+const userInfo = ref({});
 
 //Fetch events from the API
 onMounted(async () => {
@@ -35,6 +36,21 @@ onMounted(async () => {
     }
 })
 
+const fetchUserData = async () => {
+    try {
+        const response = await api.apiFetch(`/user/${userStore.user_id}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            userInfo.value = await response.json();
+        } else {
+            console.error('Failed to fetch user data');
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+};
+
 //Computed properties to check the role of the user
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
 const isFinance = computed(() => userStore.role_id === 'Finance Manager')
@@ -46,15 +62,17 @@ const handleEventClick = (eventData) => {
         router.push({ name: 'Event' })
     } else if (isFinance.value) {
         router.push({ name: 'Finance' })
+    }else if (isEventPlanner.value) {
+        router.push({ name: 'Planner' })
     }
 }
 
 const isModalVisible = ref(false)
 
 // Function to open the modal
-const openModal = () => {
+const openModal = async () => {
+    await fetchUserData();
     isModalVisible.value = true
-    console.log('Modal opened')
 }
 
 // Function to close the modal
@@ -86,13 +104,13 @@ const handleModalOption = async (option) => {
 <template>
 
     <!--Home Page for Attendee-->
-    <template v-if="isAttendee || isEventPlanner">
+    <template v-if="isAttendee">
         <div class="phone-container">
             <div class="home">
                 <div class="home-header">
 
                     <div class="home-header__text">
-                        <p>Welcome, {{ userStore.first_name }} {{ userStore.last_name }}</p>
+                        <p>Welcome, {{ userStore.first_name }}</p>
                         <p class="role-bubble">{{ userStore.role_id }}</p>
                     </div>
                     <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
@@ -115,10 +133,10 @@ const handleModalOption = async (option) => {
         <div class="phone-container">
             <div class="home">
                 <div class="home-header">
-                    <p>{{ userStore.first_name }} {{ userStore.last_name }} - {{ userStore.org_id }} - {{
-                        userStore.role
-                        }}
-                    </p>
+                    <div class="home-header__text">
+                        <p>Welcome {{ userStore.first_name }} </p>
+                        <p class="role-bubble">{{ userStore.role_id }}</p>
+                    </div>
                     <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
                 </div>
                 <h1>Upcoming Events</h1>
@@ -127,15 +145,42 @@ const handleModalOption = async (option) => {
                     <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" design="block-finance" @event-click="handleEventClick" />
+                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget" design="block-finance" @event-click="handleEventClick" />
                 </div>
             </div>
         </div>
     </template>
 
+    <!--Home Page for Event Planner-->
+    <template v-if="isEventPlanner">
+        <div class="phone-container">
+            <div class="home">
+                <div class="home-header">
+
+                    <div class="home-header__text">
+                        <p>Welcome, {{ userStore.first_name }}</p>
+                        <p class="role-bubble">{{ userStore.role_id }}</p>
+                    </div>
+                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+                </div>
+                <h1>Upcoming Events</h1>
+                <div class="p-event__container">
+                    <!--Dynamic Events-->
+                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                        :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                        :pictureLink="event.pictureLink" :description="event.description"
+                        :currentBudget="event.currentBudget" design="block-planner" @event-click="handleEventClick" />
+                    <PButton label="Create Event" @click="handleEventClick" design="planner"></PButton>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!--Modal for User info-->
     <template v-if="isModalVisible">
         <div class="phone-container">
             <div class="modal-overlay" @click="closeModal"></div>
+        <div class="modal-container">
             <div class="modal-profile">
 
                 <div class="modal-profile-img-name">
@@ -143,7 +188,7 @@ const handleModalOption = async (option) => {
                     <PProfilePic design="big" :profileImage='userStore.profile_picture' />
                     <div class="modal-profile-title-org">
                         <h5>{{ userStore.role_id }}</h5>
-                        <p>{{ userStore.org_id }}</p>
+                        <p>{{ userStore.org.name }}</p>
                     </div>
                 </div>
 
@@ -155,20 +200,20 @@ const handleModalOption = async (option) => {
                         </div>
                         <div class="profile-content">
                             <h5>Phone</h5>
-                            <p><!--{{ userStore.phone }}-->246-123-5124</p>
+                            <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') }}</p>
                         </div>
                         <div class="profile-content">
                             <h5>Known Travel Number</h5>
-                            <p><!--{{ userStore.ktn }}-->98884256</p>
+                            <p>{{ userInfo.known_traveler_number }}</p>
                         </div>
                         <div class="profile-content">
                             <h5>Gender</h5>
-                            <p><!--{{ userStore.gender }}-->Male</p>
+                            <p>{{ userInfo.gender }}</p>
                         </div>
-                        <div class="profile-content">
+                        <!-- <div class="profile-content">
                             <h5>Date of Birth</h5>
-                            <p><!--{{ userStore.dob }}-->12/12/1990</p>
-                        </div>
+                            <p>{{ userInfo.dob }}</p>
+                        </div> -->
                     </div>
                 </div>
 
@@ -180,6 +225,7 @@ const handleModalOption = async (option) => {
                 </div>
             </div>
         </div>
+    </div>
     </template>
 
 </template>

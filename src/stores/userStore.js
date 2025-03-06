@@ -6,6 +6,7 @@ export const useUserStore = defineStore('user', {
     first_name: '',
     last_name: '',
     org_id: '',
+    org: {},
     role_id: '',
     profile_picture: '',
     email: ''
@@ -19,6 +20,7 @@ export const useUserStore = defineStore('user', {
       this.first_name = user.first_name
       this.last_name = user.last_name
       this.org_id = user.org_id
+      this.org = user.org
       this.role_id = user.role_id
       this.profile_picture = user.profile_picture
       this.email = user.email
@@ -34,6 +36,7 @@ export const useUserStore = defineStore('user', {
         this.first_name = userData.first_name
         this.last_name = userData.last_name
         this.org_id = userData.org_id
+        this.org = userData.org
         this.role_id = userData.role_id
         this.profile_picture = userData.profile_picture
         this.email = userData.email
@@ -46,6 +49,7 @@ export const useUserStore = defineStore('user', {
       this.first_name = ''
       this.last_name = ''
       this.org_id = ''
+      this.org = ''
       this.role_id = ''
       this.profile_picture = ''
       this.email = ''

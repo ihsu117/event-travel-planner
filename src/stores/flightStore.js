@@ -5,6 +5,7 @@ export const useFlightStore = defineStore('flight', {
         currentFlight: {
             flightDate: null,
             origin: '',
+            passID: '',
             destination: '',
             flightDepTime: '',
             flightArrTime: '',
@@ -26,6 +27,7 @@ export const useFlightStore = defineStore('flight', {
             this.currentFlight = {
                 flightDate: new Date(flight.flightDate),
                 origin: flight.origin,
+                passID: flight.passID,
                 destination: flight.destination,
                 flightDepTime: flight.flightDepTime,
                 flightArrTime: flight.flightArrTime,
@@ -56,7 +58,7 @@ export const useFlightStore = defineStore('flight', {
                     return;
                 }
 
-                this.flightResults = flightData.map(flight => ({
+                this.flightResults = flightData.slice(1).map(flight => ({
                     flightDate: new Date(flight.itinerary[0].departure_date),
                     origin: flight.origin_airport,
                     destination: flight.destination_airport,
@@ -64,6 +66,7 @@ export const useFlightStore = defineStore('flight', {
                     flightArrTime: flight.itinerary[flight.itinerary.length - 1].arrival_time,
                     seatNumber: '' || 'TBD',
                     seatAvailable: 1,
+                    passID: flight.passenger_ids,
                     price: Math.round(flight.price),
                     flightType: flight.flight_type,
                     flightClass: flight.flight_class,
