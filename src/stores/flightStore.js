@@ -57,17 +57,17 @@ export const useFlightStore = defineStore('flight', {
                 }
 
                 this.flightResults = flightData.map(flight => ({
-                    flightDate: new Date(flight.departure_date),
+                    flightDate: new Date(flight.itinerary[0].departure_date),
                     origin: flight.origin_airport,
                     destination: flight.destination_airport,
-                    flightDepTime: flight.departure_time,
-                    flightArrTime: flight.arrival_time,
+                    flightDepTime: flight.itinerary[0].departure_time,
+                    flightArrTime: flight.itinerary[flight.itinerary.length - 1].arrival_time,
                     seatNumber: '' || 'TBD',
                     seatAvailable: 1,
                     price: Math.round(flight.price),
-                    flightType: 'Nonstop',
-                    flightClass: 'Economy',
-                    flightGate: flight.terminal || 'TBD',
+                    flightType: flight.flight_type,
+                    flightClass: flight.flight_class,
+                    flightGate: flight.itinerary[0].terminal || 'TBD',
                     airline: flight.airline,
                     logoURL: flight.logo,
                     offer_id: flight.offer_id
