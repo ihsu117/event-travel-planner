@@ -3,13 +3,29 @@ import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
 import { PEvent, PTextField, PFlight } from '@poseidon-components'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 
 const eventStore = useEventStore()
 const router = useRouter()
 
 const isModalVisible = ref(false)
+const flightData = ref([])
+
+onMounted(async () => {
+    try {
+        const response = await api.apiFetch(`/flights/eventflights?id=${eventStore.currentEvent.id}`, {
+            credentials: 'include'
+        })
+        if (response.ok) {
+            flightData.value = await response.json()
+            console.log('flights:', flightData.value)
+        }
+    } catch (error) {
+        console.error('Failed to fetch flights:', error)
+    }
+})
+
 
 //Function to format the date
 const formatDate = (date) => {
@@ -19,6 +35,7 @@ const formatDate = (date) => {
         year: 'numeric'
     })
 }
+
 
 // Function to open the modal
 const openModal = () => {
@@ -79,18 +96,24 @@ const budgetColor = computed(() => {
                 <div class="flight-container">
                     <h3>Waiting for Approval</h3>
                     <div class="p-event__container">
-                        <PFlight flightClass="Economy" :price="142" airline="United"
-                            logoURL="https://companieslogo.com/img/orig/UAL-44813086.png?t=1720244494"
-                            flightDepTime="2:30" flightArrTime="4:30" design="finance" @click="openModal"></PFlight>
+                        <PFlight v-for="(flight, index) in flightData"
+          :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance" :flightDate="flight.flightDate"
+          :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
+          :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
+          :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
+          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"/>
                     </div>
                 </div>
 
                 <div class="flight-container">
                     <h3>Transaction History</h3>
                     <div class="p-event__container">
-                        <PFlight flightClass="Economy" :price="142" airline="United"
-                            logoURL="https://companieslogo.com/img/orig/UAL-44813086.png?t=1720244494"
-                            flightDepTime="2:30" flightArrTime="4:30" design="finance" @click="openModal"></PFlight>
+                        <PFlight v-for="(flight, index) in flightData"
+          :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance" :flightDate="flight.flightDate"
+          :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
+          :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
+          :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
+          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" />
                     </div>
                 </div>
 
