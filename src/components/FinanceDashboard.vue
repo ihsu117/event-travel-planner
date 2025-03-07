@@ -14,7 +14,7 @@ const flightData = ref([])
 
 onMounted(async () => {
     try {
-        const response = await api.apiFetch(`/flights/eventflights?id=${eventStore.currentEvent.id}`, {
+        const response = await api.apiFetch(`/flights/eventflights`, {
             credentials: 'include'
         })
         if (response.ok) {
@@ -101,7 +101,7 @@ const budgetColor = computed(() => {
           :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
           :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
           :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
-          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"/>
+          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" @click="openModal()"/>
                     </div>
                 </div>
 
