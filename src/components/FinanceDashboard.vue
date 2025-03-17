@@ -7,10 +7,11 @@ import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 
 const eventStore = useEventStore()
+const flightStore = useFlightStore()
 const router = useRouter()
 
 const isModalVisible = ref(false)
-const flightData = ref([])
+const flightSelected = ref(null)
 
 onMounted(async () => {
     try {
@@ -18,8 +19,9 @@ onMounted(async () => {
             credentials: 'include'
         })
         if (response.ok) {
-            flightData.value = await response.json()
-            console.log('flights:', flightData.value)
+
+            flightStore.setEventFlightResults(response.json())
+            
         }
     } catch (error) {
         console.error('Failed to fetch flights:', error)
@@ -38,13 +40,15 @@ const formatDate = (date) => {
 
 
 // Function to open the modal
-const openModal = () => {
+const openModal = (flight) => {
+    flightSelected.value = flight
     isModalVisible.value = true
 }
 
 // Function to close the modal
 const closeModal = () => {
     isModalVisible.value = false
+    flightSelected.value = null
 }
 
 // Function to handle modal option selection
@@ -96,33 +100,32 @@ const budgetColor = computed(() => {
                 <div class="flight-container">
                     <h3>Waiting for Approval</h3>
                     <div class="p-event__container">
-                        <PFlight v-for="(flight, index) in flightData"
+                        <PFlight v-for="(flight, index) in flightStore.flightResults"
           :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance" :flightDate="flight.flightDate"
           :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
           :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
           :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
-          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"/>
+          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" @click="openModal(flight)"/>
                     </div>
                 </div>
 
                 <div class="flight-container">
                     <h3>Transaction History</h3>
                     <div class="p-event__container">
-                        <PFlight v-for="(flight, index) in flightData"
+                        <PFlight v-for="(flight, index) in flightStore.flightResults"
           :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance" :flightDate="flight.flightDate"
           :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
           :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
           :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
-          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" />
+          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" @click="openModal(flight)"/>
                     </div>
                 </div>
 
                 <div v-if="isModalVisible">
                     <div class="modal-overlay" @click="closeModal"></div>
                     <div class="modal">
-                        <PFlight flightClass="Economy" :price="142" airline="United"
-                            logoURL="https://companieslogo.com/img/orig/UAL-44813086.png?t=1720244494"
-                            flightDepTime="2:30" flightArrTime="4:30" design="finance" style=""></PFlight>
+                        <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass" :price="flightSelected.price" :airline="flightSelected.airline"
+                        :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime" :flightArrTime="flightSelected.flightArrTime" design="finance" style="" ></PFlight>
 
                         <div class="modal-options">
                             <h2 class="modal-approve" @click="handleModalOption('Approve')">Approve</h2>
