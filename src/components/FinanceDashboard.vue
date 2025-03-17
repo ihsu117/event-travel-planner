@@ -15,7 +15,7 @@ const flightSelected = ref(null)
 
 onMounted(async () => {
     try {
-        const response = await api.apiFetch(`/flights/eventflights?id=${eventStore.currentEvent.id}`, {
+        const response = await api.apiFetch(`/flights/eventflights`, {
             credentials: 'include'
         })
         if (response.ok) {
