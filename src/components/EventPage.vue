@@ -2,7 +2,7 @@
 import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
-import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField } from '@poseidon-components'
+import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight } from '@poseidon-components'
 import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 
@@ -12,6 +12,8 @@ const router = useRouter()
 const searchDate = ref(null)
 const arrivalDate = ref(null)
 const zipcode = ref('')
+const flightSelected = ref(false)
+const editView = ref(false)
 
 //Function to handle the date selection
 const handleDateSelect = (date) => {
@@ -48,6 +50,13 @@ const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
 
+//Function to handle the flight click
+const handleFlightClick = (flight) => {
+    flightStore.setCurrentFlight(flight)
+    router.push({ name: 'FlightItinerary' })
+}
+
+
 //Function to search for flights with Duffel API
 const toFlightSearch = () => {
     return api.apiFetch('/flights/search', {
@@ -76,9 +85,29 @@ const checkAndLoadEvent = () => {
     }
 }
 
+const checkAndLoadSelectedFlight = () => {
+    const selectedFlightData = localStorage.getItem('selectedFlight');
+    const isFlightSelected = localStorage.getItem('flightSelected') === 'true';
+    if (isFlightSelected && selectedFlightData) {
+        flightStore.setCurrentFlight(JSON.parse(selectedFlightData));
+        flightSelected.value = true;
+    }
+}
+
 // Call the function when the component is mounted
-onMounted(() => {
+onMounted(async () => {
     checkAndLoadEvent();
+    checkAndLoadSelectedFlight();
+    try {
+        const response = await api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
+            credentials: 'include'
+        })
+        if (response.ok) {
+            eventStore.currentEvent.financeMan = await response.json()
+        }
+    } catch (error) {
+        console.error('Failed to fetch finance manager:', error)
+    }
 });
 
 </script>
@@ -105,6 +134,10 @@ onMounted(() => {
                 </div>
                 <div>
                     <h1>Flight Information</h1>
+                    <div class="selected-flight" v-if="flightSelected">
+                        <PFlight design="block" v-bind="flightStore.currentFlight"
+                            @click="handleFlightClick(flightStore.currentFlight)" />
+                    </div>
                     <div class="p-dropdown__container">
                         <PDropDown design="event" dropDownLabel="Departure Date" :options="dateOptions"
                             @option-selected="handleDateSelect" v-model="searchDate">
@@ -120,8 +153,11 @@ onMounted(() => {
 
                 <h1>Finance Team</h1>
                 <div class="finance-info">
-                    <PFinanceBlock design="p-finance" email="TWagner49@gmail.com" name="Timothy Wagner"
-                        jobTitle="Finance Manager" phoneNum="246-123-5124" profileImage=""></PFinanceBlock>
+                    <PFinanceBlock design="p-finance" :email="eventStore.currentEvent.financeMan.email"
+                        :name="eventStore.currentEvent.financeMan.firstName + ' ' + eventStore.currentEvent.financeMan.lastName"
+                        :jobTitle="eventStore.currentEvent.financeMan.role"
+                        :phoneNum="eventStore.currentEvent.financeMan.phoneNum"
+                        :profileImage="eventStore.currentEvent.financeMan.profilePic"></PFinanceBlock>
                 </div>
             </div>
         </div>
