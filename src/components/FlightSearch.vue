@@ -10,12 +10,15 @@ const flightStore = useFlightStore()
 const router = useRouter()
 const sortPrice = ref('none')
 
-const handleBack = () => {
-  router.back()
+//Function to handle the back button
+const handleBack = (targetRoute) => {
+  router.push({ name: targetRoute });
 }
 
+//Function to handle the flight click
 const handleFlightClick = (flight) => {
-  console.log('Selected flight offer ID:', flight.offer_id)
+  flightStore.setCurrentFlight(flight)
+  router.push({ name: 'FlightItinerary' })
 }
 
 // const handlePriceSort = (option) => {
@@ -45,7 +48,7 @@ const handleFlightClick = (flight) => {
       <div>
         <PEvent :organization="eventStore.currentEvent.organization" :name="eventStore.currentEvent.name"
           :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
-          :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="handleBack" />
+          :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Event')" />
       </div>
 
       <h1>Upcoming Flights</h1>

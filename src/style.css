@@ -1,3 +1,15 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes 
+
 .login-container {
   display: flex;
   flex-direction: column;
@@ -8,6 +20,7 @@
 .login-container img {
   height: 236px;
   width: 236px;
+
 }
 
 .login-form {
@@ -38,10 +51,6 @@
   font-size: 12px;
 }
 
-.login-button p {
-  font-size: 12px;
-}
-
 .login-button a {
   text-decoration: none;
   color: var(--pos-yellow);
@@ -49,7 +58,6 @@
 
 .phone-container {
   position: relative;
-  ;
   padding: 10px;
   max-width: 393px;
 }
@@ -70,15 +78,54 @@
 }
 
 .home-header {
-  margin-right: 200px;
-  margin-top: 10px;
+  background: var(--top-gradient);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  margin-bottom: 15px;
+  color: var(--pos-white);
+  font-size: 13px;
+  min-width: 393px;
+  max-width: 393px;
+  height: 75px;
+  padding-top: 7px;
+  padding-bottom: 7px;
 }
 
 .home-header p {
   margin: 0;
-  margin-bottom: 5px;
-  color: var(--pos-dark-grey);
-  font-size: 13px;
+  margin-left: 20px;
+  max-width: 300px;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home-header__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+}
+
+.home-header .p-profilepic--small {
+  margin-right: 20px;
+  max-width: 50px;
+  max-height: 50px;
+}
+
+.home-header .role-bubble {
+  color: var(--pos-green);
+  background-color: #BBF7D0;
+  border-radius: 40px;
+  border: var(--pos-green) 1px solid;
+  font-size: 11px;
+  padding: 4px 8px;
+  margin-right: 30px;
+  font-weight: 600;
 }
 
 .home h1 {
@@ -102,31 +149,49 @@
 }
 
 .event-page h1 {
-  text-align: left;
   background: var(--top-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font-size: 24px;
-  margin-left: 27px;
+  text-align: left;
+  margin-left: 0;
+  padding-left: 15px;
   margin-bottom: 12px;
 }
 
-.event-page p {
-  text-align: left;
+.event-description,
+.event-budget {
+  text-align: center;
   color: black;
   font-size: 14px;
-  margin-left: 40px;
-  margin-right: 40px;
   margin-top: 0px;
   margin-bottom: 24px;
+  max-width: 500px;
+
+}
+
+.event-description {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 330px;
+  margin: 0 auto;
 }
 
 .event-page .p-dropdown__container {
   margin-left: 5px;
   margin-bottom: 15px;
- 
   max-width: 380px;
+}
+
+.selected-flight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 393px;
+  background-color: var(--pos-outer-yellow);
+  padding-bottom: 20px;
 }
 
 .finance-info {
@@ -141,6 +206,7 @@
   max-width: 393px;
   background-color: var(--pos-outer-yellow);
   padding-bottom: 20px;
+
 }
 
 .flight-page h1 {
@@ -158,6 +224,353 @@
   gap: 11px;
 }
 
+.flight-itinerary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 393px;
+  background-color: var(--pos-outer-yellow);
+  padding-bottom: 20px;
+  color: black;
+}
+
+.flight-itinerary-status {
+  padding-top: 23px;
+  margin-right: 70px;
+}
+
+.flight-itinerary-status h3,
+.flight-itinerary-status h2 {
+  margin: 0;
+  text-align: left;
+}
+
+.flight-itinerary-status h3 {
+  font-size: 23px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.flight-itinerary-status h2 {
+  font-size: 32px;
+  font-weight: 600;
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.flight-itinerary .p-event__container {
+  margin-top: 16px;
+  padding-top: 8px;
+  padding-bottom: 15px;
+  width: 343px;
+}
+
+.flight-itinerary-button {
+  padding-top: 20px;
+  margin-left: 200px;
+}
+
+.finance-dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 393px;
+  background-color: var(--pos-outer-yellow);
+  padding-bottom: 20px;
+}
+
+.finance-dashboard p {
+  color: black;
+}
+
+.finance-dashboard h1 {
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 24px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  margin-left: 0;
+
+}
+
+.finance-dashboard .p-event__container {
+  padding-top: 13px;
+  width: 338px;
+
+}
+
+.finance-dashboard .flight-container h3 {
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 24px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  text-align: left;
+  margin-left: 0;
+}
+
+.flight-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.budget-container {
+  flex-grow: 1;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  gap: 10px;
+  border: 1px solid var(--pos-yellow);
+  border-radius: 3px;
+}
+
+.budget-container h1 {
+  margin: 0;
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  transform: translate(-50%, -50%);
+  background: var(--pos-inner-yellow);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: var(--drop-shadow);
+  z-index: 1000;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+.modal-options {
+  cursor: pointer;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+
+.modal-approve,
+.modal-deny {
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-bottom: 0px;
+  margin-top: 5px;
+
+}
+
+.modal-approve {
+  color: var(--pos-green);
+  border: 1px solid var(--pos-green);
+
+}
+
+.modal-deny {
+  color: var(--pos-red);
+  border: 1px solid var(--pos-red);
+}
+
+.modal .p-flight--finance {
+  width: 300px;
+}
+
+.modal .p-flight--finance .p-flight__price {
+  padding-left: 0px;
+  margin-right: 5px;
+}
+
+.modal .p-flight--finance .p-flight__info {
+  min-width: 145px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.modal-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, -110%);
+  border-radius: 10px;
+  box-shadow: var(--drop-shadow);
+  z-index: 1000;
+  animation: fadeIn 0.15s ease-in-out;
+  width: 335px;
+  min-height: 600px;
+  max-height: 600px;
+  background: var(--pos-grey);
+  color: black;
+}
+
+.modal-profile {
+  min-height: 150px;
+  padding-top: 15px;
+}
+
+.modal-profile-title-org {
+  line-height: 1.1;
+}
+
+.modal-profile-img-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding-bottom: 5px;
+}
+
+.modal-profile-img-name h4 {
+  font-size: 32px;
+  margin-bottom: 0;
+  margin-top: 5px;
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.modal-profile-img-name h5 {
+  font-size: 24px;
+  padding-top: 10px;
+  margin: 0;
+}
+
+.modal-profile-img-name p {
+  font-size: 20px;
+  margin: 0;
+}
+
+.modal-profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 15px;
+  min-width: 190px;
+  max-width: 220px;
+}
+
+.profile-content {
+  text-align: left;
+  min-width: 190px;
+  max-width: 220px;
+  line-height: 1.3;
+}
+
+.profile-content h5,
+.profile-content p {
+  margin: 0;
+  font-size: 17px;
+}
+
+.modal-profile-options {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.planner-event {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  height: 950px;
+  background-color: var(--pos-outer-yellow);
+  padding-bottom: 20px;
+}
+
+/*Change these into a new header style*/
+.planner-event h1 {
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 393px;
+  background-color: var(--pos-outer-yellow);
+  padding-bottom: 20px;
+  gap: 10px;
+}
+
+.event-form h2 {
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 20px;
+  text-align: left;
+  margin-left: 0;
+  padding-left: 15px;
+  margin-bottom: 5px;
+}
+
+.event-form .planner-dates {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+  width: 95%;
+}
+
+.event-form .planner-dates h2 {
+  text-align: center;
+  padding-left: 0%;
+}
+.event-form .planner-dates input {
+  width: 100%;
+  min-width: 155px;
+  font-size: 18px;
+}
+
+/*Change to textarea*/
+.event-form .planner-description input {
+  height: 150px;
+}
 
 #app {
   max-width: 1280px;
