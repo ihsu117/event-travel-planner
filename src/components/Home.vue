@@ -115,13 +115,6 @@ const handleModalOption = async (option) => {
     closeModal()
 }
 
-const handleEditEventClick = (eventData) => {
-    router.push({
-        name: 'Planner',
-        query: { edit: true, event: JSON.stringify(eventData) }
-    });
-};
-
 </script>
 <template>
 
