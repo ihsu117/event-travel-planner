@@ -6,7 +6,7 @@ import EventPage from '../components/EventPage.vue'
 import FlightSearch from '../components/FlightSearch.vue'
 import FlightItinerary from '../components/FlightItinerary.vue'
 import FinanceDashboard from '../components/FinanceDashboard.vue'
-import PlannerEvent from '../components/PlannerEvent.vue'
+import PlannerCreate from '../components/PlannerCreate.vue'
 
 const routes = [
   {
@@ -47,9 +47,9 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/planner/',
-    name: 'Planner',
-    component: PlannerEvent,
+    path: '/planner/create',
+    name: 'EventCreate',
+    component: PlannerCreate,
     meta: { requiresAuth: true }
   }
 

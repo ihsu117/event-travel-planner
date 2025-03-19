@@ -8,8 +8,6 @@
   }
 }
 
-@keyframes 
-
 .login-container {
   display: flex;
   flex-direction: column;
@@ -195,7 +193,7 @@
 }
 
 .finance-info {
-  margin-left: 19px;
+  position: relative;
 }
 
 .flight-page {
@@ -561,15 +559,26 @@
   text-align: center;
   padding-left: 0%;
 }
+
 .event-form .planner-dates input {
   width: 100%;
   min-width: 155px;
   font-size: 18px;
 }
 
-/*Change to textarea*/
 .event-form .planner-description input {
   height: 150px;
+}
+
+.x-icon {
+  position: absolute;
+  right: 11px;
+  top: 11px;
+  cursor: pointer;
+}
+
+.event-edit-button {
+  margin-top: 20px;
 }
 
 #app {

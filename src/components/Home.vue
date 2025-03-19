@@ -18,6 +18,7 @@ const userStore = useUserStore()
 const router = useRouter()
 const events = ref([])
 const userInfo = ref({});
+const editView = ref(false)
 
 //Fetch events from the API
 onMounted(async () => {
@@ -69,9 +70,16 @@ const handleEventClick = (eventData) => {
 
 const handleCreateEvent = () => {
     if (isEventPlanner.value) {
-        router.push({ name: 'Planner' })
+        router.push({ name: 'EventCreate' })
     }
 }
+
+const handleEditEventClick = (event) => {
+    if (isEventPlanner.value) {
+        eventStore.setCurrentEvent(event); 
+        router.push({ name: 'Event', query: { editView: 'true', eventID: event.id } }); 
+    }
+};
 
 const isModalVisible = ref(false)
 
@@ -106,13 +114,6 @@ const handleModalOption = async (option) => {
     }
     closeModal()
 }
-
-const handleEditEventClick = (eventData) => {
-    router.push({
-        name: 'Planner',
-        query: { edit: true, event: JSON.stringify(eventData) }
-    });
-};
 
 </script>
 <template>
@@ -185,8 +186,9 @@ const handleEditEventClick = (eventData) => {
                     <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :financeMan="event.financeMan" design="block-planner"
-                        @event-click="handleEventClick" @editClick="handleEditEventClick"/>
+                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget" :financeMan="event.financeMan"
+                        design="block-planner" @editClick="handleEditEventClick(event)"
+                        @event-click="handleEventClick" />
                     <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
             </div>

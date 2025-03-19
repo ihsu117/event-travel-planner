@@ -46,6 +46,8 @@ export const useEventStore = defineStore('event', {
         parsedEventData.startDate = new Date(parsedEventData.startDate);
         parsedEventData.endDate = new Date(parsedEventData.endDate);
         this.currentEvent = JSON.parse(eventData);
+        console.log('Loaded Event ID:', this.currentEvent.id);
+        console.log('Loaded Event Name:', this.currentEvent.name);
       }
     },
     clearEvents() {
