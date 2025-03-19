@@ -83,6 +83,43 @@ export const useFlightStore = defineStore('flight', {
             }
         },
 
+        async setEventFlightResults(eventFlights) {
+            try {
+                const flightData = eventFlights instanceof Promise ? await eventFlights : eventFlights;
+
+                console.log('Flight data type:', typeof flightData);
+                console.log('Flight data:', flightData);
+
+                if (!Array.isArray(flightData)) {
+                    console.error('Expected array of flights, got:', typeof flightData);
+                    return;
+                }
+
+                this.flightResults = flightData.map(flight => ({
+                    flightDate: new Date(flight.depart_time),
+                    origin: flight.depart_loc,
+                    destination: flight.arrive_loc,
+                    flightDepTime: flight.depart_time,
+                    flightArrTime: flight.arrive_time,
+                    seatNumber: '' || 'TBD',
+                    seatAvailable: 1,
+                    passID: flight.attendee_id,
+                    price: Math.round(flight.price),
+                    flightType: flight.flightType || '',
+                    flightClass: flight.flightClass || '',
+                    flightGate: flight.flightGate || 'TBD',
+                    airline: flight.airline || '',
+                    logoURL: flight.logoURL || '',
+                    offer_id: flight.offer_id
+                }));
+
+                console.log('Processed flights:', this.flightResults);
+            } catch (error) {
+                console.error('Error processing flight data:', error);
+                this.flightResults = [];
+            }
+        },
+
         clearFlights() {
             this.flightResults = []
         }

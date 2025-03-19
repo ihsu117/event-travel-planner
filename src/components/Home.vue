@@ -105,6 +105,7 @@ const handleModalOption = async (option) => {
             });
             if (response.ok) {
                 userStore.$reset() // Reset the user store
+                localStorage.clear() // Clear local storage
                 router.push({ name: 'Login' }) // Redirect to login page
             }
         } catch (error) {
@@ -113,6 +114,13 @@ const handleModalOption = async (option) => {
     }
     closeModal()
 }
+
+const handleEditEventClick = (eventData) => {
+    router.push({
+        name: 'Planner',
+        query: { edit: true, event: JSON.stringify(eventData) }
+    });
+};
 
 </script>
 <template>
@@ -135,7 +143,8 @@ const handleModalOption = async (option) => {
                     <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" design="block" @event-click="handleEventClick" />
+                        :currentBudget="event.currentBudget" :financeMan="event.financeMan" design="block"
+                        @event-click="handleEventClick" />
 
                 </div>
             </div>
@@ -159,7 +168,8 @@ const handleModalOption = async (option) => {
                     <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget" design="block-finance" @event-click="handleEventClick" />
+                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget" :financeMan="event.financeMan"
+                        design="block-finance" @event-click="handleEventClick" />
                 </div>
             </div>
         </div>
@@ -196,52 +206,53 @@ const handleModalOption = async (option) => {
     <template v-if="isModalVisible">
         <div class="phone-container">
             <div class="modal-overlay" @click="closeModal"></div>
-        <div class="modal-container">
-            <div class="modal-profile">
+            <div class="modal-container">
+                <div class="modal-profile">
 
-                <div class="modal-profile-img-name">
-                    <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
-                    <PProfilePic design="big" :profileImage='userStore.profile_picture' />
-                    <div class="modal-profile-title-org">
-                        <h5>{{ userStore.role_id }}</h5>
-                        <p>{{ userStore.org.name }}</p>
+                    <div class="modal-profile-img-name">
+                        <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
+                        <PProfilePic design="big" :profileImage='userStore.profile_picture' />
+                        <div class="modal-profile-title-org">
+                            <h5>{{ userStore.role_id }}</h5>
+                            <p>{{ userStore.org.name }}</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="modal-profile-info-container">
-                    <div class="modal-profile-info">
-                        <div class="profile-content">
-                            <h5>Email</h5>
-                            <p>{{ userStore.email }}</p>
-                        </div>
-                        <div class="profile-content">
-                            <h5>Phone</h5>
-                            <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') }}</p>
-                        </div>
-                        <div class="profile-content">
-                            <h5>Known Travel Number</h5>
-                            <p>{{ userInfo.known_traveler_number }}</p>
-                        </div>
-                        <div class="profile-content">
-                            <h5>Gender</h5>
-                            <p>{{ userInfo.gender }}</p>
-                        </div>
-                        <!-- <div class="profile-content">
+                    <div class="modal-profile-info-container">
+                        <div class="modal-profile-info">
+                            <div class="profile-content">
+                                <h5>Email</h5>
+                                <p>{{ userStore.email }}</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Phone</h5>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') }}</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Known Travel Number</h5>
+                                <p>{{ userInfo.known_traveler_number }}</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Gender</h5>
+                                <p>{{ userInfo.gender }}</p>
+                            </div>
+                            <!-- <div class="profile-content">
                             <h5>Date of Birth</h5>
                             <p>{{ userInfo.dob }}</p>
                         </div> -->
+                        </div>
                     </div>
-                </div>
 
-                <div class="modal-profile-options">
-                    <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')">Edit
-                    </PButton>
-                    <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')">Logout
-                    </PButton>
+                    <div class="modal-profile-options">
+                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')">Edit
+                        </PButton>
+                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')">
+                            Logout
+                        </PButton>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </template>
 
 </template>

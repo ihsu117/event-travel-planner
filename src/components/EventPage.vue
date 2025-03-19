@@ -77,7 +77,6 @@ const toFlightSearch = () => {
         router.push({ name: 'Flight' })
     )
 }
-
 const editableName = ref(eventStore.currentEvent.name)
 const editableStartDate = ref(eventStore.currentEvent.startDate)
 const editableEndDate = ref(eventStore.currentEvent.endDate)
