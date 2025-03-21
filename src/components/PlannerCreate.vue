@@ -68,7 +68,7 @@ const loadOrgUsers = async () => {
         if (response.ok) {
             const result = await response.json()
             console.log('Organization users:', result)
-            userStore.setUsers(result)
+            userStore.setUser(result)
         } else {
             console.error('Failed to load organization users:', await response.json())
         }
@@ -83,17 +83,22 @@ const loadOrgUsers = async () => {
     <template v-if="isInvitePage">
         <div class="phone-container">
             <div class="planner-event">
+
                 <PEvent design="small-header" name="Invitations" @back-click="isInvitePage = false" />
-                <h2>Finance Manager</h2>
-                <div class="p-event__container">
-                    
-                </div>
+                <div class="event-invite">
+                    <h2>Finance Manager</h2>
+                    <div class="p-event__container">
 
-                <h2>Attendees</h2>
-                <div class="p-event__container">
+                    </div>
 
+                    <h2>Attendees</h2>
+                    <div class="p-event__container">
+                        <PFinanceBlock design="invite" v-for="user in userStore.users" :key="user.id"
+                            :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                            :profileImage="user.profile_picture" />
+                    </div>
+                    <PButton label="Send Invites" @click="createEvent" design="gradient"></PButton>
                 </div>
-                <PButton label="Send Invites" @click="createEvent" design="gradient"></PButton>
             </div>
         </div>
     </template>
@@ -123,7 +128,7 @@ const loadOrgUsers = async () => {
                             <h2>End Date</h2>
                             <PTextField type="date" label="End Date" v-model="endDate" />
                         </div>
-                        
+
                     </div>
 
                     <div>

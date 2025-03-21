@@ -524,6 +524,24 @@
   margin-bottom: 0px;
 }
 
+
+
+.planner-event .event-invite .p-event__container{
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  gap: 10px; 
+}
+
+.planner-event .event-invite h2{
+  margin: 10px;
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+
 .event-form {
   display: flex;
   flex-direction: column;
