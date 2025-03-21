@@ -194,6 +194,7 @@
 
 .finance-info {
   position: relative;
+  padding-left: 20px;
 }
 
 .flight-page {
@@ -513,7 +514,6 @@
   padding-bottom: 20px;
 }
 
-/*Change these into a new header style*/
 .planner-event h1 {
   background: var(--top-gradient);
   -webkit-background-clip: text;
@@ -523,6 +523,24 @@
   text-align: center;
   margin-bottom: 0px;
 }
+
+
+
+.planner-event .event-invite .p-event__container{
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  gap: 10px; 
+}
+
+.planner-event .event-invite h2{
+  margin: 10px;
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 
 .event-form {
   display: flex;
@@ -551,8 +569,8 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 10px;
-  width: 95%;
+  gap: 4px;
+  width: 100%;
 }
 
 .event-form .planner-dates h2 {
@@ -561,8 +579,8 @@
 }
 
 .event-form .planner-dates input {
-  width: 100%;
-  min-width: 155px;
+  max-width: 165px;
+  min-width: 165px;
   font-size: 18px;
 }
 
