@@ -194,6 +194,7 @@
 
 .finance-info {
   position: relative;
+  padding-left: 20px;
 }
 
 .flight-page {
@@ -513,7 +514,6 @@
   padding-bottom: 20px;
 }
 
-/*Change these into a new header style*/
 .planner-event h1 {
   background: var(--top-gradient);
   -webkit-background-clip: text;
@@ -551,8 +551,8 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 10px;
-  width: 95%;
+  gap: 4px;
+  width: 100%;
 }
 
 .event-form .planner-dates h2 {
@@ -561,8 +561,8 @@
 }
 
 .event-form .planner-dates input {
-  width: 100%;
-  min-width: 155px;
+  max-width: 165px;
+  min-width: 165px;
   font-size: 18px;
 }
 
