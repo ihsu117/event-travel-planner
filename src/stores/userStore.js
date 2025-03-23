@@ -15,12 +15,12 @@ export const useUserStore = defineStore('user', {
 
   actions: {
     setUser(userData) {
-      if (Array.isArray(userData)) {
+      if (Array.isArray(userData) && userData.length > 1) {
         // Handle array of users
         this.users = userData.map(user => ({
           user_id: user.id,
-          first_name: user.firstName,
-          last_name: user.lastName,
+          first_name: user.first_name,
+          last_name: user.last_name,
           org_id: user.org_id,
           org: user.org,
           role_id: user.role_id,
@@ -32,8 +32,8 @@ export const useUserStore = defineStore('user', {
         const user = userData.user
         console.log('Setting user data:', user)
         this.user_id = user.id
-        this.first_name = user.firstName
-        this.last_name = user.lastName
+        this.first_name = user.first_name
+        this.last_name = user.last_name
         this.org_id = user.org_id
         this.org = user.org
         this.role_id = user.role_id
@@ -48,7 +48,7 @@ export const useUserStore = defineStore('user', {
       const user = localStorage.getItem('user')
       if (user) {
         const userData = JSON.parse(user)
-        if (Array.isArray(userData.users)) {
+        if (Array.isArray(userData.users) && userData.length > 1) {
           // Handle array of users
           this.users = userData.users;
           console.log('Loaded multiple users from local storage:', this.users)

@@ -56,6 +56,7 @@ const fetchUserData = async () => {
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
 const isFinance = computed(() => userStore.role_id === 'Finance Manager')
 const isEventPlanner = computed(() => userStore.role_id === 'Event Planner')
+console.log('Role:', userStore.role_id)
 
 const handleEventClick = (eventData) => {
     eventStore.setCurrentEvent(eventData)

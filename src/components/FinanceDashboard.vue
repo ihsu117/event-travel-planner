@@ -16,12 +16,19 @@ const flightSelected = ref(null)
 onMounted(async () => {
     try {
         const response = await api.apiFetch(`/flights/eventflights`, {
-            credentials: 'include'
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: eventStore.currentEvent.id // Pass the eventID from the current event
+            })
         })
         if (response.ok) {
 
             flightStore.setEventFlightResults(response.json())
-            
+
         }
     } catch (error) {
         console.error('Failed to fetch flights:', error)
@@ -90,7 +97,8 @@ const budgetColor = computed(() => {
                 </div>
                 <div class="budget-container">
                     <h1>Budget: </h1>
-                    <h2 :style="{ color: budgetColor }">${{ eventStore.currentEvent.currentBudget }}/${{ eventStore.currentEvent.maxBudget }}</h2>
+                    <h2 :style="{ color: budgetColor }">${{ eventStore.currentEvent.currentBudget }}/${{
+                        eventStore.currentEvent.maxBudget }}</h2>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path fill="currentColor"
                             d="M8.707 19.707L18 10.414L13.586 6l-9.293 9.293a1 1 0 0 0-.263.464L3 21l5.242-1.03c.176-.044.337-.135.465-.263M21 7.414a2 2 0 0 0 0-2.828L19.414 3a2 2 0 0 0-2.828 0L15 4.586L19.414 9z" />
@@ -101,11 +109,13 @@ const budgetColor = computed(() => {
                     <h3>Waiting for Approval</h3>
                     <div class="p-event__container">
                         <PFlight v-for="(flight, index) in flightStore.flightResults"
-          :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance" :flightDate="flight.flightDate"
-          :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
-          :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
-          :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
-          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" @click="openModal(flight)"/>
+                            :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
+                            :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
+                            :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
+                            :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
+                            :flightType="flight.flightType" :flightClass="flight.flightClass"
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
+                            @click="openModal(flight)" />
                     </div>
                 </div>
 
@@ -113,19 +123,23 @@ const budgetColor = computed(() => {
                     <h3>Transaction History</h3>
                     <div class="p-event__container">
                         <PFlight v-for="(flight, index) in flightStore.flightResults"
-          :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance" :flightDate="flight.flightDate"
-          :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
-          :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
-          :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
-          :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" @click="openModal(flight)"/>
+                            :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
+                            :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
+                            :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
+                            :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
+                            :flightType="flight.flightType" :flightClass="flight.flightClass"
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
+                            @click="openModal(flight)" />
                     </div>
                 </div>
 
                 <div v-if="isModalVisible">
                     <div class="modal-overlay" @click="closeModal"></div>
                     <div class="modal">
-                        <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass" :price="flightSelected.price" :airline="flightSelected.airline"
-                        :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime" :flightArrTime="flightSelected.flightArrTime" design="finance" style="" ></PFlight>
+                        <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
+                            :price="flightSelected.price" :airline="flightSelected.airline"
+                            :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime"
+                            :flightArrTime="flightSelected.flightArrTime" design="finance" style=""></PFlight>
 
                         <div class="modal-options">
                             <h2 class="modal-approve" @click="handleModalOption('Approve')">Approve</h2>
