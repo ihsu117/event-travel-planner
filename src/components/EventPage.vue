@@ -164,7 +164,7 @@ const saveChanges = async () => {
         <div class="phone-container">
             <div class="event-page">
                 <div>
-                    <PEvent :organization="eventStore.currentEvent.organization" :name="editableName"
+                    <PEvent :organization="eventStore.currentEvent.orgName" :name="editableName"
                         :startDate="editableStartDate" :endDate="editableEndDate"
                         :pictureLink="eventStore.currentEvent.pictureLink" design="header-edit" @update="handleUpdate"
                         @back-click="() => handleBack('Home')" />
