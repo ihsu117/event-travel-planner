@@ -10,6 +10,9 @@ export const useUserStore = defineStore('user', {
     role_id: '',
     profile_picture: '',
     email: '',
+    dob: '',
+    title: '',
+    KTN: '',
     users: []
   }),
 
@@ -19,13 +22,16 @@ export const useUserStore = defineStore('user', {
         // Handle array of users
         this.users = userData.map(user => ({
           user_id: user.id,
-          first_name: user.first_name,
-          last_name: user.last_name,
+          first_name: user.firstName,
+          last_name: user.lastName,
           org_id: user.org_id,
           org: user.org,
-          role_id: user.role_id,
+          role_id: user.role,
           profile_picture: user.profilePic,
-          email: user.email
+          email: user.email,
+          dob: user.dob,
+          title: user.title,
+          KTN: user.KTN
         }))
         console.log('Setting users data:', this.users)
       } else {
@@ -39,6 +45,9 @@ export const useUserStore = defineStore('user', {
         this.role_id = user.role_id
         this.profile_picture = user.profile_picture
         this.email = user.email
+        this.dob = user.dob,
+        this.title = user.title,
+        this.KTN = user.KTN
         console.log('User state updated:', this.$state)
       }
       localStorage.setItem('user', JSON.stringify(this.$state))
@@ -61,6 +70,9 @@ export const useUserStore = defineStore('user', {
           this.role_id = userData.role_id
           this.profile_picture = userData.profile_picture
           this.email = userData.email
+          this.dob = userData.dob
+          this.title = userData.title
+          this.KTN = userData.KTN
           console.log('User state loaded from local storage:', this.$state)
         }
       }
@@ -74,7 +86,10 @@ export const useUserStore = defineStore('user', {
       this.org = ''
       this.role_id = ''
       this.profile_picture = ''
-      this.email = ''
+      this.email = '',
+      this.dob = '',
+      this.title = '',
+      this.KTN = '',
       this.users = [];
       localStorage.removeItem('user')
       console.log('User state cleared')

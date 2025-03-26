@@ -9,6 +9,7 @@ import api from '../assets/scripts/api.js'
 const router = useRouter()
 const eventName = ref('')
 const description = ref('')
+const destinationCode = ref('')
 const startDate = ref('')
 const endDate = ref('')
 const pictureLink = ref('')
@@ -16,6 +17,9 @@ const maxBudget = ref('')
 const eventStore = useEventStore()
 const userStore = useUserStore()
 const isInvitePage = ref(false)
+const selectedUsers = ref([])
+const selectedFinman = ref('')
+const org = userStore.org_id
 
 const createEvent = async () => {
     try {
@@ -24,8 +28,12 @@ const createEvent = async () => {
             description: description.value,
             startDate: startDate.value,
             endDate: endDate.value,
+            destinationCode: destinationCode.value,
             pictureLink: pictureLink.value,
-            maxBudget: maxBudget.value
+            maxBudget: maxBudget.value,
+            financeMan: { id: selectedFinman.value },
+            autoApprove: Boolean(false),
+            autoApproveThreshold: 20
         }
 
         const response = await api.apiFetch('/events', {
@@ -55,7 +63,6 @@ const handleBack = (targetRoute) => {
 
 const toEventPage = () => {
     isInvitePage.value = true
-    loadOrgUsers()
 }
 
 const loadOrgUsers = async () => {
@@ -77,6 +84,42 @@ const loadOrgUsers = async () => {
     }
 }
 
+const toggleUserSelection = (userID) => {
+    if (selectedUsers.value.includes(userID)) {
+        // Remove user from selected users
+        selectedUsers.value = selectedUsers.value.filter(id => id !== userID);
+        console.log('User unselected:', userID);
+    } else {
+        // Add user to selected users
+        selectedUsers.value.push(userID);
+        console.log('User selected:', userID);
+    }
+    console.log('Selected users:', selectedUsers.value);
+}
+
+const isUserSelected = (userID) => {
+    return selectedUsers.value.includes(userID)
+}
+
+const selectFinanceManager = (userID) => {
+    if (selectedFinman.value === userID) {
+        // Deselect the currently selected finance manager
+        selectedFinman.value = '';
+        console.log('Finance manager unselected:', userID);
+    } else {
+        // Select the new finance manager
+        selectedFinman.value = userID;
+        console.log('Finance manager selected:', userID);
+    }
+};
+
+const isFinanceManagerSelected = (userID) => {
+    return selectedFinman.value === userID;
+};
+
+onMounted(() => {
+    loadOrgUsers()
+})
 </script>
 
 <template>
@@ -86,16 +129,13 @@ const loadOrgUsers = async () => {
 
                 <PEvent design="small-header" name="Invitations" @back-click="isInvitePage = false" />
                 <div class="event-invite">
-                    <h2>Finance Manager</h2>
-                    <div class="p-event__container">
-
-                    </div>
-
                     <h2>Attendees</h2>
                     <div class="p-event__container">
-                        <PFinanceBlock design="invite" v-for="user in userStore.users" :key="user.id"
-                            :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                            :profileImage="user.profile_picture" />
+                        <PFinanceBlock design="invite"
+                            v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')"
+                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                            :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
+                            @click="toggleUserSelection(user.user_id)" />
                     </div>
                     <PButton label="Send Invites" @click="createEvent" design="gradient"></PButton>
                 </div>
@@ -112,33 +152,47 @@ const loadOrgUsers = async () => {
                 <div class="event-form">
                     <div>
                         <h2>Name</h2>
-                        <PTextField label="Event Name" v-model="eventName" />
+                        <PTextField label="Event Name" v-model="eventName" required/>
+                    </div>
+                    <div>
+                        <h2>Destination</h2>
+                        <PTextField label="Destination Zip" v-model="destinationCode" required/>
                     </div>
                     <div class="planner-description">
                         <h2>Description</h2>
-                        <PTextField design="textarea" :maxlength=400 label="Description" v-model="description" />
+                        <PTextField design="textarea" :maxlength=400 label="Description" v-model="description" required/>
                     </div>
 
                     <div class="planner-dates">
                         <div>
                             <h2>Start Date</h2>
-                            <PTextField type="date" label="Start Date" v-model="startDate" />
+                            <PTextField type="date" label="Start Date" v-model="startDate" required/>
                         </div>
                         <div>
                             <h2>End Date</h2>
-                            <PTextField type="date" label="End Date" v-model="endDate" />
+                            <PTextField type="date" label="End Date" v-model="endDate" required/>
                         </div>
 
                     </div>
 
                     <div>
                         <h2>Picture Link</h2>
-                        <PTextField label="Picture Link" v-model="pictureLink" />
+                        <PTextField label="Picture Link" v-model="pictureLink" required/>
                     </div>
                     <div>
                         <h2>Max Budget</h2>
-                        <PTextField label="Max Budget" v-model="maxBudget" />
+                        <PTextField label="Max Budget" v-model="maxBudget" required/>
                     </div>
+
+                    <h2>Finance Manager</h2>
+                    <div class="p-event__container">
+                        <PFinanceBlock design="invite"
+                            v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
+                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                            :profileImage="user.profile_picture" :class="{ selected: isFinanceManagerSelected(user.user_id) }"
+                            @click="selectFinanceManager(user.user_id)" required/>
+                    </div>
+
                 </div>
                 <PButton label="Create Event" @click="toEventPage" design="gradient"></PButton>
             </div>

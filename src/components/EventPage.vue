@@ -1,10 +1,13 @@
 <script setup>
+
 import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter, useRoute } from 'vue-router'
 import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight } from '@poseidon-components'
 import { computed, ref, onMounted } from 'vue'
+//import { getGoogleMapsLoader } from '../assets/scripts/googleMapsLoader'
 import api from '../assets/scripts/api.js'
+import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
@@ -15,6 +18,8 @@ const arrivalDate = ref(null)
 const zipcode = ref('')
 const flightSelected = ref(false)
 const editView = ref(route.query.editView === 'true')
+const flightType = ref('one-way');
+
 
 //Function to handle the date selection
 const handleDateSelect = (date) => {
@@ -60,6 +65,7 @@ const handleFlightClick = (flight) => {
 
 //Function to search for flights with Duffel API
 const toFlightSearch = () => {
+    flightStore.clearFlights()
     return api.apiFetch('/flights/search', {
         method: 'POST',
         credentials: 'include',
@@ -123,39 +129,61 @@ const saveChanges = async () => {
     }
 }
 
-    // Function to check and load event data from localStorage
-    const checkAndLoadEvent = () => {
-        const eventData = localStorage.getItem('currentEvent');
-        if (eventData) {
-            eventStore.loadCurrentEvent();
-        }
+// Function to check and load event data from localStorage
+const checkAndLoadEvent = () => {
+    const eventData = localStorage.getItem('currentEvent');
+    if (eventData) {
+        eventStore.loadCurrentEvent();
     }
+}
 
-    const checkAndLoadSelectedFlight = () => {
-        const selectedFlightData = localStorage.getItem('selectedFlight');
-        const isFlightSelected = localStorage.getItem('flightSelected') === 'true';
-        if (isFlightSelected && selectedFlightData) {
-            flightStore.setCurrentFlight(JSON.parse(selectedFlightData));
-            flightSelected.value = true;
-        }
+const checkAndLoadSelectedFlight = () => {
+    const selectedFlightData = localStorage.getItem('selectedFlight');
+    const isFlightSelected = localStorage.getItem('flightSelected') === 'true';
+    if (isFlightSelected && selectedFlightData) {
+        flightStore.setCurrentFlight(JSON.parse(selectedFlightData));
+        flightSelected.value = true;
     }
+}
 
-    // Call the function when the component is mounted
-    onMounted(async () => {
-        checkAndLoadEvent()
-        checkAndLoadSelectedFlight()
-        console.log('Organization:', eventStore.currentEvent.organization)
-        try {
-            const response = await api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
-                credentials: 'include'
-            })
-            if (response.ok) {
-                eventStore.currentEvent.financeMan = await response.json()
-            }
-        } catch (error) {
-            console.error('Failed to fetch finance manager:', error)
+
+const query = ref('')
+const { suggestions } = usePlacesAutocomplete(query, {
+    debounce: 500,
+    minLengthAutocomplete: 3,
+    componentRestrictions: { country: 'us' },
+})
+
+const isInputFocused = ref(false);
+const handlePlaceSelect = (place) => {
+    query.value = place.description;
+    isInputFocused.value = false;
+    console.log('Selected place:', place);
+}
+
+const handleBlur = () => {
+    setTimeout(() => {
+        isInputFocused.value = false;
+    }, 100);
+};
+
+const autocomplete = ref(null)
+// Call the function when the component is mounted
+onMounted(async () => {
+    checkAndLoadEvent()
+    checkAndLoadSelectedFlight()
+    console.log('Organization:', eventStore.currentEvent.organization)
+    try {
+        const response = await api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
+            credentials: 'include'
+        })
+        if (response.ok) {
+            eventStore.currentEvent.financeMan = await response.json()
         }
-    })
+    } catch (error) {
+        console.error('Failed to fetch finance manager:', error)
+    }
+})
 </script>
 
 <template>
@@ -164,7 +192,7 @@ const saveChanges = async () => {
         <div class="phone-container">
             <div class="event-page">
                 <div>
-                    <PEvent :organization="eventStore.currentEvent.organization" :name="editableName"
+                    <PEvent :organization="eventStore.currentEvent.orgName" :name="editableName"
                         :startDate="editableStartDate" :endDate="editableEndDate"
                         :pictureLink="eventStore.currentEvent.pictureLink" design="header-edit" @update="handleUpdate"
                         @back-click="() => handleBack('Home')" />
@@ -173,7 +201,8 @@ const saveChanges = async () => {
                     <h1>Description</h1>
                     <div class="event-description">
                         <PTextField v-model="description" design="textarea-edit"
-                            :description="eventStore.currentEvent.description" @update:modelValue="value => handleUpdate({ field: 'description', value })">
+                            :description="eventStore.currentEvent.description"
+                            @update:modelValue="value => handleUpdate({ field: 'description', value })">
                         </PTextField>
                     </div>
 
@@ -188,7 +217,7 @@ const saveChanges = async () => {
                                     d="m12 13.414l5.657 5.657a1 1 0 0 0 1.414-1.414L13.414 12l5.657-5.657a1 1 0 0 0-1.414-1.414L12 10.586L6.343 4.929A1 1 0 0 0 4.93 6.343L10.586 12l-5.657 5.657a1 1 0 1 0 1.414 1.414z" />
                             </g>
                         </svg>
-                        <PFinanceBlock design="p-finance" :email="eventStore.currentEvent.financeMan.email"
+                        <PFinanceBlock :email="eventStore.currentEvent.financeMan.email"
                             :name="eventStore.currentEvent.financeMan.firstName + ' ' + eventStore.currentEvent.financeMan.lastName"
                             :jobTitle="eventStore.currentEvent.financeMan.role"
                             :phoneNum="eventStore.currentEvent.financeMan.phoneNum"
@@ -228,14 +257,31 @@ const saveChanges = async () => {
                             <PFlight design="block" v-bind="flightStore.currentFlight"
                                 @click="handleFlightClick(flightStore.currentFlight)" />
                         </div>
+                        <div class="flight-type">
+                            <label>
+                                <input type="radio" name="flightType" value="one-way" v-model="flightType" />
+                                One-Way
+                            </label>
+                            <label>
+                                <input type="radio" name="flightType" value="roundtrip" v-model="flightType" />
+                                Roundtrip
+                            </label>
+                        </div>
                         <div class="p-dropdown__container">
-                            <PDropDown design="event" dropDownLabel="Departure Date" :options="dateOptions"
-                                @option-selected="handleDateSelect" v-model="searchDate">
-                            </PDropDown>
-                            <PDropDown design="event" dropDownLabel="Arrival Date" :options="dateOptions"
-                                @option-selected="" v-model="arrivalDate">
-                            </PDropDown>
-                            <PTextField design="small" v-model="zipcode" label="Zip Code"></PTextField>
+                            <PTextField design="small" label="Departure Date" type="date" v-model="searchDate">
+                            </PTextField>
+                            <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
+                                v-model="returnDate"></PTextField>
+                            <PTextField design="small" label="Zip Code" type="text" v-model="zipcode"></PTextField>
+                            <div style="position: relative;">
+                                <PTextField design="small" type="text" v-model="query" placeholder="Search a place..."
+                                    @focus="isInputFocused = true"
+                                    @blur="handleBlur" />
+                                <ul v-if="isInputFocused && suggestions.length" class="scrollable-list">
+                                    <li v-for="item in suggestions" :key="item.place_id"
+                                        @click="handlePlaceSelect(item)">{{ item.description }}</li>
+                                </ul>
+                            </div>
                         </div>
                         <PButton design="gradient" label="Book Your Flight Here Now!" @click="toFlightSearch" />
                     </div>
@@ -243,7 +289,7 @@ const saveChanges = async () => {
 
                     <h1>Finance Team</h1>
                     <div class="finance-info">
-                        <PFinanceBlock design="p-finance" :email="eventStore.currentEvent.financeMan.email"
+                        <PFinanceBlock :email="eventStore.currentEvent.financeMan.email"
                             :name="eventStore.currentEvent.financeMan.firstName + ' ' + eventStore.currentEvent.financeMan.lastName"
                             :jobTitle="eventStore.currentEvent.financeMan.role"
                             :phoneNum="eventStore.currentEvent.financeMan.phoneNum"

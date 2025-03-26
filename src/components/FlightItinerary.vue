@@ -12,7 +12,6 @@ const handleBack = (targetRoute) => {
 }
 
 const confirmPurchase = async () => {
-  alert('Purchase confirmed - Offer ID: ' + flightStore.currentFlight.offer_id + ' Passenger ID: ' + flightStore.currentFlight.passID);
   console.log(flightStore.currentFlight.offer_id + ' ' + flightStore.currentFlight.passID)
 
   //Saves selected flight to local storage
