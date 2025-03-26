@@ -5,7 +5,6 @@ import { useFlightStore } from '../stores/flightStore'
 import { useRouter, useRoute } from 'vue-router'
 import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight } from '@poseidon-components'
 import { computed, ref, onMounted } from 'vue'
-//import { getGoogleMapsLoader } from '../assets/scripts/googleMapsLoader'
 import api from '../assets/scripts/api.js'
 import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
 
@@ -154,6 +153,7 @@ const { suggestions } = usePlacesAutocomplete(query, {
     componentRestrictions: { country: 'us' },
 })
 
+
 const isInputFocused = ref(false);
 const handlePlaceSelect = (place) => {
     query.value = place.description;
@@ -167,7 +167,6 @@ const handleBlur = () => {
     }, 100);
 };
 
-const autocomplete = ref(null)
 // Call the function when the component is mounted
 onMounted(async () => {
     checkAndLoadEvent()
@@ -274,9 +273,8 @@ onMounted(async () => {
                                 v-model="returnDate"></PTextField>
                             <PTextField design="small" label="Zip Code" type="text" v-model="zipcode"></PTextField>
                             <div style="position: relative;">
-                                <PTextField design="small" type="text" v-model="query" placeholder="Search a place..."
-                                    @focus="isInputFocused = true"
-                                    @blur="handleBlur" />
+                                <PTextField id='place' design="small" type="text" v-model="query" placeholder="Search a place..."
+                                    @focus="isInputFocused = true" @blur="handleBlur" />
                                 <ul v-if="isInputFocused && suggestions.length" class="scrollable-list">
                                     <li v-for="item in suggestions" :key="item.place_id"
                                         @click="handlePlaceSelect(item)">{{ item.description }}</li>

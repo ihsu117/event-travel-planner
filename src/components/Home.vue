@@ -78,8 +78,8 @@ const handleCreateEvent = () => {
 
 const handleEditEventClick = (event) => {
     if (isEventPlanner.value) {
-        eventStore.setCurrentEvent(event); 
-        router.push({ name: 'Event', query: { editView: 'true', eventID: event.id } }); 
+        eventStore.setCurrentEvent(event);
+        router.push({ name: 'Event', query: { editView: 'true', eventID: event.id } });
     }
 };
 
@@ -226,13 +226,13 @@ const handleModalOption = async (option) => {
 
                             <div class="profile-content">
                                 <h5>Gender</h5>
-                                <p v-if="userInfo.gender=='m'">Male</p>
+                                <p v-if="userInfo.gender == 'm'">Male</p>
                                 <p v-else>Female</p>
                             </div>
                             <div class="profile-content">
-                            <h5>Date of Birth</h5>
-                            <p>{{ format(userInfo.dob, 'MMMM do yyyy') }}</p>
-                        </div>
+                                <h5>Date of Birth</h5>
+                                <p>{{ format(userInfo.dob, 'MMMM do yyyy') }}</p>
+                            </div>
                         </div>
                     </div>
 

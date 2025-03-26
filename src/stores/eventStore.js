@@ -6,7 +6,6 @@ export const useEventStore = defineStore('event', {
       id: null,
       userId: '',
       organization: '',
-      orgName: '',
       name: '',
       startDate: null,
       endDate: null,
@@ -26,7 +25,6 @@ export const useEventStore = defineStore('event', {
         id: eventData.id,
         userId: eventData.userId,
         organization: eventData.organization,
-        //orgName: eventData.org.name,
         name: eventData.name,
         startDate: new Date(eventData.startDate),
         endDate: new Date(eventData.endDate),
@@ -38,6 +36,7 @@ export const useEventStore = defineStore('event', {
         financeMan: eventData.financeMan,
         inviteLink: eventData.inviteLink
       }
+      console.log(this.currentEvent)
       localStorage.setItem('currentEvent', JSON.stringify(this.currentEvent));
     },
 
@@ -48,8 +47,6 @@ export const useEventStore = defineStore('event', {
         parsedEventData.startDate = new Date(parsedEventData.startDate);
         parsedEventData.endDate = new Date(parsedEventData.endDate);
         this.currentEvent = JSON.parse(eventData);
-        console.log('Loaded Event ID:', this.currentEvent.id);
-        console.log('Loaded Event Name:', this.currentEvent.name);
       }
     },
     clearEvents() {
@@ -57,7 +54,6 @@ export const useEventStore = defineStore('event', {
         id: null,
         userId: '',
         organization: '',
-        orgName: '',
         name: '',
         startDate: null,
         endDate: null,

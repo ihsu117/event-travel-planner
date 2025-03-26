@@ -6,7 +6,7 @@ import { PButton, PTextField, PProfilePic } from '@poseidon-components'
 import '@poseidon-styles/index.css'
 import api from '../assets/scripts/api.js'
 
-const loginPage = ref(false)
+const loginPage = ref(true)
 const email = ref('')
 const password = ref('')
 const mfaCode = ref('')
@@ -140,7 +140,7 @@ const checkMFA = async () => {
     </div>
   </template>
 
-  <template v-else>
+  <template v-else-if="!loginPage">
     <div class="login-container">
       <div class="register-form">
         <div>

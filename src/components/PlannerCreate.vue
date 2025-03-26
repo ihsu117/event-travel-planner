@@ -20,6 +20,7 @@ const isInvitePage = ref(false)
 const selectedUsers = ref([])
 const selectedFinman = ref('')
 const org = userStore.org_id
+const attendees = ref([])
 
 const createEvent = async () => {
     try {
@@ -33,7 +34,8 @@ const createEvent = async () => {
             maxBudget: maxBudget.value,
             financeMan: { id: selectedFinman.value },
             autoApprove: Boolean(false),
-            autoApproveThreshold: 20
+            autoApproveThreshold: 20,
+            attendees: selectedUsers.value
         }
 
         const response = await api.apiFetch('/events', {
@@ -85,20 +87,23 @@ const loadOrgUsers = async () => {
 }
 
 const toggleUserSelection = (userID) => {
-    if (selectedUsers.value.includes(userID)) {
+    const user = {
+            id: userID
+        } 
+    if (selectedUsers.value.some(selectedUser => selectedUser.id === userID)) {
         // Remove user from selected users
-        selectedUsers.value = selectedUsers.value.filter(id => id !== userID);
-        console.log('User unselected:', userID);
+        selectedUsers.value = selectedUsers.value.filter(selectedUser => selectedUser.id !== userID);
+        console.log('User unselected:', user);
     } else {
         // Add user to selected users
-        selectedUsers.value.push(userID);
-        console.log('User selected:', userID);
+        selectedUsers.value.push(user);
+        console.log('User selected:', user);
     }
     console.log('Selected users:', selectedUsers.value);
 }
 
 const isUserSelected = (userID) => {
-    return selectedUsers.value.includes(userID)
+    return selectedUsers.value.some(selectedUser => selectedUser.id === userID);
 }
 
 const selectFinanceManager = (userID) => {
@@ -129,6 +134,16 @@ onMounted(() => {
 
                 <PEvent design="small-header" name="Invitations" @back-click="isInvitePage = false" />
                 <div class="event-invite">
+
+                    <h2>Finance Manager</h2>
+                    <div class="p-event__container">
+                        <PFinanceBlock design="invite"
+                            v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
+                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                            :profileImage="user.profile_picture" :class="{ selected: isFinanceManagerSelected(user.user_id) }"
+                            @click="selectFinanceManager(user.user_id)" required/>
+                    </div>
+                    
                     <h2>Attendees</h2>
                     <div class="p-event__container">
                         <PFinanceBlock design="invite"
@@ -184,14 +199,7 @@ onMounted(() => {
                         <PTextField label="Max Budget" v-model="maxBudget" required/>
                     </div>
 
-                    <h2>Finance Manager</h2>
-                    <div class="p-event__container">
-                        <PFinanceBlock design="invite"
-                            v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
-                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                            :profileImage="user.profile_picture" :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                            @click="selectFinanceManager(user.user_id)" required/>
-                    </div>
+                    
 
                 </div>
                 <PButton label="Create Event" @click="toEventPage" design="gradient"></PButton>
