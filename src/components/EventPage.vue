@@ -65,6 +65,7 @@ const handleFlightClick = (flight) => {
 
 //Function to search for flights with Duffel API
 const toFlightSearch = () => {
+    flightStore.clearFlights()
     return api.apiFetch('/flights/search', {
         method: 'POST',
         credentials: 'include',
@@ -271,6 +272,7 @@ onMounted(async () => {
                             </PTextField>
                             <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField>
+                            <PTextField design="small" label="Zip Code" type="text" v-model="zipcode"></PTextField>
                             <div style="position: relative;">
                                 <PTextField design="small" type="text" v-model="query" placeholder="Search a place..."
                                     @focus="isInputFocused = true"
