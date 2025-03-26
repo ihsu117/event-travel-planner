@@ -419,7 +419,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  top: 0%;
   left: 50%;
   transform: translate(-50%, -110%);
   border-radius: 10px;
@@ -483,6 +482,14 @@
   max-width: 220px;
 }
 
+.mfa-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center ;
+  gap: 15px;
+  padding: 10%;
+}
+
 .profile-content {
   text-align: left;
   min-width: 190px;
@@ -509,7 +516,7 @@
   flex-direction: column;
   align-items: center;
   max-width: 100%;
-  height: 950px;
+  height: 1250px;
   background-color: var(--pos-outer-yellow);
   padding-bottom: 20px;
 }
@@ -524,13 +531,20 @@
   margin-bottom: 0px;
 }
 
-
-
 .planner-event .event-invite .p-event__container{
   padding-top: 15px;
   padding-bottom: 15px;
   margin-bottom: 20px;
   gap: 10px; 
+  
+}
+
+.planner-event .p-event__container{
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  gap: 10px; 
+  
 }
 
 .planner-event .event-invite h2{
@@ -541,7 +555,6 @@
   color: transparent;
 }
 
-
 .event-form {
   display: flex;
   flex-direction: column;
@@ -551,6 +564,7 @@
   background-color: var(--pos-outer-yellow);
   padding-bottom: 20px;
   gap: 10px;
+  
 }
 
 .event-form h2 {
@@ -619,4 +633,29 @@
   button {
     background-color: #f9f9f9;
   }
+}
+
+.scrollable-list {
+  position: absolute; /* Position the dropdown absolutely */
+  top: 60%; /* Position it below the input field */
+  left: 0; /* Align it with the left edge of the parent container */
+  z-index: 1000; /* Ensure it appears above other elements */
+  max-height: 150px; /* Set the maximum height for the scrollable area */
+  overflow-y: auto; /* Enable vertical scrolling */
+  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+  padding: 5px; /* Optional: Add padding for spacing */
+  border-radius: 5px; /* Optional: Add rounded corners */
+  background-color: var(--pos-grey); /* Optional: Set background color */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better visibility */
+  width: 100%; /* Match the width of the input field */
+  color: black;
+}
+
+.scrollable-list li {
+  cursor: pointer; /* Make list items selectable */
+  padding: 5px; /* Add padding for better spacing */
+}
+
+.scrollable-list li:hover {
+  background-color: #f0f0f0; /* Highlight item on hover */
 }

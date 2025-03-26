@@ -26,7 +26,7 @@ export const useEventStore = defineStore('event', {
         id: eventData.id,
         userId: eventData.userId,
         organization: eventData.organization,
-        orgName: eventData.org.name,
+        //orgName: eventData.org.name,
         name: eventData.name,
         startDate: new Date(eventData.startDate),
         endDate: new Date(eventData.endDate),

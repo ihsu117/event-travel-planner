@@ -12,6 +12,7 @@ import { useRouter } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
+import { format } from 'date-fns'
 
 const eventStore = useEventStore()
 const userStore = useUserStore()
@@ -222,18 +223,16 @@ const handleModalOption = async (option) => {
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') }}</p>
                             </div>
-                            <div class="profile-content">
-                                <h5>Known Travel Number</h5>
-                                <p>{{ userInfo.known_traveler_number }}</p>
-                            </div>
+
                             <div class="profile-content">
                                 <h5>Gender</h5>
-                                <p>{{ userInfo.gender }}</p>
+                                <p v-if="userInfo.gender=='m'">Male</p>
+                                <p v-else>Female</p>
                             </div>
-                            <!-- <div class="profile-content">
+                            <div class="profile-content">
                             <h5>Date of Birth</h5>
-                            <p>{{ userInfo.dob }}</p>
-                        </div> -->
+                            <p>{{ format(userInfo.dob, 'MMMM do yyyy') }}</p>
+                        </div>
                         </div>
                     </div>
 

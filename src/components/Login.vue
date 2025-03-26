@@ -6,14 +6,13 @@ import { PButton, PTextField } from '@poseidon-components'
 import '@poseidon-styles/index.css'
 import api from '../assets/scripts/api.js'
 
+const loginPage = ref(true)
 const email = ref('')
 const password = ref('')
 const mfaCode = ref('')
 const errors = ref({ email: '', password: '' })
 const router = useRouter()
 const userStore = useUserStore()
-const showMFA = ref(false)
-
 
 //Function to login the user
 const loginUser = async () => {
@@ -38,7 +37,7 @@ const loginUser = async () => {
 
     if (apiResponse.ok) {
       console.log('Login successful')
-      showMFA.value = true
+      isModalVisible.value = true
     } else {
       throw new Error('Invalid email or password')
     }
@@ -46,6 +45,12 @@ const loginUser = async () => {
   } catch (error) {
     errors.value.password = 'Invalid email or password'
   }
+}
+
+const isModalVisible = ref(false)
+// Function to close the modal
+const closeModal = () => {
+  isModalVisible.value = false
 }
 
 const checkMFA = async () => {
@@ -81,27 +86,33 @@ const checkMFA = async () => {
 </script>
 
 <template>
-  <div class="login-container">
-    <img src="@poseidon-assets/img/AppLogo.png" alt="Poseidon Logo" />
-    <div class="login-form">
-      <div class="login-input">
-        <PTextField v-model="email" label="Enter Email" />
-        <div class="forgot-pass">
-          <PTextField v-model="password" type="password" label="Enter Password" />
-          <p><a href="#">Forgot Password?</a></p>
+  <template v-if="loginPage">
+    <div class="login-container">
+      <img src="@poseidon-assets/img/AppLogo.png" alt="Poseidon Logo" />
+      <div class="login-form">
+        <div class="login-input">
+          <PTextField v-model="email" label="Enter Email" />
+          <div class="forgot-pass">
+            <PTextField v-model="password" type="password" label="Enter Password" />
+            <p><a href="#">Forgot Password?</a></p>
+          </div>
+        </div>
+        <div class="login-button">
+          <PButton @click="loginUser" design="login" label="Login">Submit</PButton>
+          <p>Don't have an account? <a href="#">Sign up here!</a></p>
         </div>
       </div>
-      <div class="login-button">
-        <PButton @click="loginUser" design="login" label="Login">Submit</PButton>
-        <p>Don't have an account? <a href="#">Sign up here!</a></p>
-      </div>
     </div>
-  </div>
+  </template>
 
-  <div v-if="showMFA==true" class="mfa-container">
-    <div class="mfa-form">
-      <PTextField v-model="mfaCode" label="Enter MFA Code" />
-      <PButton @click="checkMFA" v-model="mfaCode" design="login" label="Submit">Submit</PButton>
-    </div>
-  </div>
+  <template v-if="isModalVisible">
+    <div class="modal-overlay" @click="closeModal"></div>
+      <div class="modal">
+        <div class="mfa-form">
+          <PTextField v-model="mfaCode" label="Enter MFA Code" />
+          <PButton @click="checkMFA" design="login" label="Submit">Submit</PButton>
+        </div>
+      </div>
+  </template>
+
 </template>
