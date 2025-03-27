@@ -88,7 +88,12 @@ const handleSendInvites = async () => {
     try {
         await createEvent();
         console.log('EventID: ', lastCreatedEventId.value)
-        await createUser();
+
+        if (newUsers.value.length > 0) {
+            await createUser();
+        } else {
+            console.log('No new users to invite.');
+        }
         router.push({ name: 'Home' }) 
     } catch (error) {
         console.error('Error sending invites:', error)

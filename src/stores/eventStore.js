@@ -16,7 +16,9 @@ export const useEventStore = defineStore('event', {
       currentBudget: 0,
       createdBy: null,
       financeMan: null,
-      inviteLink: ''
+      inviteLink: '',
+      autoapprove: false,
+      autoapprove_threshold: 0
     }
   }),
 
@@ -36,7 +38,9 @@ export const useEventStore = defineStore('event', {
         currentBudget: eventData.currentBudget,
         createdBy: eventData.createdBy,
         financeMan: eventData.financeMan,
-        inviteLink: eventData.inviteLink
+        inviteLink: eventData.inviteLink,
+        autoapprove: eventData.autoapprove,
+        autoapprove_threshold: eventData.autoapprove_threshold
       }
       console.log(this.currentEvent)
       localStorage.setItem('currentEvent', JSON.stringify(this.currentEvent));
@@ -66,7 +70,9 @@ export const useEventStore = defineStore('event', {
         currentBudget: 0,
         createdBy: null,
         financeMan: null,
-        inviteLink: ''
+        inviteLink: '',
+        autoapprove: false,
+        autoapprove_threshold: 0
       }
       localStorage.removeItem('currentEvent')
     }

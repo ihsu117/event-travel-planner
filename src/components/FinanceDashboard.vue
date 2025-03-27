@@ -13,10 +13,49 @@ const router = useRouter()
 const isModalVisible = ref(false)
 const flightSelected = ref(null)
 
+const isEditModalVisible = ref(false)
+const modalBudget = eventStore.currentEvent?.maxBudget || 0;
+const modalAuto = eventStore.currentEvent?.autoapprove || false;
+const modalThreshold = eventStore.currentEvent?.autoapprove_threshold || 0;
+
+const openEditModal = () => {
+    isEditModalVisible.value = true
+}
+
+const closeEditModal = () => {
+    isEditModalVisible.value = false
+}
+
+// Function to save the updated value
+const saveUpdatedValue = async () => {
+    try {
+        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                maxBudget: modalBudget.value,
+                autoapprove: modalAuto.value,
+                autoapprove_threshold: modalThreshold.value
+            })
+        })
+        if (response.ok) {
+
+            closeEditModal()
+        } else {
+            console.error('Failed to update value:', await response.text())
+        }
+    } catch (error) {
+        console.error('Error updating value:', error)
+    }
+}
+
 onMounted(async () => {
     try {
         const response = await api.apiFetch(`/flights/eventflights`, {
-            method: 'POST',
+            method: 'PUT',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
@@ -35,16 +74,7 @@ onMounted(async () => {
     }
 })
 
-
-//Function to format the date
-const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', {
-        month: '2-digit',
-        day: '2-digit',
-        year: 'numeric'
-    })
-}
-
+//Send flightID back with approval
 
 // Function to open the modal
 const openModal = (flight) => {
@@ -99,12 +129,20 @@ const budgetColor = computed(() => {
                     <h1>Budget: </h1>
                     <h2 :style="{ color: budgetColor }">${{ eventStore.currentEvent.currentBudget }}/${{
                         eventStore.currentEvent.maxBudget }}</h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <div>
+                        <h1>Auto Approve</h1>
+                        <h3>{{ eventStore.currentEvent.autoapprove }}</h3>
+                    </div>
+                    <div>
+                        <h1>Threshold</h1>
+                        <h3>{{ eventStore.currentEvent.autoapprove_threshold }}</h3>
+                    </div>
+                    <svg @click="openEditModal('Threshold', eventStore.currentEvent.autoapprove_threshold, 'autoapprove_threshold')"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path fill="currentColor"
                             d="M8.707 19.707L18 10.414L13.586 6l-9.293 9.293a1 1 0 0 0-.263.464L3 21l5.242-1.03c.176-.044.337-.135.465-.263M21 7.414a2 2 0 0 0 0-2.828L19.414 3a2 2 0 0 0-2.828 0L15 4.586L19.414 9z" />
                     </svg>
                 </div>
-
                 <div class="flight-container">
                     <h3>Waiting for Approval</h3>
                     <div class="p-event__container">
@@ -130,6 +168,36 @@ const budgetColor = computed(() => {
                             :flightType="flight.flightType" :flightClass="flight.flightClass"
                             :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
                             @click="openModal(flight)" />
+                    </div>
+                </div>
+
+                <div v-if="isEditModalVisible">
+                    <div class="modal-overlay" @click="closeEditModal"></div>
+                    <div class="modal">
+
+                        <div>
+                            <h2>Budget</h2>
+                            <input v-model="modalBudget" type="text" />
+                        </div>
+
+                        <div>
+                            <h2>Auto Approve</h2>
+                            <input v-model="modalAuto" name="modalAuto" type="radio" id="autoapprove-yes"
+                                :value="true" />
+                            <label for="autoapprove-yes">Yes</label>
+                            <input v-model="modalAuto" name="modalAuto" type="radio" id="autoapprove-no"
+                                :value="false" />
+                            <label for="autoapprove-no">No</label>
+                        </div>
+
+                        <div v-if="modalAuto">
+                            <h2>Threshold</h2>
+                            <input v-model="modalThreshold" type="text" />
+                        </div>
+
+                        <div class="modal-options">
+                            <button @click="saveUpdatedValue">Save</button>
+                        </div>
                     </div>
                 </div>
 
