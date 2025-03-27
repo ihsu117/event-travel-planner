@@ -26,7 +26,14 @@ const confirmPurchase = async () => {
     },
     body: JSON.stringify({
       offerID: flightStore.currentFlight.offer_id,
-      passID: flightStore.currentFlight.passID
+      passID: flightStore.currentFlight.passID,
+      flight = {
+        departure: flightStore.currentFlight.departure,
+        arrival: flightStore.currentFlight.arrival,
+        departureTime: flightStore.currentFlight.departureTime,
+        arrivalTime: flightStore.currentFlight.arrivalTime,
+        price: flightStore.currentFlight.price,
+      }
     })
   }).then(
     response => console.log(response)
