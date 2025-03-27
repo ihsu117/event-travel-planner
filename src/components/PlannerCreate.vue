@@ -39,7 +39,7 @@ const createEvent = async () => {
             maxBudget: maxBudget.value,
             financeMan: { id: selectedFinman.value },
             autoApprove: Boolean(false),
-            autoApproveThreshold: 20,
+            autoApproveThreshold: 10,
             attendees: selectedUsers.value
         }
 

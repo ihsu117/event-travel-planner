@@ -39,8 +39,8 @@ export const useEventStore = defineStore('event', {
         createdBy: eventData.createdBy,
         financeMan: eventData.financeMan,
         inviteLink: eventData.inviteLink,
-        autoapprove: eventData.autoapprove,
-        autoapprove_threshold: eventData.autoapprove_threshold
+        autoapprove: eventData.autoApprove,
+        autoapprove_threshold: eventData.autoApproveThreshold
       }
       console.log(this.currentEvent)
       localStorage.setItem('currentEvent', JSON.stringify(this.currentEvent));

@@ -2,7 +2,7 @@
 import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
-import { PEvent, PTextField, PFlight } from '@poseidon-components'
+import { PEvent, PTextField, PFlight, PButton } from '@poseidon-components'
 import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 
@@ -14,9 +14,9 @@ const isModalVisible = ref(false)
 const flightSelected = ref(null)
 
 const isEditModalVisible = ref(false)
-const modalBudget = eventStore.currentEvent?.maxBudget || 0;
-const modalAuto = eventStore.currentEvent?.autoapprove || false;
-const modalThreshold = eventStore.currentEvent?.autoapprove_threshold || 0;
+const modalBudget = ref('')
+const modalAuto = ref()
+const modalThreshold = ref(0)
 
 const openEditModal = () => {
     isEditModalVisible.value = true
@@ -30,20 +30,21 @@ const closeEditModal = () => {
 const saveUpdatedValue = async () => {
     try {
         const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
-            method: 'POST',
+            method: 'PUT',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 maxBudget: modalBudget.value,
-                autoapprove: modalAuto.value,
-                autoapprove_threshold: modalThreshold.value
+                autoApprove: Boolean(modalAuto.value),
+                autoApproveThreshold: Number(modalThreshold.value) || 0
             })
         })
         if (response.ok) {
-
             closeEditModal()
+            checkAndLoadEvent()
+            window.location.reload()
         } else {
             console.error('Failed to update value:', await response.text())
         }
@@ -52,14 +53,26 @@ const saveUpdatedValue = async () => {
     }
 }
 
+const checkAndLoadEvent = () => {
+    const eventData = localStorage.getItem('currentEvent');
+    if (eventData) {
+        eventStore.loadCurrentEvent();
+    }
+}
+
 onMounted(async () => {
+    checkAndLoadEvent()
     try {
         const response = await api.apiFetch(`/flights/eventflights/${eventStore.currentEvent.id}`, {
             method: 'GET',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
+<<<<<<< HEAD
             }
+=======
+            },
+>>>>>>> a733d39fdf798604efb425aedcad779882815912
         })
         if (response.ok) {
             flightStore.setEventFlightResults(response.json())
@@ -118,14 +131,16 @@ const handleBack = (targetRoute) => {
 
 const budgetColor = computed(() => {
     const budgetThreshold = eventStore.currentEvent.maxBudget * 0.3;
-    if (eventStore.currentEvent.currentBudget > budgetThreshold) {
+    if (eventStore.currentEvent.maxBudget > budgetThreshold) {
         return 'var(--pos-green)';
-    } else if (eventStore.currentEvent.currentBudget >= 0) {
+    } else if (eventStore.currentEvent.maxBudget >= 0) {
         return 'var(--pos-yellow)';
     } else {
         return 'var(--pos-red)';
     }
 });
+
+console.log(eventStore.currentEvent.id)
 </script>
 
 <template>
@@ -144,13 +159,13 @@ const budgetColor = computed(() => {
                 </div>
                 <div class="budget-container">
                     <h1>Budget: </h1>
-                    <h2 :style="{ color: budgetColor }">${{ eventStore.currentEvent.currentBudget }}/${{
+                    <h2 :style="{ color: budgetColor }">${{
                         eventStore.currentEvent.maxBudget }}</h2>
                     <div>
                         <h1>Auto Approve</h1>
                         <h3>{{ eventStore.currentEvent.autoapprove }}</h3>
                     </div>
-                    <div>
+                    <div v-if="eventStore.currentEvent.autoapprove">
                         <h1>Threshold</h1>
                         <h3>{{ eventStore.currentEvent.autoapprove_threshold }}</h3>
                     </div>
@@ -176,6 +191,7 @@ const budgetColor = computed(() => {
 
                 <div class="flight-container">
                     <h3>Transaction History</h3>
+                    <PButton design="gradient-small" label="Get Report" @click=""></PButton>
                     <div class="p-event__container">
                         <PFlight v-for="(flight, index) in flightStore.flightResults"
                             :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
