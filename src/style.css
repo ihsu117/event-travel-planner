@@ -69,7 +69,7 @@
   text-align: left;
 }
 
-.register-form #name{
+.register-form #name {
   display: flex;
   flex-direction: row;
   gap: 10px;
@@ -92,10 +92,28 @@
   align-items: center;
 }
 
+.register-form #genderAndTitle {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  max-width: 393px;
+}
+
 .phone-container {
   position: relative;
   padding: 10px;
   max-width: 393px;
+  width: 100%;
+  /* Ensure it takes up the full width of its parent */
+  height: auto;
+  /* Allow the height to adjust based on content */
+  overflow: visible;
+  /* Ensure content is not clipped */
+}
+
+body {
+  overflow-y: auto;
+  /* Enable vertical scrolling for the entire page */
 }
 
 .home .p-event__container {
@@ -523,7 +541,7 @@
 .mfa-form {
   display: flex;
   flex-direction: column;
-  align-items: center ;
+  align-items: center;
   gap: 15px;
   padding: 10%;
 }
@@ -569,23 +587,23 @@
   margin-bottom: 0px;
 }
 
-.planner-event .event-invite .p-event__container{
+.planner-event .event-invite .p-event__container {
   padding-top: 15px;
   padding-bottom: 15px;
   margin-bottom: 20px;
-  gap: 10px; 
-  
+  gap: 10px;
+
 }
 
-.planner-event .p-event__container{
+.planner-event .p-event__container {
   padding-top: 15px;
   padding-bottom: 15px;
   margin-bottom: 20px;
-  gap: 10px; 
-  
+  gap: 10px;
+
 }
 
-.planner-event .event-invite h2{
+.planner-event .event-invite h2 {
   margin: 10px;
   background: var(--top-gradient);
   -webkit-background-clip: text;
@@ -602,7 +620,7 @@
   background-color: var(--pos-outer-yellow);
   padding-bottom: 20px;
   gap: 10px;
-  
+
 }
 
 .event-form h2 {
@@ -674,26 +692,41 @@
 }
 
 .scrollable-list {
-  position: absolute; /* Position the dropdown absolutely */
-  top: 60%; /* Position it below the input field */
-  left: 0; /* Align it with the left edge of the parent container */
-  z-index: 1000; /* Ensure it appears above other elements */
-  max-height: 150px; /* Set the maximum height for the scrollable area */
-  overflow-y: auto; /* Enable vertical scrolling */
-  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
-  padding: 5px; /* Optional: Add padding for spacing */
-  border-radius: 5px; /* Optional: Add rounded corners */
-  background-color: var(--pos-grey); /* Optional: Set background color */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better visibility */
-  width: 100%; /* Match the width of the input field */
+  position: absolute;
+  /* Position the dropdown absolutely */
+  top: 60%;
+  /* Position it below the input field */
+  left: 0;
+  /* Align it with the left edge of the parent container */
+  z-index: 1000;
+  /* Ensure it appears above other elements */
+  max-height: 150px;
+  /* Set the maximum height for the scrollable area */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+  border: 1px solid #ccc;
+  /* Optional: Add a border for better visibility */
+  padding: 5px;
+  /* Optional: Add padding for spacing */
+  border-radius: 5px;
+  /* Optional: Add rounded corners */
+  background-color: var(--pos-grey);
+  /* Optional: Set background color */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  /* Optional: Add a shadow for better visibility */
+  width: 100%;
+  /* Match the width of the input field */
   color: black;
 }
 
 .scrollable-list li {
-  cursor: pointer; /* Make list items selectable */
-  padding: 5px; /* Add padding for better spacing */
+  cursor: pointer;
+  /* Make list items selectable */
+  padding: 5px;
+  /* Add padding for better spacing */
 }
 
 .scrollable-list li:hover {
-  background-color: #f0f0f0; /* Highlight item on hover */
+  background-color: #f0f0f0;
+  /* Highlight item on hover */
 }
