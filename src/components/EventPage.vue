@@ -7,6 +7,7 @@ import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight } from '
 import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
+import VueGoogleAutocomplete from "vue-google-autocomplete"
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
@@ -146,19 +147,10 @@ const checkAndLoadSelectedFlight = () => {
 }
 
 
-const query = ref('')
-const { suggestions } = usePlacesAutocomplete(query, {
-    debounce: 500,
-    minLengthAutocomplete: 3,
-    componentRestrictions: { country: 'us' },
-})
-
-
-const isInputFocused = ref(false);
-const handlePlaceSelect = (place) => {
-    query.value = place.description;
-    isInputFocused.value = false;
-    console.log('Selected place:', place);
+const selectedAirport = ref(null);
+const handlePlaceChanged = (place) => {
+    selectedAirport.value = place.description; // Update the const with the selected place
+    console.log('Selected Airport:', selectedAirport.value);
 }
 
 const handleBlur = () => {
@@ -271,15 +263,8 @@ onMounted(async () => {
                             </PTextField>
                             <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField>
-                            <PTextField design="small" label="Zip Code" type="text" v-model="zipcode"></PTextField>
-                            <div style="position: relative;">
-                                <PTextField id='place' design="small" type="text" v-model="query" placeholder="Search a place..."
-                                    @focus="isInputFocused = true" @blur="handleBlur" />
-                                <ul v-if="isInputFocused && suggestions.length" class="scrollable-list">
-                                    <li v-for="item in suggestions" :key="item.place_id"
-                                        @click="handlePlaceSelect(item)">{{ item.description }}</li>
-                                </ul>
-                            </div>
+                            <vue-google-autocomplete class="p-textfield--small" v-model="selectedAirport" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
+                            </vue-google-autocomplete>
                         </div>
                         <PButton design="gradient" label="Book Your Flight Here Now!" @click="toFlightSearch" />
                     </div>
