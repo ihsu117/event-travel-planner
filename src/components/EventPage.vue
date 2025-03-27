@@ -67,7 +67,6 @@ const handleFlightClick = (flight) => {
 
 //Function to search for flights with Duffel API
 const toFlightSearch = () => {
-    console.log('Destination Code:', eventStore.currentEvent.destinationCode);
     flightStore.clearFlights()
     console.log(eventStore.currentEvent);
     return api.apiFetch('/flights/search', {
@@ -80,7 +79,7 @@ const toFlightSearch = () => {
             departure_date: searchDate.value || eventStore.currentEvent.startDate,
             lat: latitude.value,
             long: longitude.value,
-            destination: eventStore.currentEvent.destinationCode
+            destination: 'ATL'
         })
     }).then(
         response => flightStore.setFlightResults(response.json())
@@ -155,6 +154,8 @@ const checkAndLoadSelectedFlight = () => {
 const selectedAirport = ref(null);
 const handlePlaceChanged = (place) => {
     selectedAirport.value = place.description; // Update the const with the selected place
+    latitude.value = place.latitude;
+    longitude.value = place.longitude;
     console.log('Selected Airport:', selectedAirport.value);
 }
 
@@ -163,12 +164,6 @@ const handleBlur = () => {
         isInputFocused.value = false;
     }, 100);
 };
-
-const getAddressData = (place) => {
-    latitude.value = place.latitude;
-    longitude.value = place.longitude;
-    console.log(`Got: ${place.latitude} | ${place.longitude}`);
-}
 
 // Call the function when the component is mounted
 onMounted(async () => {
