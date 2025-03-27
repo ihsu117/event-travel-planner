@@ -21,6 +21,11 @@ const selectedUsers = ref([])
 const selectedFinman = ref('')
 const org = userStore.org_id
 const attendees = ref([])
+const newUsers = ref([])
+const newEmail = ref('')
+const inviteEmail = ref('')
+const isModalVisible = ref(false)
+const lastCreatedEventId = ref(null);
 
 const createEvent = async () => {
     try {
@@ -50,12 +55,72 @@ const createEvent = async () => {
         if (response.ok) {
             const result = await response.json()
             console.log('Event created successfully:', result)
-            router.push({ name: 'Home' }) // Redirect to home or another page
+            lastCreatedEventId.value = result.eventId
+            console.log('Last created event ID:', lastCreatedEventId.value)
+            return lastCreatedEventId.value
+            
         } else {
             console.error('Failed to create event:', await response.json())
         }
     } catch (error) {
         console.error('Error creating event:', error)
+    }
+}
+
+const addUser = () => {
+    if (newEmail.value.trim() === '') {
+        console.error('Email cannot be empty');
+        return;
+    }
+
+    const newUser = {
+        email: newEmail.value,
+        profile_picture: ''
+    }
+    newUsers.value.push(newUser);
+    inviteEmail.value = newEmail.value;
+    newEmail.value = '';
+    closeModal();
+    console.log('User added:', newUser);
+}
+
+const handleSendInvites = async () => {
+    try {
+        await createEvent();
+        console.log('EventID: ', lastCreatedEventId.value)
+        await createUser();
+        router.push({ name: 'Home' }) 
+    } catch (error) {
+        console.error('Error sending invites:', error)
+    }
+}
+
+const createUser = async () => {
+    try {
+        const schema = {
+            eventId: lastCreatedEventId,
+            attendee: {
+                email: inviteEmail
+            }
+        }
+
+        console.log('Creating user:', schema)
+        const response = await api.apiFetch('/events/invite/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(schema),
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const result = await response.json()
+            console.log('User created successfully:', result)
+        } else {
+            console.error('Failed to create user:', await response.json())
+        }
+    } catch (error) {
+        console.error('Error creating user:', error)
     }
 }
 
@@ -88,8 +153,8 @@ const loadOrgUsers = async () => {
 
 const toggleUserSelection = (userID) => {
     const user = {
-            id: userID
-        } 
+        id: userID
+    }
     if (selectedUsers.value.some(selectedUser => selectedUser.id === userID)) {
         // Remove user from selected users
         selectedUsers.value = selectedUsers.value.filter(selectedUser => selectedUser.id !== userID);
@@ -116,11 +181,19 @@ const selectFinanceManager = (userID) => {
         selectedFinman.value = userID;
         console.log('Finance manager selected:', userID);
     }
-};
+}
 
 const isFinanceManagerSelected = (userID) => {
     return selectedFinman.value === userID;
-};
+}
+
+const closeModal = () => {
+    isModalVisible.value = false
+}
+
+const openModal = () => {
+    isModalVisible.value = true
+}
 
 onMounted(() => {
     loadOrgUsers()
@@ -140,10 +213,11 @@ onMounted(() => {
                         <PFinanceBlock design="invite"
                             v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
                             :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                            :profileImage="user.profile_picture" :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                            @click="selectFinanceManager(user.user_id)" required/>
+                            :profileImage="user.profile_picture"
+                            :class="{ selected: isFinanceManagerSelected(user.user_id) }"
+                            @click="selectFinanceManager(user.user_id)" required />
                     </div>
-                    
+
                     <h2>Attendees</h2>
                     <div class="p-event__container">
                         <PFinanceBlock design="invite"
@@ -151,8 +225,15 @@ onMounted(() => {
                             :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
                             :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
                             @click="toggleUserSelection(user.user_id)" />
+
+                        <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.user_id"
+                            :email="user.email" :profileImage="user.profile_picture"
+                            :class="{ selected: isUserSelected(user.user_id) }"
+                            @click="toggleUserSelection(user.user_id)" />
+
+                        <PButton design="planner" @click="openModal" label="Add User"></PButton>
                     </div>
-                    <PButton label="Send Invites" @click="createEvent" design="gradient"></PButton>
+                    <PButton label="Send Invites" @click="handleSendInvites" design="gradient"></PButton>
                 </div>
             </div>
         </div>
@@ -167,43 +248,52 @@ onMounted(() => {
                 <div class="event-form">
                     <div>
                         <h2>Name</h2>
-                        <PTextField label="Event Name" v-model="eventName" required/>
+                        <PTextField label="Event Name" v-model="eventName" required />
                     </div>
                     <div>
                         <h2>Destination</h2>
-                        <PTextField label="Destination Zip" v-model="destinationCode" required/>
+                        <PTextField label="Destination Zip" v-model="destinationCode" required />
                     </div>
                     <div class="planner-description">
                         <h2>Description</h2>
-                        <PTextField design="textarea" :maxlength=400 label="Description" v-model="description" required/>
+                        <PTextField design="textarea" :maxlength=400 label="Description" v-model="description"
+                            required />
                     </div>
 
                     <div class="planner-dates">
                         <div>
                             <h2>Start Date</h2>
-                            <PTextField type="date" label="Start Date" v-model="startDate" required/>
+                            <PTextField type="date" label="Start Date" v-model="startDate" required />
                         </div>
                         <div>
                             <h2>End Date</h2>
-                            <PTextField type="date" label="End Date" v-model="endDate" required/>
+                            <PTextField type="date" label="End Date" v-model="endDate" required />
                         </div>
 
                     </div>
 
                     <div>
                         <h2>Picture Link</h2>
-                        <PTextField label="Picture Link" v-model="pictureLink" required/>
+                        <PTextField label="Picture Link" v-model="pictureLink" required />
                     </div>
                     <div>
                         <h2>Max Budget</h2>
-                        <PTextField label="Max Budget" v-model="maxBudget" required/>
+                        <PTextField label="Max Budget" v-model="maxBudget" required />
                     </div>
-
-                    
-
                 </div>
                 <PButton label="Create Event" @click="toEventPage" design="gradient"></PButton>
             </div>
         </div>
     </template>
+
+    <template v-if="isModalVisible">
+        <div class="modal-overlay" @click="closeModal"></div>
+        <div class="modal">
+            <div class="new-user">
+                <PTextField v-model="newEmail" label="Enter Attendee Email" />
+                <PButton @click="addUser" design="login" label="Send Invite"></PButton>
+            </div>
+        </div>
+    </template>
+
 </template>
