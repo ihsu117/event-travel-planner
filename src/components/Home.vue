@@ -135,11 +135,11 @@ const handleModalOption = async (option) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
                         :currentBudget="event.currentBudget" :destinationCode="event.destinationCode"
-                        :financeMan="event.financeMan" design="block" @event-click="handleEventClick" />
+                        :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold" design="block" @event-click="handleEventClick" />
 
                 </div>
             </div>
@@ -160,11 +160,11 @@ const handleModalOption = async (option) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
                         :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
-                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" design="block-finance"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold" design="block-finance"
                         @event-click="handleEventClick" />
                 </div>
             </div>
@@ -186,11 +186,11 @@ const handleModalOption = async (option) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
                         :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
-                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" design="block-planner"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"design="block-planner"
                         @editClick="handleEditEventClick(event)" @event-click="handleEventClick" />
                     <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
