@@ -79,7 +79,7 @@ const toFlightSearch = () => {
             departure_date: searchDate.value || eventStore.currentEvent.startDate,
             lat: latitude.value,
             long: longitude.value,
-            destination: 'ATL'
+            destination: eventStore.currentEvent.destinationCode
         })
     }).then(
         response => flightStore.setFlightResults(response.json())
