@@ -2,7 +2,7 @@
 import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter } from 'vue-router'
-import { PEvent, PTextField, PFlight } from '@poseidon-components'
+import { PEvent, PTextField, PFlight, PButton } from '@poseidon-components'
 import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 
@@ -167,6 +167,7 @@ console.log(eventStore.currentEvent.id)
 
                 <div class="flight-container">
                     <h3>Transaction History</h3>
+                    <PButton design="gradient-small" label="Get Report" @click=""></PButton>
                     <div class="p-event__container">
                         <PFlight v-for="(flight, index) in flightStore.flightResults"
                             :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"

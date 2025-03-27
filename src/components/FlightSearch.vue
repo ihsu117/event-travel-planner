@@ -59,7 +59,7 @@ const handleFlightClick = (flight) => {
 
       <div class="p-event__container">
         <PFlight v-for="(flight, index) in flightStore.flightResults"
-          :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="block" :flightDate="flight.flightDate"
+          :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="block" :flightID="flight.flightID" :flightDate="flight.flightDate"
           :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
           :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
           :price="flight.price" :flightType="flight.flightType" :flightClass="flight.flightClass"
