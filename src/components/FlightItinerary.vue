@@ -20,14 +20,6 @@ const confirmPurchase = async () => {
         price: flightStore.currentFlight.price,
         date: flightStore.currentFlight.flightDate
   }
-  console.log(flightStore.currentFlight.offer_id + ' ' + flightStore.currentFlight.passID)
-  const flightData = {
-        departure: flightStore.currentFlight.departure,
-        arrival: flightStore.currentFlight.arrival,
-        departureTime: flightStore.currentFlight.departureTime,
-        arrivalTime: flightStore.currentFlight.arrivalTime,
-        price: flightStore.currentFlight.price
-      }
   //Saves selected flight to local storage
   localStorage.setItem('selectedFlight', JSON.stringify(flightStore.currentFlight));
   localStorage.setItem('flightSelected', 'true');

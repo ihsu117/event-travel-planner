@@ -68,11 +68,7 @@ onMounted(async () => {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
-<<<<<<< HEAD
             }
-=======
-            },
->>>>>>> a733d39fdf798604efb425aedcad779882815912
         })
         if (response.ok) {
             flightStore.setEventFlightResults(response.json())
@@ -85,17 +81,22 @@ onMounted(async () => {
 
 //Send flightID back with approval
 const updateFlight = async () => {
+    console.log(flightSelected)
     try {
-        const response = await api.apiFetch('/flights/booking/', {
+        const response = await api.apiFetch('/flights/booking', {
             method: 'POST',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: {
-                flightID: flightSelected.id
-            }
+            body: JSON.stringify({
+                flightID: flightSelected.value.flightID,
+                price: flightSelected.value.price
+            })
         })
+        if(response.ok) {
+            console.log("booked flight")
+        }
     } catch (error) {
         console.log(error);
     }
@@ -118,7 +119,7 @@ const handleModalOption = (option) => {
     console.log(`Selected option: ${option}`)
 
     if(option == "Approve") {
-
+        updateFlight()
     }
 
     closeModal()
@@ -184,7 +185,7 @@ console.log(eventStore.currentEvent.id)
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" :flightID="flight.flightID"
                             @click="openModal(flight)" />
                     </div>
                 </div>
@@ -199,7 +200,7 @@ console.log(eventStore.currentEvent.id)
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" :flightID="flight.flightID"
                             @click="openModal(flight)" />
                     </div>
                 </div>
@@ -240,7 +241,7 @@ console.log(eventStore.currentEvent.id)
                         <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
                             :price="flightSelected.price" :airline="flightSelected.airline"
                             :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime"
-                            :flightArrTime="flightSelected.flightArrTime" design="finance" style=""></PFlight>
+                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" design="finance" style=""></PFlight>
 
                         <div class="modal-options">
                             <h2 class="modal-approve" @click="handleModalOption('Approve')">Approve</h2>
