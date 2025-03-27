@@ -54,18 +54,14 @@ const saveUpdatedValue = async () => {
 
 onMounted(async () => {
     try {
-        const response = await api.apiFetch(`/flights/eventflights`, {
-            method: 'PUT',
+        const response = await api.apiFetch(`/flights/eventflights/${eventStore.currentEvent.id}`, {
+            method: 'GET',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: eventStore.currentEvent.id // Pass the eventID from the current event
-            })
+            }
         })
         if (response.ok) {
-
             flightStore.setEventFlightResults(response.json())
 
         }
@@ -75,6 +71,22 @@ onMounted(async () => {
 })
 
 //Send flightID back with approval
+const updateFlight = async () => {
+    try {
+        const response = await api.apiFetch('/flights/booking/', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: {
+                flightID: flightSelected.id
+            }
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 // Function to open the modal
 const openModal = (flight) => {
@@ -91,6 +103,11 @@ const closeModal = () => {
 // Function to handle modal option selection
 const handleModalOption = (option) => {
     console.log(`Selected option: ${option}`)
+
+    if(option == "Approve") {
+
+    }
+
     closeModal()
 }
 

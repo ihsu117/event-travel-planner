@@ -160,7 +160,7 @@ const handleModalOption = async (option) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
                         :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"

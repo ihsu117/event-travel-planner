@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 export const useFlightStore = defineStore('flight', {
     state: () => ({
         currentFlight: {
+            flightID: null,
             flightDate: null,
             origin: '',
             passID: '',
@@ -25,6 +26,7 @@ export const useFlightStore = defineStore('flight', {
     actions: {
         setCurrentFlight(flight) {
             this.currentFlight = {
+                flightID: null,
                 flightDate: new Date(flight.flightDate),
                 origin: flight.origin,
                 passID: flight.passID,
@@ -59,6 +61,7 @@ export const useFlightStore = defineStore('flight', {
                 }
 
                 this.flightResults = flightData.slice(1).map(flight => ({
+                    flightID: null,
                     flightDate: new Date(flight.itinerary[0].departure_date),
                     origin: flight.origin_airport,
                     destination: flight.destination_airport,
@@ -96,6 +99,7 @@ export const useFlightStore = defineStore('flight', {
                 }
 
                 this.flightResults = flightData.map(flight => ({
+                    flightID: flight.flight_id,
                     flightDate: new Date(flight.depart_time),
                     origin: flight.depart_loc,
                     destination: flight.arrive_loc,

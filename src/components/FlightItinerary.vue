@@ -12,6 +12,14 @@ const handleBack = (targetRoute) => {
 }
 
 const confirmPurchase = async () => {
+  const flightData = {
+        depart_loc: flightStore.currentFlight.origin,
+        arrive_loc: flightStore.currentFlight.destination,
+        depart_time: flightStore.currentFlight.flightDepTime,
+        arrive_time: flightStore.currentFlight.flightArrTime,
+        price: flightStore.currentFlight.price,
+        date: flightStore.currentFlight.flightDate
+  }
   console.log(flightStore.currentFlight.offer_id + ' ' + flightStore.currentFlight.passID)
 
   //Saves selected flight to local storage
@@ -27,13 +35,7 @@ const confirmPurchase = async () => {
     body: JSON.stringify({
       offerID: flightStore.currentFlight.offer_id,
       passID: flightStore.currentFlight.passID,
-      flight = {
-        departure: flightStore.currentFlight.departure,
-        arrival: flightStore.currentFlight.arrival,
-        departureTime: flightStore.currentFlight.departureTime,
-        arrivalTime: flightStore.currentFlight.arrivalTime,
-        price: flightStore.currentFlight.price,
-      }
+      flight: flightData
     })
   }).then(
     response => console.log(response)
