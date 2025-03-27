@@ -224,7 +224,7 @@ const updateUser = async () => {
           </div>
         </div>
 
-        <div id="genderAndTitle">
+        <!-- <div id="genderAndTitle">
           <div>
             <h1>Title</h1>
             <PDropDown design="login" v-model="title" dropDownLabel="Title" :options="titleOptions" />
@@ -234,16 +234,16 @@ const updateUser = async () => {
             <h1>Gender</h1>
             <PDropDown design="login" v-model="gender" dropDownLabel="Gender" :options="genderOptions" />
           </div>
-        </div>
+        </div> -->
 
         <div>
           <h1>Phone Number</h1>
           <PTextField v-model="phoneNumber" label="123-456-7890" />
         </div>
-        <div>
+        <!-- <div>
           <h1>Known Traveler Number</h1>
           <PTextField v-model="phoneNumber" label="123-456-7890" />
-        </div>
+        </div> -->
         <div>
           <h1>Date of Birth</h1>
           <PTextField v-model="dob" type="date" label="MM/DD/YYYY" min="1920-01-02" :max="today" />
