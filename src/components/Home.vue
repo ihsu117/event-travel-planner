@@ -138,8 +138,8 @@ const handleModalOption = async (option) => {
                     <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :financeMan="event.financeMan" design="block"
-                        @event-click="handleEventClick" />
+                        :currentBudget="event.currentBudget" :destinationCode="event.destinationCode"
+                        :financeMan="event.financeMan" design="block" @event-click="handleEventClick" />
 
                 </div>
             </div>
@@ -163,8 +163,9 @@ const handleModalOption = async (option) => {
                     <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget" :financeMan="event.financeMan"
-                        design="block-finance" @event-click="handleEventClick" />
+                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" design="block-finance"
+                        @event-click="handleEventClick" />
                 </div>
             </div>
         </div>
@@ -188,9 +189,9 @@ const handleModalOption = async (option) => {
                     <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget" :financeMan="event.financeMan"
-                        design="block-planner" @editClick="handleEditEventClick(event)"
-                        @event-click="handleEventClick" />
+                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" design="block-planner"
+                        @editClick="handleEditEventClick(event)" @event-click="handleEventClick" />
                     <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
             </div>

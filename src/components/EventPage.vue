@@ -67,6 +67,7 @@ const handleFlightClick = (flight) => {
 
 //Function to search for flights with Duffel API
 const toFlightSearch = () => {
+    console.log('Destination Code:', eventStore.currentEvent.destinationCode);
     flightStore.clearFlights()
     console.log(eventStore.currentEvent);
     return api.apiFetch('/flights/search', {

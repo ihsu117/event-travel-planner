@@ -98,9 +98,9 @@ const handleSendInvites = async () => {
 const createUser = async () => {
     try {
         const schema = {
-            eventId: lastCreatedEventId,
+            eventId: lastCreatedEventId.value,
             attendee: {
-                email: inviteEmail
+                email: inviteEmail.value
             }
         }
 
