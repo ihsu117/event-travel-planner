@@ -7,6 +7,7 @@ import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight } from '
 import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
+import VueGoogleAutocomplete from "vue-google-autocomplete";
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
@@ -18,6 +19,8 @@ const zipcode = ref('')
 const flightSelected = ref(false)
 const editView = ref(route.query.editView === 'true')
 const flightType = ref('one-way');
+const latitude = ref('');
+const longitude = ref('');
 
 
 //Function to handle the date selection
@@ -65,6 +68,7 @@ const handleFlightClick = (flight) => {
 //Function to search for flights with Duffel API
 const toFlightSearch = () => {
     flightStore.clearFlights()
+    console.log(eventStore.currentEvent);
     return api.apiFetch('/flights/search', {
         method: 'POST',
         credentials: 'include',
@@ -72,9 +76,10 @@ const toFlightSearch = () => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            destination: "JFK",
             departure_date: searchDate.value || eventStore.currentEvent.startDate,
-            zip: zipcode.value
+            lat: latitude.value,
+            long: longitude.value,
+            destination: eventStore.currentEvent.destinationCode
         })
     }).then(
         response => flightStore.setFlightResults(response.json())
@@ -166,6 +171,12 @@ const handleBlur = () => {
         isInputFocused.value = false;
     }, 100);
 };
+
+const getAddressData = (place) => {
+    latitude.value = place.latitude;
+    longitude.value = place.longitude;
+    console.log(`Got: ${place.latitude} | ${place.longitude}`);
+}
 
 // Call the function when the component is mounted
 onMounted(async () => {
@@ -279,6 +290,10 @@ onMounted(async () => {
                                     <li v-for="item in suggestions" :key="item.place_id"
                                         @click="handlePlaceSelect(item)">{{ item.description }}</li>
                                 </ul>
+                            </div>
+                            <div>
+                                <vue-google-autocomplete id="map" types="airport" classname="form-control" placeholder="Start typing" country="us" v-on:placechanged="getAddressData">
+                                </vue-google-autocomplete>
                             </div>
                         </div>
                         <PButton design="gradient" label="Book Your Flight Here Now!" @click="toFlightSearch" />
