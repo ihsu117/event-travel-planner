@@ -151,12 +151,10 @@ const checkAndLoadSelectedFlight = () => {
 }
 
 
-const selectedAirport = ref(null);
 const handlePlaceChanged = (place) => {
-    selectedAirport.value = place.description; // Update the const with the selected place
     latitude.value = place.latitude;
     longitude.value = place.longitude;
-    console.log('Selected Airport:', selectedAirport.value);
+    console.log('Selected Location:', place);
 }
 
 const handleBlur = () => {
@@ -269,7 +267,7 @@ onMounted(async () => {
                             </PTextField>
                             <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField>
-                            <vue-google-autocomplete class="p-textfield--small" v-model="selectedAirport" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
+                            <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
                             </vue-google-autocomplete>
                         </div>
                         <PButton design="gradient" label="Book Your Flight Here Now!" @click="toFlightSearch" />

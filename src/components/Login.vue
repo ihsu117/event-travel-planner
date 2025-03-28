@@ -189,9 +189,9 @@ const updateUser = async () => {
       <img src="@poseidon-assets/img/AppLogo.png" alt="Poseidon Logo" />
       <div class="login-form">
         <div class="login-input">
-          <PTextField v-model="email" label="Enter Email" />
+          <PTextField v-model="email" label="Enter Email" @keyup.enter="loginUser" />
           <div class="forgot-pass">
-            <PTextField v-model="password" type="password" label="Enter Password" />
+            <PTextField v-model="password" type="password" label="Enter Password" @keyup.enter="loginUser" />
             <p><a href="#">Forgot Password?</a></p>
           </div>
         </div>
@@ -207,7 +207,7 @@ const updateUser = async () => {
     <div class="modal-overlay" @click="closeModal"></div>
     <div class="modal">
       <div class="mfa-form">
-        <PTextField v-model="mfaCode" label="Enter MFA Code" />
+        <PTextField v-model="mfaCode" label="Enter MFA Code" @keyup.enter="checkMFA" />
         <PButton @click="checkMFA" design="login" label="Submit">Submit</PButton>
       </div>
     </div>
@@ -258,10 +258,10 @@ const updateUser = async () => {
         </div>
         <div id="pic">
           <h1>Profile Picture</h1>
-          <!-- <PProfilePic design='big' :profileImage="profileImage" @click="triggerFileInput" style="cursor: pointer;">
+          <PProfilePic design='big' :profileImage="profileImage" @click="triggerFileInput" style="cursor: pointer;">
           </PProfilePic>
-          <input type="file" accept="image/*" ref="fileInput" @change="onFileChange" style="display: none;" /> -->
-          <PTextField v-model="profileImage" label="Image Link" />
+          <input type="file" accept="image/*" ref="fileInput" @change="onFileChange" style="display: none;" />
+          <!-- <PTextField v-model="profileImage" label="Image Link" /> -->
         </div>
 
         <div id="button">
