@@ -8,7 +8,6 @@ export const checkAuth = () => {
         const eventStore = useEventStore();
         userStore.clearUser();
         eventStore.clearEvents();
-
     }
     return isAuthenticated;
 }

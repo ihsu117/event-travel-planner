@@ -12,12 +12,14 @@ import { useRouter } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
+import { format } from 'date-fns'
 
 const eventStore = useEventStore()
 const userStore = useUserStore()
 const router = useRouter()
 const events = ref([])
 const userInfo = ref({});
+const editView = ref(false)
 
 //Fetch events from the API
 onMounted(async () => {
@@ -55,6 +57,7 @@ const fetchUserData = async () => {
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
 const isFinance = computed(() => userStore.role_id === 'Finance Manager')
 const isEventPlanner = computed(() => userStore.role_id === 'Event Planner')
+console.log('Role:', userStore.role_id)
 
 const handleEventClick = (eventData) => {
     eventStore.setCurrentEvent(eventData)
@@ -69,9 +72,16 @@ const handleEventClick = (eventData) => {
 
 const handleCreateEvent = () => {
     if (isEventPlanner.value) {
-        router.push({ name: 'Planner' })
+        router.push({ name: 'EventCreate' })
     }
 }
+
+const handleEditEventClick = (event) => {
+    if (isEventPlanner.value) {
+        eventStore.setCurrentEvent(event);
+        router.push({ name: 'Event', query: { editView: 'true', eventID: event.id } });
+    }
+};
 
 const isModalVisible = ref(false)
 
@@ -107,13 +117,6 @@ const handleModalOption = async (option) => {
     closeModal()
 }
 
-const handleEditEventClick = (eventData) => {
-    router.push({
-        name: 'Planner',
-        query: { edit: true, event: JSON.stringify(eventData) }
-    });
-};
-
 </script>
 <template>
 
@@ -132,11 +135,11 @@ const handleEditEventClick = (eventData) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :financeMan="event.financeMan" design="block"
-                        @event-click="handleEventClick" />
+                        :currentBudget="event.currentBudget" :destinationCode="event.destinationCode"
+                        :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold" design="block" @event-click="handleEventClick" />
 
                 </div>
             </div>
@@ -157,11 +160,12 @@ const handleEditEventClick = (eventData) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget" :financeMan="event.financeMan"
-                        design="block-finance" @event-click="handleEventClick" />
+                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold" design="block-finance"
+                        @event-click="handleEventClick" />
                 </div>
             </div>
         </div>
@@ -182,11 +186,12 @@ const handleEditEventClick = (eventData) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :financeMan="event.financeMan" design="block-planner"
-                        @event-click="handleEventClick" @editClick="handleEditEventClick"/>
+                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"design="block-planner"
+                        @editClick="handleEditEventClick(event)" @event-click="handleEventClick" />
                     <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
             </div>
@@ -219,18 +224,16 @@ const handleEditEventClick = (eventData) => {
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') }}</p>
                             </div>
-                            <div class="profile-content">
-                                <h5>Known Travel Number</h5>
-                                <p>{{ userInfo.known_traveler_number }}</p>
-                            </div>
+
                             <div class="profile-content">
                                 <h5>Gender</h5>
-                                <p>{{ userInfo.gender }}</p>
+                                <p v-if="userInfo.gender == 'm'">Male</p>
+                                <p v-else>Female</p>
                             </div>
-                            <!-- <div class="profile-content">
-                            <h5>Date of Birth</h5>
-                            <p>{{ userInfo.dob }}</p>
-                        </div> -->
+                            <div class="profile-content">
+                                <h5>Date of Birth</h5>
+                                <p>{{ format(userInfo.dob, 'MMMM do yyyy') }}</p>
+                            </div>
                         </div>
                     </div>
 

@@ -9,22 +9,47 @@ export const useUserStore = defineStore('user', {
     org: {},
     role_id: '',
     profile_picture: '',
-    email: ''
+    email: '',
+    dob: '',
+    title: '',
+    KTN: '',
+    users: []
   }),
 
   actions: {
     setUser(userData) {
-      const user = userData.user
-      console.log('Setting user data:', user)
-      this.user_id = user.id
-      this.first_name = user.first_name
-      this.last_name = user.last_name
-      this.org_id = user.org_id
-      this.org = user.org
-      this.role_id = user.role_id
-      this.profile_picture = user.profile_picture
-      this.email = user.email
-      console.log('User state updated:', this.$state)
+      if (Array.isArray(userData) && userData.length > 1) {
+        // Handle array of users
+        this.users = userData.map(user => ({
+          user_id: user.id,
+          first_name: user.firstName,
+          last_name: user.lastName,
+          org_id: user.org_id,
+          org: user.org,
+          role_id: user.role,
+          profile_picture: user.profilePic,
+          email: user.email,
+          dob: user.dob,
+          title: user.title,
+          KTN: user.KTN
+        }))
+        console.log('Setting users data:', this.users)
+      } else {
+        const user = userData.user
+        console.log('Setting user data:', user)
+        this.user_id = user.id
+        this.first_name = user.first_name
+        this.last_name = user.last_name
+        this.org_id = user.org_id
+        this.org = user.org
+        this.role_id = user.role_id
+        this.profile_picture = user.profile_picture
+        this.email = user.email
+        this.dob = user.dob,
+        this.title = user.title,
+        this.KTN = user.KTN
+        console.log('User state updated:', this.$state)
+      }
       localStorage.setItem('user', JSON.stringify(this.$state))
     },
 
@@ -32,15 +57,24 @@ export const useUserStore = defineStore('user', {
       const user = localStorage.getItem('user')
       if (user) {
         const userData = JSON.parse(user)
-        this.user_id = userData.user_id
-        this.first_name = userData.first_name
-        this.last_name = userData.last_name
-        this.org_id = userData.org_id
-        this.org = userData.org
-        this.role_id = userData.role_id
-        this.profile_picture = userData.profile_picture
-        this.email = userData.email
-        console.log('User state loaded from local storage:', this.$state)
+        if (Array.isArray(userData.users) && userData.length > 1) {
+          // Handle array of users
+          this.users = userData.users;
+          console.log('Loaded multiple users from local storage:', this.users)
+        } else {
+          this.user_id = userData.user_id
+          this.first_name = userData.first_name
+          this.last_name = userData.last_name
+          this.org_id = userData.org_id
+          this.org = userData.org
+          this.role_id = userData.role_id
+          this.profile_picture = userData.profile_picture
+          this.email = userData.email
+          this.dob = userData.dob
+          this.title = userData.title
+          this.KTN = userData.KTN
+          console.log('User state loaded from local storage:', this.$state)
+        }
       }
     },
 
@@ -52,7 +86,11 @@ export const useUserStore = defineStore('user', {
       this.org = ''
       this.role_id = ''
       this.profile_picture = ''
-      this.email = ''
+      this.email = '',
+      this.dob = '',
+      this.title = '',
+      this.KTN = '',
+      this.users = [];
       localStorage.removeItem('user')
       console.log('User state cleared')
     }
