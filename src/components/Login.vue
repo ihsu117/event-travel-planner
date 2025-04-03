@@ -283,7 +283,7 @@ const updateUser = async () => {
             </svg>
             <h5 v-if="errors.mfaCode" class="input-error">{{ errors.mfaCode }}</h5>
           </div>
-          <PTextField v-model="mfaCode" ref="mfaInput" label="Enter MFA Code" @keyup.enter="checkMFA"/>
+          <PTextField v-model="mfaCode" ref="mfaInput" label="Enter MFA Code" inputmode="numeric" type="tel" @keyup.enter="checkMFA"/>
           <div class="mfa-button">
             <PButton @click="checkMFA" design="login" label="Submit" >Submit</PButton>
           </div>
