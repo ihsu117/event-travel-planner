@@ -160,15 +160,14 @@ console.log(eventStore.currentEvent.id)
                 </div>
                 <div class="budget-container">
                     <h1>Budget: </h1>
-                    <h2 :style="{ color: budgetColor }">${{
-                        eventStore.currentEvent.maxBudget }}</h2>
+                    <h2 :style="{ color: budgetColor }">{{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(eventStore.currentEvent.maxBudget) }}</h2>
                     <div>
                         <h1>Auto Approve</h1>
                         <h3>{{ eventStore.currentEvent.autoapprove }}</h3>
                     </div>
                     <div v-if="eventStore.currentEvent.autoapprove">
                         <h1>Threshold</h1>
-                        <h3>{{ eventStore.currentEvent.autoapprove_threshold }}</h3>
+                        <h3>{{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(eventStore.currentEvent.autoapprove_threshold) }}</h3>
                     </div>
                     <svg @click="openEditModal('Threshold', eventStore.currentEvent.autoapprove_threshold, 'autoapprove_threshold')"
                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
