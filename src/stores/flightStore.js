@@ -1,10 +1,4 @@
 import { defineStore } from 'pinia'
-import { logger } from '../../backend/service/LogService.mjs';
-
-// Init child logger instance
-const log = logger.child({
-    dataAccess : "flightStore", //specify module where logs are from
-});
 
 export const useFlightStore = defineStore('flight', {
     state: () => ({
@@ -49,8 +43,7 @@ export const useFlightStore = defineStore('flight', {
                 logoURL: flight.logoURL,
                 offer_id: flight.offer_id
             };
-            console.log('Current flight:', this.currentFlight);  //Debug
-            log.verbose("Current flight set", {currentFlight: this.currentFlight});
+            console.log('Current flight:', this.currentFlight);
         },
 
         async setFlightResults(duffelFlights) {
@@ -58,14 +51,12 @@ export const useFlightStore = defineStore('flight', {
                 // Handle if duffelFlights is a Promise
                 const flightData = duffelFlights instanceof Promise ? await duffelFlights : duffelFlights;
 
-                console.log('Flight data type:', typeof flightData); //Debug
-                console.log('Flight data:', {flightData: flightData}); //Debug
-                log.verbose('Flight results data set:', {flightData: flightData, flightDataType: typeof flightData});
-
+                console.log('Flight data type:', typeof flightData);
+                console.log('Flight data:', flightData);
 
                 // Ensure we have an array to work with
                 if (!Array.isArray(flightData)) {
-                    log.error(new Error('Expected array of flights, got:', typeof flightData));
+                    console.error('Expected array of flights, got:', typeof flightData);
                     return;
                 }
 
@@ -88,10 +79,9 @@ export const useFlightStore = defineStore('flight', {
                     offer_id: flight.offer_id
                 }));
 
-                console.log('Processed flights:', this.flightResults); //Debug
-                log.verbose('Processed flights:', {flightResults: this.flightResults});
+                console.log('Processed flights:', this.flightResults);
             } catch (error) {
-                log.error('Error processing flight data:', error);
+                console.error('Error processing flight data:', error);
                 this.flightResults = [];
             }
         },
@@ -100,11 +90,11 @@ export const useFlightStore = defineStore('flight', {
             try {
                 const flightData = eventFlights instanceof Promise ? await eventFlights : eventFlights;
 
-                console.log('Flight data type:', typeof flightData); //Debug
-                console.log('Flight data:', flightData); //Debug
+                console.log('Flight data type:', typeof flightData);
+                console.log('Flight data:', flightData);
 
                 if (!Array.isArray(flightData)) {
-                    log.error(new Error('Expected array of flights, got:', typeof flightData));
+                    console.error('Expected array of flights, got:', typeof flightData);
                     return;
                 }
 
@@ -127,10 +117,9 @@ export const useFlightStore = defineStore('flight', {
                     offer_id: flight.offer_id
                 }));
 
-                console.log('Processed flights:', this.flightResults); //Debug
-                log.verbose('Processed flights:', {flightResults: this.flightResults});
+                console.log('Processed flights:', this.flightResults);
             } catch (error) {
-                log.error('Error processing flight data:', error);
+                console.error('Error processing flight data:', error);
                 this.flightResults = [];
             }
         },
