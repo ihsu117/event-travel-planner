@@ -59,8 +59,19 @@ const isFinance = computed(() => userStore.role_id === 'Finance Manager')
 const isEventPlanner = computed(() => userStore.role_id === 'Event Planner')
 console.log('Role:', userStore.role_id)
 
-const handleEventClick = (eventData) => {
+const handleEventClick = async (eventData) => {
+    try {
+        const response = await api.apiFetch('/events/' + eventData.id, {
+            credentials: 'include'
+        })
+        if (response.ok) {
+            eventData = await response.json()
+        }
+    } catch (error) {
+        console.error('Failed to fetch the selected event:', error)
+    }
     eventStore.setCurrentEvent(eventData)
+    console.log('!!Event:', eventData)
     if (isAttendee.value) {
         router.push({ name: 'Event' })
     } else if (isFinance.value) {
@@ -184,7 +195,7 @@ const handleModalOption = async (option) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org" :eventName="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
                         :currentBudget="event.currentBudget" :destinationCode="event.destinationCode"
@@ -209,7 +220,7 @@ const handleModalOption = async (option) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org" :eventName="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
                         :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
@@ -235,7 +246,7 @@ const handleModalOption = async (option) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org.name" :name="event.name"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org" :eventName="event.name"
                         :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                         :pictureLink="event.pictureLink" :description="event.description"
                         :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"

@@ -167,36 +167,36 @@ const handleBlur = () => {
 onMounted(async () => {
     checkAndLoadEvent()
     checkAndLoadSelectedFlight()
-    console.log('Organization:', eventStore.currentEvent.organization)
-    try {
-    const [financeResponse, eventResponse] = await Promise.all([
-        api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
-            credentials: 'include'
-        }),
-        api.apiFetch('/events/' + eventStore.currentEvent.id, {
-            credentials: 'include'
-        })
-    ]);
+    console.log('Organization:', eventStore.currentEvent.org)
+//     try {
+//     const [financeResponse, eventResponse] = await Promise.all([
+//         api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
+//             credentials: 'include'
+//         }),
+//         api.apiFetch('/events/' + eventStore.currentEvent.id, {
+//             credentials: 'include'
+//         })
+//     ]);
 
-    if (financeResponse.ok) {
-        const financeMan = await financeResponse.json();
-        financeMan.phoneNum = financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-        eventStore.currentEvent.financeMan = financeMan;
-    } else {
-        console.error('Failed to fetch finance manager');
-    }
+//     if (financeResponse.ok) {
+//         const financeMan = await financeResponse.json();
+//         financeMan.phoneNum = financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+//         eventStore.currentEvent.financeMan = financeMan;
+//     } else {
+//         console.error('Failed to fetch finance manager');
+//     }
 
-    if (eventResponse.ok) {
-        const { createdBy } = await eventResponse.json();
-        createdBy.phoneNum = createdBy.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-        eventStore.currentEvent.createdBy = createdBy;
-    } else {
-        console.error('Failed to fetch current event');
-    }
+//     if (eventResponse.ok) {
+//         const { createdBy } = await eventResponse.json();
+//         createdBy.phoneNum = createdBy.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+//         eventStore.currentEvent.createdBy = createdBy;
+//     } else {
+//         console.error('Failed to fetch current event');
+//     }
 
-} catch (error) {
-    console.error('One or both requests failed:', error);
-}
+// } catch (error) {
+//     console.error('One or both requests failed:', error);
+// }
 
 })
 </script>
@@ -207,7 +207,7 @@ onMounted(async () => {
         <div class="phone-container">
             <div class="event-page">
                 <div>
-                    <PEvent :organization="eventStore.currentEvent.organization" :name="editableName"
+                    <PEvent :organization="eventStore.currentEvent.org" :name="editableName"
                         :startDate="editableStartDate" :endDate="editableEndDate"
                         :pictureLink="eventStore.currentEvent.pictureLink" design="header-edit" @update="handleUpdate"
                         @back-click="() => handleBack('Home')" />
@@ -255,7 +255,7 @@ onMounted(async () => {
         <div class="phone-container">
             <div class="event-page">
                 <div>
-                    <PEvent :organization="eventStore.currentEvent.organization" :name="eventStore.currentEvent.name"
+                    <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                         :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
                         :pictureLink="eventStore.currentEvent.pictureLink" design="header"
                         @back-click="() => handleBack('Home')" />
@@ -286,8 +286,8 @@ onMounted(async () => {
                             </PTextField>
                             <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField>
-                            <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
-                            </vue-google-autocomplete>
+                            <!-- <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
+                            </vue-google-autocomplete> -->
                         </div>
                         <PButton design="gradient" label="Search for Flights" @click="toFlightSearch" />
                     </div>
