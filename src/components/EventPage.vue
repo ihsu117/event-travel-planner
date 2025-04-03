@@ -286,8 +286,8 @@ onMounted(async () => {
                             </PTextField>
                             <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField>
-                            <!-- <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
-                            </vue-google-autocomplete> -->
+                            <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
+                            </vue-google-autocomplete>
                         </div>
                         <PButton design="gradient" label="Search for Flights" @click="toFlightSearch" />
                     </div>
@@ -297,12 +297,12 @@ onMounted(async () => {
                     <div class="finance-info">
                         <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
                             :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
-                            :jobTitle="eventStore.currentEvent.createdBy?.role"
+                            jobTitle="Event Planner"
                             :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                             :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                         <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
                             :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
-                            :jobTitle="eventStore.currentEvent.financeMan?.role"
+                            jobTitle="Finance Manager"
                             :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                             :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                     </div>
