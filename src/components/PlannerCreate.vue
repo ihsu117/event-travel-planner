@@ -12,7 +12,7 @@ const description = ref('')
 const destinationCode = ref('')
 const startDate = ref('')
 const endDate = ref('')
-const pictureLink = ref('')
+const pictureLink = ref('') // This will hold the base64-encoded image
 const maxBudget = ref('')
 const eventStore = useEventStore()
 const userStore = useUserStore()
@@ -25,7 +25,19 @@ const newUsers = ref([])
 const newEmail = ref('')
 const inviteEmail = ref('')
 const isModalVisible = ref(false)
-const lastCreatedEventId = ref(null);
+const lastCreatedEventId = ref(null)
+
+// Function to handle image upload and convert to base64
+const handleImageUpload = async (event) => {
+    const file = event.target.files[0]
+    if (file) {
+        const reader = new FileReader()
+        reader.onload = () => {
+            pictureLink.value = reader.result // Set the base64 string to pictureLink
+        }
+        reader.readAsDataURL(file) // Convert the file to a base64 string
+    }
+}
 
 const createEvent = async () => {
     try {
@@ -35,7 +47,7 @@ const createEvent = async () => {
             startDate: startDate.value,
             endDate: endDate.value,
             destinationCode: destinationCode.value,
-            pictureLink: pictureLink.value,
+            pictureLink: pictureLink.value, // Send the base64-encoded image
             maxBudget: maxBudget.value,
             financeMan: { id: selectedFinman.value },
             autoApprove: Boolean(false),
@@ -278,8 +290,10 @@ onMounted(() => {
                     </div>
 
                     <div>
-                        <h2>Picture Link</h2>
-                        <PTextField label="Picture Link" v-model="pictureLink" required />
+                        <h2>Picture</h2>
+                        <!-- File input for image upload -->
+                        <input type="file" accept="image/*" @change="handleImageUpload" />
+                        <p v-if="pictureLink">Image uploaded successfully!</p>
                     </div>
                     <div>
                         <h2>Max Budget</h2>

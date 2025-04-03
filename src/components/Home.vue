@@ -119,7 +119,56 @@ const handleModalOption = async (option) => {
 
 </script>
 <template>
+    <!--Modal for User info-->
+    <template v-if="isModalVisible">
+        <div>
+            <div class="modal-overlay" @click="closeModal"></div>
+            <div class="modal-container">
+                <div class="modal-profile">
+                    <div class="modal-profile-img-name">
+                        <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
+                        <PProfilePic design="big" :profileImage='userStore.profile_picture' />
+                        <div class="modal-profile-title-org">
+                            <h5>{{ userStore.role_id }}</h5>
+                            <p>{{ userStore.org.name }}</p>
+                        </div>
+                    </div>
 
+                    <div class="modal-profile-info-container">
+                        <div class="modal-profile-info">
+                            <div class="profile-content">
+                                <h5>Email</h5>
+                                <p>{{ userStore.email }}</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Phone</h5>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
+                            </div>
+
+                            <div class="profile-content">
+                                <h5>Gender</h5>
+                                <p v-if="userInfo.gender == 'm'">Male</p>
+                                <p v-else>Female</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Date of Birth</h5>
+                                <p>{{ format(userInfo.dob, 'MMMM do, yyyy') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-profile-options">
+                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')">Edit
+                        </PButton>
+                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')">
+                            Logout
+                        </PButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
     <!--Home Page for Attendee-->
     <template v-if="isAttendee">
         <div class="phone-container">
@@ -193,57 +242,6 @@ const handleModalOption = async (option) => {
                         :destinationCode="event.destinationCode" :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"design="block-planner"
                         @editClick="handleEditEventClick(event)" @event-click="handleEventClick" />
                     <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
-                </div>
-            </div>
-        </div>
-    </template>
-
-    <!--Modal for User info-->
-    <template v-if="isModalVisible">
-        <div class="phone-container">
-            <div class="modal-overlay" @click="closeModal"></div>
-            <div class="modal-container">
-                <div class="modal-profile">
-
-                    <div class="modal-profile-img-name">
-                        <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
-                        <PProfilePic design="big" :profileImage='userStore.profile_picture' />
-                        <div class="modal-profile-title-org">
-                            <h5>{{ userStore.role_id }}</h5>
-                            <p>{{ userStore.org.name }}</p>
-                        </div>
-                    </div>
-
-                    <div class="modal-profile-info-container">
-                        <div class="modal-profile-info">
-                            <div class="profile-content">
-                                <h5>Email</h5>
-                                <p>{{ userStore.email }}</p>
-                            </div>
-                            <div class="profile-content">
-                                <h5>Phone</h5>
-                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') }}</p>
-                            </div>
-
-                            <div class="profile-content">
-                                <h5>Gender</h5>
-                                <p v-if="userInfo.gender == 'm'">Male</p>
-                                <p v-else>Female</p>
-                            </div>
-                            <div class="profile-content">
-                                <h5>Date of Birth</h5>
-                                <p>{{ format(userInfo.dob, 'MMMM do yyyy') }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal-profile-options">
-                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')">Edit
-                        </PButton>
-                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')">
-                            Logout
-                        </PButton>
-                    </div>
                 </div>
             </div>
         </div>

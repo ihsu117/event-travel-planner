@@ -8,6 +8,15 @@
   }
 }
 
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
+
 .login-container {
   display: flex;
   flex-direction: column;
@@ -31,10 +40,13 @@
 .login-input {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 28px;
-  margin-top: 41px;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.email-container {
+  position: relative;
 }
 
 .forgot-pass p {
@@ -47,6 +59,37 @@
   color: var(--pos-yellow);
   text-decoration: none;
   font-size: 12px;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  
+  gap: 5px;
+  margin-bottom: 7px;
+  margin-left: 13px;
+  height: 0;
+  opacity: 0; /* Start hidden */
+  overflow: hidden;
+  transition: height 0.15s ease, opacity 0.7s ease; /* Add opacity transition */
+}
+
+.error-container.show {
+  height: 19px;
+  opacity: 1; /* Fully visible */
+}
+
+.error-icon {
+  margin-top: 2px;
+}
+
+.input-error {
+  position: relative;
+  color: var(--pos-yellow);
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0px;
 }
 
 .login-button a {
@@ -117,7 +160,6 @@ body {
 }
 
 .home .p-event__container {
-  height: 621px;
   gap: 7px;
 }
 
@@ -476,7 +518,7 @@ body {
   flex-direction: column;
   align-items: center;
   left: 50%;
-  transform: translate(-50%, -110%);
+  transform: translate(-50%, 20%);
   border-radius: 10px;
   box-shadow: var(--drop-shadow);
   z-index: 1000;
@@ -538,12 +580,72 @@ body {
   max-width: 220px;
 }
 
+.modal#mfa {
+  width: 50px; /* Initial width */
+  height: 50px; /* Initial height */
+  transition: width 0.3s ease, height 0.3s ease;
+  overflow: hidden;
+}
+
+.modal#mfa.expanded {
+  width: 330px; /* Final width */
+  height: 168px; /* Final height */
+  overflow: hidden;
+}
+
+.modal#mfa .error-container {
+  margin: 0;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--pos-yellow);
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 3px solid var(--pos-yellow);
+  border-right: 3px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
 .mfa-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
-  padding: 10%;
+  gap: 5px;
+}
+
+.mfa-form h5 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--pos-yellow);
+}
+
+.mfa-form h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: black;
+}
+
+.mfa-button {
+ padding: 5px;
+}
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade-in.show {
+  opacity: 1;
 }
 
 .profile-content {

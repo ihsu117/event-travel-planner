@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/userStore'
 import { PButton, PTextField, PProfilePic, PDropDown } from '@poseidon-components'
@@ -30,7 +30,10 @@ const regDateMinFormatted = regDateMin.toISOString().split('T')[0]
 const parsedDate = new Date(today); // Interpreted as '2025-03-26T00:00:00' in local time
 const titleOptions = ['mr', 'mrs', 'ms', 'miss', 'dr']
 const genderOptions = ['m', 'f', 'o']
-
+const loading = ref(false)
+const mfaInput = ref(null)
+const passwordInput = ref(null)
+const emailInput = ref(null)
 
 
 const onFileChange = (event) => {
@@ -48,8 +51,13 @@ const triggerFileInput = () => {
   fileInput.value.click()
 }
 
+const openModal = () => {
+  isModalVisible.value = true
+}
+
 const closeModal = () => {
   isModalVisible.value = false
+  errors.value.mfaCode = ''
 }
 
 const validatePassword = () => {
@@ -74,12 +82,31 @@ const handleSubmit = async () => {
 
 //Function to login the user
 const loginUser = async () => {
+  mfaCode.value = '' // Clear any previous MFA code
+  errors.value.password = '' // Clear any previous errors
+  errors.value.email = '' // Clear any previous errors
+  passwordInput.value.blur()
+  emailInput.value.blur()
+
+  if (!email.value) {
+    errors.value.email = 'Email is required'
+  }
+
+  if (!password.value) {
+    errors.value.password = 'Password is required'
+  }
+
+  if (errors.value.email || errors.value.password) {
+    return // Stop submission if validation fails
+  }
+
   console.log('Attempting login with:', {
     email: email.value,
     password: password.value
   })
   try {
-
+    openModal()
+    loading.value = true // Show loading spinner
     //API call to backend to check for user credentials
     const apiResponse = await api.apiFetch('/auth/login', {
       method: 'POST',
@@ -95,13 +122,20 @@ const loginUser = async () => {
 
     if (apiResponse.ok) {
       console.log('Login successful')
-      isModalVisible.value = true
+      loading.value = false
+      nextTick(() => {
+    // Focus on the MFA input field after the modal is visible
+    if (mfaInput.value && mfaInput.value.focus) {
+      mfaInput.value.focus()
+    }
+  })
     } else {
-      throw new Error('Invalid email or password')
+      closeModal()
+      throw new Error('Invalid Email or Password')
     }
 
   } catch (error) {
-    errors.value.password = 'Invalid email or password'
+    errors.value.email = 'Invalid Email or Password'
   }
 }
 
@@ -110,6 +144,13 @@ const checkMFA = async () => {
     email: email.value,
     mfaCode: mfaCode.value
   })
+  errors.value.mfaCode = '' // Clear any previous errors
+
+  if (!mfaCode.value) {
+    errors.value.mfaCode = 'Code is required';
+    return;
+  }
+
   try {
     const apiResponse = await api.apiFetch('/auth/mfa', {
       method: 'POST',
@@ -177,7 +218,7 @@ const updateUser = async () => {
       throw new Error('Invalid registration information')
     }
   } catch (error) {
-    errors.value.password = 'Invalid registration information'
+    errors.value.email = 'Invalid registration information'
   }
 }
 
@@ -189,26 +230,69 @@ const updateUser = async () => {
       <img src="@poseidon-assets/img/AppLogo.png" alt="Poseidon Logo" />
       <div class="login-form">
         <div class="login-input">
-          <PTextField v-model="email" label="Enter Email" />
-          <div class="forgot-pass">
-            <PTextField v-model="password" type="password" label="Enter Password" />
-            <p><a href="#">Forgot Password?</a></p>
+
+          <div class="email-container">
+            <div :class="['error-container', { show: errors.email }]">
+              <svg v-if="errors.email" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                viewBox="0 0 16 16">
+                <path fill="#FEB96E" fill-rule="evenodd"
+                  d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                  clip-rule="evenodd" />
+              </svg>
+              <p v-if="errors.email" class="input-error">{{ errors.email }}</p>
+            </div>
+            <PTextField v-model="email" ref="emailInput" label="Enter Email" @keyup.enter="loginUser" />
+          </div>
+
+          <div class="password-container">
+            <div :class="['error-container', { show: errors.password }]">
+              <svg v-if="errors.password" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                viewBox="0 0 16 16">
+                <path fill="#FEB96E" fill-rule="evenodd"
+                  d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                  clip-rule="evenodd" />
+              </svg>
+              <p v-if="errors.password" class="input-error">{{ errors.password }}</p>
+            </div>
+            <div class="forgot-pass">
+              <PTextField v-model="password" ref="passwordInput" type="password" label="Enter Password" @keyup.enter="loginUser" />
+              <p><a href="#">Forgot Password?</a></p>
+            </div>
           </div>
         </div>
         <div class="login-button">
           <PButton @click="loginUser" design="login" label="Login">Submit</PButton>
-          <p>Don't have an account? <a href="#">Sign up here!</a></p>
         </div>
       </div>
     </div>
   </template>
 
   <template v-if="isModalVisible">
-    <div class="modal-overlay" @click="closeModal"></div>
-    <div class="modal">
-      <div class="mfa-form">
-        <PTextField v-model="mfaCode" label="Enter MFA Code" />
-        <PButton @click="checkMFA" design="login" label="Submit">Submit</PButton>
+    <div class="modal-overlay" id="mfa" @click="closeModal"></div>
+    <div class="modal" id="mfa" :class="{ expanded: !loading }">
+      <!-- Content that fades in and out -->
+      <div :class="['fade-in', { show: !loading }]">
+        <div class="mfa-form" v-show="!loading">
+          <h4>A 6 digit code was sent to <b>{{ email }}</b></h4>
+          <div :class="['error-container', { show: errors.mfaCode }]">
+            <svg v-if="errors.mfaCode" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+              viewBox="0 0 16 16">
+              <path fill="#FEB96E" fill-rule="evenodd"
+                d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                clip-rule="evenodd" />
+            </svg>
+            <h5 v-if="errors.mfaCode" class="input-error">{{ errors.mfaCode }}</h5>
+          </div>
+          <PTextField v-model="mfaCode" ref="mfaInput" label="Enter MFA Code" inputmode="numeric" type="tel" @keyup.enter="checkMFA"/>
+          <div class="mfa-button">
+            <PButton @click="checkMFA" design="login" label="Submit" >Submit</PButton>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading spinner shown during the transition -->
+      <div class="loading-spinner" v-show="loading">
+        <span class="loader"></span>
       </div>
     </div>
   </template>
@@ -258,10 +342,10 @@ const updateUser = async () => {
         </div>
         <div id="pic">
           <h1>Profile Picture</h1>
-          <!-- <PProfilePic design='big' :profileImage="profileImage" @click="triggerFileInput" style="cursor: pointer;">
+          <PProfilePic design='big' :profileImage="profileImage" @click="triggerFileInput" style="cursor: pointer;">
           </PProfilePic>
-          <input type="file" accept="image/*" ref="fileInput" @change="onFileChange" style="display: none;" /> -->
-          <PTextField v-model="profileImage" label="Image Link" />
+          <input type="file" accept="image/*" ref="fileInput" @change="onFileChange" style="display: none;" />
+          <!-- <PTextField v-model="profileImage" label="Image Link" /> -->
         </div>
 
         <div id="button">

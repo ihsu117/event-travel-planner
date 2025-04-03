@@ -151,12 +151,10 @@ const checkAndLoadSelectedFlight = () => {
 }
 
 
-const selectedAirport = ref(null);
 const handlePlaceChanged = (place) => {
-    selectedAirport.value = place.description; // Update the const with the selected place
     latitude.value = place.latitude;
     longitude.value = place.longitude;
-    console.log('Selected Airport:', selectedAirport.value);
+    console.log('Selected Location:', place);
 }
 
 const handleBlur = () => {
@@ -171,15 +169,35 @@ onMounted(async () => {
     checkAndLoadSelectedFlight()
     console.log('Organization:', eventStore.currentEvent.organization)
     try {
-        const response = await api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
+    const [financeResponse, eventResponse] = await Promise.all([
+        api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
+            credentials: 'include'
+        }),
+        api.apiFetch('/events/' + eventStore.currentEvent.id, {
             credentials: 'include'
         })
-        if (response.ok) {
-            eventStore.currentEvent.financeMan = await response.json()
-        }
-    } catch (error) {
-        console.error('Failed to fetch finance manager:', error)
+    ]);
+
+    if (financeResponse.ok) {
+        const financeMan = await financeResponse.json();
+        financeMan.phoneNum = financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+        eventStore.currentEvent.financeMan = financeMan;
+    } else {
+        console.error('Failed to fetch finance manager');
     }
+
+    if (eventResponse.ok) {
+        const { createdBy } = await eventResponse.json();
+        createdBy.phoneNum = createdBy.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+        eventStore.currentEvent.createdBy = createdBy;
+    } else {
+        console.error('Failed to fetch current event');
+    }
+
+} catch (error) {
+    console.error('One or both requests failed:', error);
+}
+
 })
 </script>
 
@@ -203,7 +221,7 @@ onMounted(async () => {
                         </PTextField>
                     </div>
 
-                    <h1>Finance Team</h1>
+                    <h1>Planning Team</h1>
                     <div class="finance-info">
                         <svg class="x-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                             viewBox="0 0 24 24">
@@ -214,11 +232,16 @@ onMounted(async () => {
                                     d="m12 13.414l5.657 5.657a1 1 0 0 0 1.414-1.414L13.414 12l5.657-5.657a1 1 0 0 0-1.414-1.414L12 10.586L6.343 4.929A1 1 0 0 0 4.93 6.343L10.586 12l-5.657 5.657a1 1 0 1 0 1.414 1.414z" />
                             </g>
                         </svg>
-                        <PFinanceBlock :email="eventStore.currentEvent.financeMan.email"
-                            :name="eventStore.currentEvent.financeMan.firstName + ' ' + eventStore.currentEvent.financeMan.lastName"
-                            :jobTitle="eventStore.currentEvent.financeMan.role"
-                            :phoneNum="eventStore.currentEvent.financeMan.phoneNum"
-                            :profileImage="eventStore.currentEvent.financeMan.profilePic"></PFinanceBlock>
+                        <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                            :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                            :jobTitle="eventStore.currentEvent.createdBy?.role"
+                            :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                            :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                        <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                            :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                            :jobTitle="eventStore.currentEvent.financeMan?.role"
+                            :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                            :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                     </div>
                 </div>
                 <div class="event-edit-button">
@@ -242,12 +265,6 @@ onMounted(async () => {
                     <div class="event-description">
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
-                    <h1>Budget</h1>
-                    <div class="event-budget">
-                        <p>Company will list budget here.</p>
-                        <p> Plane Ticket - $230</p>
-                        <p> Current Budget - ${{ eventStore.currentEvent.currentBudget }}</p>
-                    </div>
                     <div>
                         <h1>Flight Information</h1>
                         <div class="selected-flight" v-if="flightSelected">
@@ -269,20 +286,25 @@ onMounted(async () => {
                             </PTextField>
                             <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField>
-                            <vue-google-autocomplete class="p-textfield--small" v-model="selectedAirport" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
+                            <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
                             </vue-google-autocomplete>
                         </div>
-                        <PButton design="gradient" label="Book Your Flight Here Now!" @click="toFlightSearch" />
+                        <PButton design="gradient" label="Search for Flights" @click="toFlightSearch" />
                     </div>
 
 
-                    <h1>Finance Team</h1>
+                    <h1>Planning Team</h1>
                     <div class="finance-info">
-                        <PFinanceBlock :email="eventStore.currentEvent.financeMan.email"
-                            :name="eventStore.currentEvent.financeMan.firstName + ' ' + eventStore.currentEvent.financeMan.lastName"
-                            :jobTitle="eventStore.currentEvent.financeMan.role"
-                            :phoneNum="eventStore.currentEvent.financeMan.phoneNum"
-                            :profileImage="eventStore.currentEvent.financeMan.profilePic"></PFinanceBlock>
+                        <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                            :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                            :jobTitle="eventStore.currentEvent.createdBy?.role"
+                            :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                            :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                        <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                            :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                            :jobTitle="eventStore.currentEvent.financeMan?.role"
+                            :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                            :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                     </div>
                 </div>
             </div>
