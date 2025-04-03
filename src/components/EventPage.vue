@@ -169,16 +169,37 @@ onMounted(async () => {
     checkAndLoadSelectedFlight()
     console.log('Organization:', eventStore.currentEvent.organization)
     try {
-        const response = await api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
+    const [financeResponse, eventResponse] = await Promise.all([
+        api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
+            credentials: 'include'
+        }),
+        api.apiFetch('/events/' + eventStore.currentEvent.id, {
             credentials: 'include'
         })
-        if (response.ok) {
-            eventStore.currentEvent.financeMan = await response.json()
-            eventStore.currentEvent.financeMan.phoneNum = eventStore.currentEvent.financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-        }
-    } catch (error) {
-        console.error('Failed to fetch finance manager:', error)
+    ]);
+
+    if (financeResponse.ok) {
+        const financeMan = await financeResponse.json();
+        financeMan.phoneNum = financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+        eventStore.currentEvent.financeMan = financeMan;
+        console.log('(Finance):', financeMan);
+    } else {
+        console.error('Failed to fetch finance manager');
     }
+
+    if (eventResponse.ok) {
+        const { createdBy } = await eventResponse.json();
+        createdBy.phoneNum = createdBy.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+        eventStore.currentEvent.createdBy = createdBy;
+        console.log('(Creator):', createdBy);
+    } else {
+        console.error('Failed to fetch current event');
+    }
+
+} catch (error) {
+    console.error('One or both requests failed:', error);
+}
+
 })
 </script>
 
@@ -271,6 +292,11 @@ onMounted(async () => {
 
                     <h1>Finance Team</h1>
                     <div class="finance-info">
+                        <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                            :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                            :jobTitle="eventStore.currentEvent.createdBy?.role"
+                            :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                            :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                         <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
                             :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
                             :jobTitle="eventStore.currentEvent.financeMan?.role"
