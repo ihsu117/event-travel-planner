@@ -518,7 +518,7 @@ body {
   flex-direction: column;
   align-items: center;
   left: 50%;
-  transform: translate(-50%, -110%);
+  transform: translate(-50%, 20%);
   border-radius: 10px;
   box-shadow: var(--drop-shadow);
   z-index: 1000;
