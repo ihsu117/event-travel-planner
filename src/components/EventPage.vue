@@ -234,12 +234,12 @@ onMounted(async () => {
                         </svg>
                         <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
                             :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
-                            :jobTitle="eventStore.currentEvent.createdBy?.role"
+                            jobTitle="Event Planner"
                             :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                             :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                         <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
                             :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
-                            :jobTitle="eventStore.currentEvent.financeMan?.role"
+                            jobTitle="Finance Manager"
                             :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                             :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                     </div>
