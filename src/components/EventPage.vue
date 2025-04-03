@@ -174,6 +174,7 @@ onMounted(async () => {
         })
         if (response.ok) {
             eventStore.currentEvent.financeMan = await response.json()
+            eventStore.currentEvent.financeMan.phoneNum = eventStore.currentEvent.financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
         }
     } catch (error) {
         console.error('Failed to fetch finance manager:', error)
@@ -240,12 +241,6 @@ onMounted(async () => {
                     <div class="event-description">
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
-                    <h1>Budget</h1>
-                    <div class="event-budget">
-                        <p>Company will list budget here.</p>
-                        <p> Plane Ticket - $230</p>
-                        <p> Current Budget - ${{ eventStore.currentEvent.currentBudget }}</p>
-                    </div>
                     <div>
                         <h1>Flight Information</h1>
                         <div class="selected-flight" v-if="flightSelected">
@@ -270,17 +265,17 @@ onMounted(async () => {
                             <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
                             </vue-google-autocomplete>
                         </div>
-                        <PButton design="gradient" label="Book Your Flight Here Now!" @click="toFlightSearch" />
+                        <PButton design="gradient" label="Search for Flights" @click="toFlightSearch" />
                     </div>
 
 
                     <h1>Finance Team</h1>
                     <div class="finance-info">
-                        <PFinanceBlock :email="eventStore.currentEvent.financeMan.email"
-                            :name="eventStore.currentEvent.financeMan.firstName + ' ' + eventStore.currentEvent.financeMan.lastName"
-                            :jobTitle="eventStore.currentEvent.financeMan.role"
-                            :phoneNum="eventStore.currentEvent.financeMan.phoneNum"
-                            :profileImage="eventStore.currentEvent.financeMan.profilePic"></PFinanceBlock>
+                        <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                            :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                            :jobTitle="eventStore.currentEvent.financeMan?.role"
+                            :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                            :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                     </div>
                 </div>
             </div>
