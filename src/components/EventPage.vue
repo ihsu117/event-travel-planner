@@ -290,7 +290,7 @@ onMounted(async () => {
                     </div>
 
 
-                    <h1>Finance Team</h1>
+                    <h1>Planning Team</h1>
                     <div class="finance-info">
                         <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
                             :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
