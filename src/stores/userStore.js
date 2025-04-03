@@ -1,4 +1,10 @@
 import { defineStore } from 'pinia'
+import { logger } from '../../backend/service/LogService.mjs';
+
+// Init child logger instance
+const log = logger.child({
+    dataAccess : "userStore", //specify module where logs are from
+});
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -33,7 +39,8 @@ export const useUserStore = defineStore('user', {
           title: user.title,
           KTN: user.KTN
         }))
-        console.log('Setting users data:', this.users)
+        console.log('Setting users data:', this.users) //Debug
+        log.verbose('Setting users data:', {userData: this.users})
       } else {
         const user = userData.user
         console.log('Setting user data:', user)
@@ -49,6 +56,7 @@ export const useUserStore = defineStore('user', {
         this.title = user.title,
         this.KTN = user.KTN
         console.log('User state updated:', this.$state)
+        log.verbose('User state updated:', {state: this.$state})
       }
       localStorage.setItem('user', JSON.stringify(this.$state))
     },
@@ -60,7 +68,8 @@ export const useUserStore = defineStore('user', {
         if (Array.isArray(userData.users) && userData.length > 1) {
           // Handle array of users
           this.users = userData.users;
-          console.log('Loaded multiple users from local storage:', this.users)
+          console.log('Loaded multiple users from local storage:', this.users) //Debug
+          log.verbose('Loaded multiple users from local storage:', {userList: this.users})
         } else {
           this.user_id = userData.user_id
           this.first_name = userData.first_name
@@ -73,7 +82,8 @@ export const useUserStore = defineStore('user', {
           this.dob = userData.dob
           this.title = userData.title
           this.KTN = userData.KTN
-          console.log('User state loaded from local storage:', this.$state)
+          console.log('User state loaded from local storage:', this.$state) //Debug
+          log.verbose('User state loaded from local storage:', {state: this.$state})
         }
       }
     },
@@ -93,6 +103,7 @@ export const useUserStore = defineStore('user', {
       this.users = [];
       localStorage.removeItem('user')
       console.log('User state cleared')
+      log.verbose('User state cleared')
     }
   }
 })

@@ -1,4 +1,10 @@
 import { defineStore } from 'pinia'
+import { logger } from '../../backend/service/LogService.mjs';
+
+// Init child logger instance
+const log = logger.child({
+    dataAccess : "eventStore", //specify module where logs are from
+});
 
 export const useEventStore = defineStore('event', {
   state: () => ({
@@ -42,7 +48,8 @@ export const useEventStore = defineStore('event', {
         autoapprove: eventData.autoApprove,
         autoapprove_threshold: eventData.autoApproveThreshold
       }
-      console.log(this.currentEvent)
+      console.log(this.currentEvent) //Debug
+      log.verbose("event set", {event: this.currentEvent});
       localStorage.setItem('currentEvent', JSON.stringify(this.currentEvent));
     },
 
@@ -74,6 +81,7 @@ export const useEventStore = defineStore('event', {
         autoapprove: false,
         autoapprove_threshold: 0
       }
+      log.verbose("event removed from localStorage", {event: JSON.stringify(this.currentEvent)})
       localStorage.removeItem('currentEvent')
     }
   }
