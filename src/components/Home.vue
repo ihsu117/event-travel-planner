@@ -222,7 +222,7 @@ const handleModalOption = async (option) => {
                             </div>
                             <div class="profile-content">
                                 <h5>Phone</h5>
-                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') }}</p>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -232,7 +232,7 @@ const handleModalOption = async (option) => {
                             </div>
                             <div class="profile-content">
                                 <h5>Date of Birth</h5>
-                                <p>{{ format(userInfo.dob, 'MMMM do yyyy') }}</p>
+                                <p>{{ format(userInfo.dob, 'MMMM do, yyyy') }}</p>
                             </div>
                         </div>
                     </div>
