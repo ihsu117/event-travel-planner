@@ -182,7 +182,6 @@ onMounted(async () => {
         const financeMan = await financeResponse.json();
         financeMan.phoneNum = financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
         eventStore.currentEvent.financeMan = financeMan;
-        console.log('(Finance):', financeMan);
     } else {
         console.error('Failed to fetch finance manager');
     }
@@ -191,7 +190,6 @@ onMounted(async () => {
         const { createdBy } = await eventResponse.json();
         createdBy.phoneNum = createdBy.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
         eventStore.currentEvent.createdBy = createdBy;
-        console.log('(Creator):', createdBy);
     } else {
         console.error('Failed to fetch current event');
     }
