@@ -223,7 +223,7 @@ onMounted(async () => {
                         </PTextField>
                     </div>
 
-                    <h1>Finance Team</h1>
+                    <h1>Planning Team</h1>
                     <div class="finance-info">
                         <svg class="x-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                             viewBox="0 0 24 24">
@@ -234,11 +234,16 @@ onMounted(async () => {
                                     d="m12 13.414l5.657 5.657a1 1 0 0 0 1.414-1.414L13.414 12l5.657-5.657a1 1 0 0 0-1.414-1.414L12 10.586L6.343 4.929A1 1 0 0 0 4.93 6.343L10.586 12l-5.657 5.657a1 1 0 1 0 1.414 1.414z" />
                             </g>
                         </svg>
-                        <PFinanceBlock :email="eventStore.currentEvent.financeMan.email"
-                            :name="eventStore.currentEvent.financeMan.firstName + ' ' + eventStore.currentEvent.financeMan.lastName"
-                            :jobTitle="eventStore.currentEvent.financeMan.role"
-                            :phoneNum="eventStore.currentEvent.financeMan.phoneNum"
-                            :profileImage="eventStore.currentEvent.financeMan.profilePic"></PFinanceBlock>
+                        <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                            :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                            :jobTitle="eventStore.currentEvent.createdBy?.role"
+                            :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                            :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                        <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                            :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                            :jobTitle="eventStore.currentEvent.financeMan?.role"
+                            :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                            :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                     </div>
                 </div>
                 <div class="event-edit-button">
