@@ -79,7 +79,8 @@ const toFlightSearch = () => {
             departure_date: searchDate.value || eventStore.currentEvent.startDate,
             lat: latitude.value,
             long: longitude.value,
-            destination: eventStore.currentEvent.destinationCode
+            destination: eventStore.currentEvent.destinationCode,
+            type: flightType.value
         })
     }).then(
         response => flightStore.setFlightResults(response.json())
@@ -273,11 +274,11 @@ onMounted(async () => {
                         </div>
                         <div class="flight-type">
                             <label>
-                                <input type="radio" name="flightType" value="one-way" v-model="flightType" />
+                                <input type="radio" name="flightType" :value="0" v-model="flightType" />
                                 One-Way
                             </label>
                             <label>
-                                <input type="radio" name="flightType" value="roundtrip" v-model="flightType" />
+                                <input type="radio" name="flightType" :value="1" v-model="flightType" />
                                 Roundtrip
                             </label>
                         </div>
