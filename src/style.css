@@ -861,7 +861,7 @@ body {
 .budget-card {
   background: var(--pos-grey);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--drop-shadow);
   padding: 24px;
   max-width: 400px;
   margin: 0 auto;
