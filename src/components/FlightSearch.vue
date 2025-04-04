@@ -12,7 +12,8 @@ const sortPrice = ref('none')
 const sortOption = ref('') // Declare sortOption to store the selected sorting option
 const filterStops = ref('') // Declare filterStops to store the selected filtering option
 const airlineSelection = ref('') // Declare airlineSelection to store the selected airline option
-const timeRange = ref('') // Declare timeRange to store the selected time range
+const arrivalTimeRange = ref('') // Declare arrivalTimeRange to store the selected arrival time range
+const departureTimeRange = ref('') // Declare departureTimeRange to store the selected departure time range
 
 //Function to handle the back button
 const handleBack = (targetRoute) => {
@@ -56,10 +57,13 @@ const handleAirlineSelection = (option) => {
   airlineSelection.value = option; // Update airlineSelection with the selected option
 }
 
-const handleTimeRangeUpdate = (timeRange) => {
-  console.log('Time Range:', timeRange)
-  timeRange.value = timeRange; // Update timeRange with the selected range
-}
+const handleTimeRangeUpdate = ({ type, value }) => {
+  if (type === 'arrival') {
+    arrivalTimeRange.value = value; // Update arrivalTimeRange with the selected range
+  } else if (type === 'departure') {
+    departureTimeRange.value = value; // Update departureTimeRange with the selected range
+  }
+};
 
 const filteredAndSortedFlights = computed(() => {
   if (!flightStore.flightResults) return [];
@@ -86,6 +90,34 @@ const filteredAndSortedFlights = computed(() => {
   // Apply filtering based on airline selection
   if (airlineSelection.value && airlineSelection.value !== 'Any') {
     flights = flights.filter(flight => flight.airline === airlineSelection.value);
+  }
+
+  // Apply filtering based on departure time range
+  if (departureTimeRange.value && departureTimeRange.value.length === 2) {
+    const [depStart, depEnd] = departureTimeRange.value.map(time => {
+      const [hours, minutes] = time.split(':').map(Number);
+      return hours * 60 + minutes; // Convert HH:mm to minutes
+    });
+
+    flights = flights.filter(flight => {
+      const flightDepTime = new Date(`1970-01-01T${flight.flightDepTime}`);
+      const flightDepMinutes = flightDepTime.getHours() * 60 + flightDepTime.getMinutes();
+      return flightDepMinutes >= depStart && flightDepMinutes <= depEnd;
+    });
+  }
+
+  // Apply filtering based on arrival time range
+  if (arrivalTimeRange.value && arrivalTimeRange.value.length === 2) {
+    const [arrStart, arrEnd] = arrivalTimeRange.value.map(time => {
+      const [hours, minutes] = time.split(':').map(Number);
+      return hours * 60 + minutes; // Convert HH:mm to minutes
+    });
+
+    flights = flights.filter(flight => {
+      const flightArrTime = new Date(`1970-01-01T${flight.flightArrTime}`);
+      const flightArrMinutes = flightArrTime.getHours() * 60 + flightArrTime.getMinutes();
+      return flightArrMinutes >= arrStart && flightArrMinutes <= arrEnd;
+    });
   }
 
   // Apply sorting
@@ -118,7 +150,7 @@ const filteredAndSortedFlights = computed(() => {
       </div>
 
       <h1>Upcoming Flights</h1>
-      <div class="p-dropdown__container">
+      <div class="p-dropdown__container" style="margin-bottom: 15px;">
         <PDropDown design="flight" dropDownLabel="Stops"
           :options="['Any number of stops', 'Nonstop only', '1 stop or fewer', '2 stops or fewer']"
           @option-selected="handleStopsSelection"></PDropDown>
@@ -132,7 +164,6 @@ const filteredAndSortedFlights = computed(() => {
       <div class="p-dropdown__container">
         <PDropDown design="flight" dropDownLabel="Sort By" :options="['Departure Time', 'Price']"
           @option-selected="handleSortSelection"></PDropDown>
-        <!-- <PDropDown design="flight" dropDownLabel="Price" :options="['Lowest', 'Highest']" @option-selected="handleOptionSelection"></PDropDown> -->
       </div>
 
       <div class="p-event__container">
