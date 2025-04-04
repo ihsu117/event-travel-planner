@@ -79,7 +79,8 @@ const toFlightSearch = () => {
             departure_date: searchDate.value || eventStore.currentEvent.startDate,
             lat: latitude.value,
             long: longitude.value,
-            destination: eventStore.currentEvent.destinationCode
+            destination: eventStore.currentEvent.destinationCode,
+            type: flightType.value
         })
     }).then(
         response => flightStore.setFlightResults(response.json())
@@ -273,11 +274,11 @@ onMounted(async () => {
                         </div>
                         <div class="flight-type">
                             <label>
-                                <input type="radio" name="flightType" value="one-way" v-model="flightType" />
+                                <input type="radio" name="flightType" :value="0" v-model="flightType" />
                                 One-Way
                             </label>
                             <label>
-                                <input type="radio" name="flightType" value="roundtrip" v-model="flightType" />
+                                <input type="radio" name="flightType" :value="1" v-model="flightType" />
                                 Roundtrip
                             </label>
                         </div>
@@ -286,8 +287,8 @@ onMounted(async () => {
                             </PTextField>
                             <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField>
-                            <!-- <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
-                            </vue-google-autocomplete> -->
+                            <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
+                            </vue-google-autocomplete>
                         </div>
                         <PButton design="gradient" label="Search for Flights" @click="toFlightSearch" />
                     </div>

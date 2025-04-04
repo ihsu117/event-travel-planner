@@ -18,7 +18,8 @@ export const useFlightStore = defineStore('flight', {
             flightGate: '',
             airline: '',
             logoURL: '',
-            offer_id: ''
+            offer_id: '',
+            itinerary: ''
         },
         flightResults: []
     }),
@@ -41,7 +42,8 @@ export const useFlightStore = defineStore('flight', {
                 flightGate: flight.flightGate,
                 airline: flight.airline,
                 logoURL: flight.logoURL,
-                offer_id: flight.offer_id
+                offer_id: flight.offer_id,
+                itinerary: flight.details
             };
             console.log('Current flight:', this.currentFlight);
         },
@@ -62,21 +64,22 @@ export const useFlightStore = defineStore('flight', {
 
                 this.flightResults = flightData.slice(1).map(flight => ({
                     flightID: null,
-                    flightDate: new Date(flight.itinerary[0].departure_date),
+                    flightDate: new Date(flight.details[0].itinerary[0].departure_date),
                     origin: flight.origin_airport,
                     destination: flight.destination_airport,
-                    flightDepTime: flight.itinerary[0].departure_time,
-                    flightArrTime: flight.itinerary[flight.itinerary.length - 1].arrival_time,
+                    flightDepTime: flight.details[0].itinerary[0].departure_time,
+                    flightArrTime: flight.details[0].itinerary[flight.details[0].itinerary.length - 1].arrival_time,
                     seatNumber: '' || 'TBD',
                     seatAvailable: 1,
-                    passID: flight.passenger_ids,
+                    passID: flight.passenger_id,
                     price: Math.round(flight.price),
                     flightType: flight.flight_type,
                     flightClass: flight.flight_class,
-                    flightGate: flight.itinerary[0].terminal || 'TBD',
+                    flightGate: flight.details[0].itinerary[0].terminal || 'TBD',
                     airline: flight.airline,
                     logoURL: flight.logo,
-                    offer_id: flight.offer_id
+                    offer_id: flight.offer_id,
+                    itinerary: flight.details
                 }));
 
                 console.log('Processed flights:', this.flightResults);
