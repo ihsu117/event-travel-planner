@@ -46,7 +46,7 @@ const handleFlightClick = (flight) => {
   <div class="phone-container">
     <div class="flight-page">
       <div>
-        <PEvent :organization="eventStore.currentEvent.organization" :name="eventStore.currentEvent.name"
+        <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
           :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
           :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Event')" />
       </div>
