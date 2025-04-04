@@ -88,7 +88,7 @@ const toFlightSearch = () => {
         router.push({ name: 'Flight' })
     )
 }
-const editableName = ref(eventStore.currentEvent.name)
+const editableName = ref(eventStore.currentEvent.eventName)
 const editableStartDate = ref(eventStore.currentEvent.startDate)
 const editableEndDate = ref(eventStore.currentEvent.endDate)
 const description = ref(eventStore.currentEvent.description)
@@ -208,7 +208,7 @@ onMounted(async () => {
         <div class="phone-container">
             <div class="event-page">
                 <div>
-                    <PEvent :organization="eventStore.currentEvent.org" :name="editableName"
+                    <PEvent :organization="eventStore.currentEvent.org" :eventName="editableName"
                         :startDate="editableStartDate" :endDate="editableEndDate"
                         :pictureLink="eventStore.currentEvent.pictureLink" design="header-edit" @update="handleUpdate"
                         @back-click="() => handleBack('Home')" />

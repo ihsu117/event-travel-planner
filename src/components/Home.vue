@@ -91,10 +91,20 @@ const handleCreateEvent = () => {
     }
 }
 
-const handleEditEventClick = (event) => {
+const handleEditEventClick = async (eventData) => {
+    try {
+        const response = await api.apiFetch('/events/' + eventData.id, {
+            credentials: 'include'
+        })
+        if (response.ok) {
+            eventData = await response.json()
+        }
+    } catch (error) {
+        console.error('Failed to fetch the selected event:', error)
+    }
     if (isEventPlanner.value) {
-        eventStore.setCurrentEvent(event);
-        router.push({ name: 'Event', query: { editView: 'true', eventID: event.id } });
+        eventStore.setCurrentEvent(eventData);
+        router.push({ name: 'Event', query: { editView: 'true', eventID: eventData.id } });
     }
 };
 
