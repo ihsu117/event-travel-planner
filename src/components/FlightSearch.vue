@@ -150,7 +150,7 @@ const filteredAndSortedFlights = computed(() => {
       </div>
 
       <h1>Upcoming Flights</h1>
-      <div class="p-dropdown__container">
+      <div class="p-dropdown__container" style="margin-bottom: 15px;">
         <PDropDown design="flight" dropDownLabel="Stops"
           :options="['Any number of stops', 'Nonstop only', '1 stop or fewer', '2 stops or fewer']"
           @option-selected="handleStopsSelection"></PDropDown>
