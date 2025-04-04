@@ -147,30 +147,36 @@
   padding: 10px;
   max-width: 393px;
   width: 100%;
-  /* Ensure it takes up the full width of its parent */
   height: auto;
-  /* Allow the height to adjust based on content */
   overflow: visible;
-  /* Ensure content is not clipped */
 }
 
 body {
   overflow-y: auto;
-  /* Enable vertical scrolling for the entire page */
 }
 
 .home .p-event__container {
+  max-height: none;
+  min-height: 500px;
   gap: 7px;
+  width: 87%;
+  overflow-y: auto;
+  overflow-x: hidden; 
 }
 
 .home {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  min-width: 393px;
   max-width: 393px;
   background-color: #FFFFE2;
   padding-bottom: 20px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  max-height: 700px;
+  min-height: 700px;
 }
 
 .home-header {
@@ -518,7 +524,7 @@ body {
   flex-direction: column;
   align-items: center;
   left: 50%;
-  transform: translate(-50%, 20%);
+  transform: translate(-50%, -110%);
   border-radius: 10px;
   box-shadow: var(--drop-shadow);
   z-index: 1000;

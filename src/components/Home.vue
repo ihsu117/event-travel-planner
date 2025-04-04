@@ -20,6 +20,7 @@ const router = useRouter()
 const events = ref([])
 const userInfo = ref({});
 const editView = ref(false)
+const loading = ref(false)
 
 //Fetch events from the API
 onMounted(async () => {
