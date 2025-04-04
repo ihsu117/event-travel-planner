@@ -48,7 +48,7 @@ const confirmPurchase = async () => {
   <div class="phone-container">
     <div class="flight-itinerary">
 
-      <PEvent design="itinerary-header" :organization="flightStore.currentFlight.airline" :name="'Flight Itinerary'"
+      <PEvent design="itinerary-header" :airline="flightStore.currentFlight.airline" :name="'Flight Itinerary'"
         :pictureLink="flightStore.currentFlight.logoURL" @back-click="() => handleBack('Flight')" />
 
       <div class="flight-itinerary-status">

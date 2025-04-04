@@ -16,7 +16,7 @@ const flightSelected = ref(null)
 const isEditModalVisible = ref(false)
 const modalBudget = ref('')
 const modalAuto = ref()
-const modalThreshold = ref(0)
+const modalThreshold = ref('')
 
 const openEditModal = () => {
     isEditModalVisible.value = true
@@ -94,7 +94,7 @@ const updateFlight = async () => {
                 price: flightSelected.value.price
             })
         })
-        if(response.ok) {
+        if (response.ok) {
             console.log("booked flight")
         }
     } catch (error) {
@@ -118,7 +118,7 @@ const closeModal = () => {
 const handleModalOption = (option) => {
     console.log(`Selected option: ${option}`)
 
-    if(option == "Approve") {
+    if (option == "Approve") {
         updateFlight()
     }
 
@@ -148,7 +148,7 @@ console.log(eventStore.currentEvent.id)
     <div class="phone-container">
         <div class="finance-dashboard">
             <div>
-                <PEvent :organization="eventStore.currentEvent.organization" :name="eventStore.currentEvent.name"
+                <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                     :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
                     :pictureLink="eventStore.currentEvent.pictureLink" design="header"
                     @back-click="() => handleBack('Home')" />
@@ -158,23 +158,39 @@ console.log(eventStore.currentEvent.id)
                 <div class="event-description">
                     <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                 </div>
-                <div class="budget-container">
-                    <h1>Budget: </h1>
-                    <h2 :style="{ color: budgetColor }">{{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(eventStore.currentEvent.maxBudget) }}</h2>
-                    <div>
-                        <h1>Auto Approve</h1>
-                        <h3>{{ eventStore.currentEvent.autoapprove }}</h3>
+                <div class="budget-card">
+                    <div class="budget-card-header">
+                        <h3>Event Budget Settings</h3>
+                        <svg @click="openEditModal" class="budget-edit-icon" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M8.707 19.707L18 10.414L13.586 6l-9.293 9.293a1 1 0 0 0-.263.464L3 21l5.242-1.03c.176-.044.337-.135.465-.263M21 7.414a2 2 0 0 0 0-2.828L19.414 3a2 2 0 0 0-2.828 0L15 4.586L19.414 9z" />
+                        </svg>
                     </div>
-                    <div v-if="eventStore.currentEvent.autoapprove">
-                        <h1>Threshold</h1>
-                        <h3>{{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(eventStore.currentEvent.autoapprove_threshold) }}</h3>
+                    <div class="budget-card-row">
+                        <span class="budget-card-label">Budget:</span>
+                        <span class="budget-card-value budget-green">
+                            {{ new Intl.NumberFormat('en-US', {
+                                style: 'currency', currency: 'USD'
+                            }).format(eventStore.currentEvent.maxBudget) }}
+                        </span>
                     </div>
-                    <svg @click="openEditModal('Threshold', eventStore.currentEvent.autoapprove_threshold, 'autoapprove_threshold')"
-                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                            d="M8.707 19.707L18 10.414L13.586 6l-9.293 9.293a1 1 0 0 0-.263.464L3 21l5.242-1.03c.176-.044.337-.135.465-.263M21 7.414a2 2 0 0 0 0-2.828L19.414 3a2 2 0 0 0-2.828 0L15 4.586L19.414 9z" />
-                    </svg>
+                    <div class="budget-card-row">
+                        <span class="budget-card-label">Auto Approve:</span>
+                        <span class="budget-card-value">
+                            {{ eventStore.currentEvent.autoapprove ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+                    <div class="budget-card-row" v-if="eventStore.currentEvent.autoapprove">
+                        <span class="budget-card-label">Threshold:</span>
+                        <span class="budget-card-value">
+                            {{ new Intl.NumberFormat('en-US', {
+                                style: 'currency', currency: 'USD'
+                            }).format(eventStore.currentEvent.autoapprove_threshold) }}
+                        </span>
+                    </div>
                 </div>
+
                 <div class="flight-container">
                     <h3>Waiting for Approval</h3>
                     <div class="p-event__container">
@@ -184,8 +200,8 @@ console.log(eventStore.currentEvent.id)
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" :flightID="flight.flightID"
-                            @click="openModal(flight)" />
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
+                            :flightID="flight.flightID" @click="openModal(flight)" />
                     </div>
                 </div>
 
@@ -199,37 +215,34 @@ console.log(eventStore.currentEvent.id)
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" :flightID="flight.flightID"
-                            @click="openModal(flight)" />
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
+                            :flightID="flight.flightID" @click="openModal(flight)" />
                     </div>
                 </div>
 
                 <div v-if="isEditModalVisible">
                     <div class="modal-overlay" @click="closeEditModal"></div>
-                    <div class="modal">
+                    <div class="modal budget-modal">
+                        <h2 class="modal-title">Set Budget</h2>
 
-                        <div>
-                            <h2>Budget</h2>
-                            <input v-model="modalBudget" type="text" />
-                        </div>
+                        <label class="modal-label" for="budget-amount">Amount</label>
+                        <PTextField v-model="modalBudget" id="budget-amount" class="modal-input" type="number"
+                            placeholder="Enter amount" />
 
-                        <div>
-                            <h2>Auto Approve</h2>
-                            <input v-model="modalAuto" name="modalAuto" type="radio" id="autoapprove-yes"
-                                :value="true" />
-                            <label for="autoapprove-yes">Yes</label>
-                            <input v-model="modalAuto" name="modalAuto" type="radio" id="autoapprove-no"
-                                :value="false" />
-                            <label for="autoapprove-no">No</label>
-                        </div>
+                        <label class="modal-label">Auto Approve</label>
+                        <label class="switch">
+                            <input type="checkbox" v-model="modalAuto" />
+                            <span class="slider round"></span>
+                        </label>
 
-                        <div v-if="modalAuto">
-                            <h2>Threshold</h2>
-                            <input v-model="modalThreshold" type="text" />
+                        <div v-if="modalAuto" class="threshold-container">
+                            <label class="modal-label" for="threshold">Threshold</label>
+                            <PTextField v-model="modalThreshold" id="threshold" class="modal-input" type="number"
+                                placeholder="Enter threshold" />
                         </div>
 
                         <div class="modal-options">
-                            <button @click="saveUpdatedValue">Save</button>
+                            <PButton design="gradient-small" label="Save" @click="saveUpdatedValue"></PButton>
                         </div>
                     </div>
                 </div>
@@ -240,7 +253,8 @@ console.log(eventStore.currentEvent.id)
                         <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
                             :price="flightSelected.price" :airline="flightSelected.airline"
                             :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime"
-                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" design="finance" style=""></PFlight>
+                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID"
+                            design="finance" style=""></PFlight>
 
                         <div class="modal-options">
                             <h2 class="modal-approve" @click="handleModalOption('Approve')">Approve</h2>

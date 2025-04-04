@@ -20,10 +20,12 @@ const router = useRouter()
 const events = ref([])
 const userInfo = ref({});
 const editView = ref(false)
+const loading = ref(false)
 
 //Fetch events from the API
 onMounted(async () => {
     checkAuth()
+    loading.value = true
     try {
         const response = await api.apiFetch('/events', {
             credentials: 'include'
@@ -35,6 +37,8 @@ onMounted(async () => {
         }
     } catch (error) {
         console.error('Failed to fetch events:', error)
+    } finally {
+        loading.value = false // Set loading to false after API call
     }
 })
 
@@ -87,10 +91,20 @@ const handleCreateEvent = () => {
     }
 }
 
-const handleEditEventClick = (event) => {
+const handleEditEventClick = async (eventData) => {
+    try {
+        const response = await api.apiFetch('/events/' + eventData.id, {
+            credentials: 'include'
+        })
+        if (response.ok) {
+            eventData = await response.json()
+        }
+    } catch (error) {
+        console.error('Failed to fetch the selected event:', error)
+    }
     if (isEventPlanner.value) {
-        eventStore.setCurrentEvent(event);
-        router.push({ name: 'Event', query: { editView: 'true', eventID: event.id } });
+        eventStore.setCurrentEvent(eventData);
+        router.push({ name: 'Event', query: { editView: 'true', eventID: eventData.id } });
     }
 };
 
@@ -179,7 +193,7 @@ const handleModalOption = async (option) => {
             </div>
         </div>
     </template>
-    
+
     <!--Home Page for Attendee-->
     <template v-if="isAttendee">
         <div class="phone-container">
@@ -194,12 +208,19 @@ const handleModalOption = async (option) => {
                 </div>
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
+                    <div v-if="loading" class="spinner">
+                        <div class="loading-spinner" v-show="loading">
+                            <span class="loader"></span>
+                        </div>
+                    </div>
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org" :eventName="event.name"
-                        :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
-                        :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :destinationCode="event.destinationCode"
-                        :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold" design="block" @event-click="handleEventClick" />
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                        :eventName="event.name" :startDate="new Date(event.startDate)"
+                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
+                        :description="event.description" :currentBudget="event.currentBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                        :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                        design="block" @event-click="handleEventClick" :class="{ 'fade-in': true, 'show': !loading }"/>
 
                 </div>
             </div>
@@ -220,11 +241,13 @@ const handleModalOption = async (option) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org" :eventName="event.name"
-                        :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
-                        :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
-                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold" design="block-finance"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                        :eventName="event.name" :startDate="new Date(event.startDate)"
+                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
+                        :description="event.description" :currentBudget="event.currentBudget"
+                        :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
+                        :financeMan="event.financeMan" :autoApprove="event.autoApprove"
+                        :autoApproveThreshold="event.autoApproveThreshold" design="block-finance"
                         @event-click="handleEventClick" />
                 </div>
             </div>
@@ -246,11 +269,13 @@ const handleModalOption = async (option) => {
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org" :eventName="event.name"
-                        :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
-                        :pictureLink="event.pictureLink" :description="event.description"
-                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
-                        :destinationCode="event.destinationCode" :financeMan="event.financeMan" :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"design="block-planner"
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                        :eventName="event.name" :startDate="new Date(event.startDate)"
+                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
+                        :description="event.description" :currentBudget="event.currentBudget"
+                        :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
+                        :financeMan="event.financeMan" :autoApprove="event.autoApprove"
+                        :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
                         @editClick="handleEditEventClick(event)" @event-click="handleEventClick" />
                     <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
