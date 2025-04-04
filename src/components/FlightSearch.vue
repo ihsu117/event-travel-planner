@@ -9,6 +9,7 @@ const eventStore = useEventStore()
 const flightStore = useFlightStore()
 const router = useRouter()
 const sortPrice = ref('none')
+const sortOption = ref('') // Declare sortOption to store the selected sorting option
 
 //Function to handle the back button
 const handleBack = (targetRoute) => {
@@ -40,6 +41,32 @@ const handleFlightClick = (flight) => {
 //   }
 // })
 
+const handleOptionSelection = (option) => {
+  sortOption.value = option; // Update sortOption with the selected option
+}
+
+const filteredAndSortedFlights = computed(() => {
+  if (!flightStore.flightResults) return [];
+
+  let flights = [...flightStore.flightResults];
+  // Apply sorting
+  switch (sortOption.value) {
+    case 'Price' || null:
+      flights.sort((a, b) => a.price - b.price);
+      break;
+    case 'Departure Time':
+      flights.sort((a, b) => {
+      const dateA = new Date(`1970-01-01T${a.flightDepTime}`);
+      const dateB = new Date(`1970-01-01T${b.flightDepTime}`);
+      return dateA - dateB;
+      });
+      break;
+  }
+
+  return flights;
+});
+
+
 </script>
 
 <template>
@@ -53,12 +80,12 @@ const handleFlightClick = (flight) => {
 
       <h1>Upcoming Flights</h1>
       <div class="p-dropdown__container">
-        <PDropDown design="flight" dropDownLabel="Times" :options="['Earliest', 'Latest']"></PDropDown>
-        <PDropDown design="flight" dropDownLabel="Price" :options="['Lowest', 'Highest']"></PDropDown>
+        <PDropDown design="flight" dropDownLabel="Sort By" :options="['Departure Time', 'Price']" @option-selected="handleOptionSelection"></PDropDown>
+        <!-- <PDropDown design="flight" dropDownLabel="Price" :options="['Lowest', 'Highest']" @option-selected="handleOptionSelection"></PDropDown> -->
       </div>
 
       <div class="p-event__container">
-        <PFlight v-for="(flight, index) in flightStore.flightResults"
+        <PFlight v-for="(flight, index) in filteredAndSortedFlights"
           :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="block" :flightID="flight.flightID" :flightDate="flight.flightDate"
           :origin="flight.origin" :destination="flight.destination" :flightDepTime="flight.flightDepTime"
           :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable"
