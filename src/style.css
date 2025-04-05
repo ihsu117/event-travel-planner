@@ -283,8 +283,18 @@ body {
 
 .event-page .p-dropdown__container#flight-search {
   gap: 0;
-  align-items:normal;
+  align-items: normal;
   flex-direction: column;
+  min-height: 0;
+  opacity: 0; /* Start hidden */
+  transition: min-height 0.8s ease, opacity 1s ease; /* Add opacity transition */
+}
+
+.event-page .p-dropdown__container#flight-search.show {
+  min-height: 30px;
+  max-height: 500px;
+  opacity: 1; /* Fully visible */
+  margin-bottom: 15px;
 }
 
 .selected-flight {

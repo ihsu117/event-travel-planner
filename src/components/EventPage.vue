@@ -295,7 +295,7 @@ const departureDateChange = (date) => {
                                 Roundtrip
                             </button>
                         </div>
-                        <div class="p-dropdown__container" id="flight-search">
+                        <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]" id="flight-search">
                             <!-- <PTextField design="small" label="Departure Date" type="date" v-model="searchDate">
                             </PTextField> -->
                             <div :class="['error-container', { show: errors.date }]">
@@ -317,7 +317,7 @@ const departureDateChange = (date) => {
                             </VueDatePicker>
 
                         </div>
-                        <div class="p-dropdown__container" id="flight-search">
+                        <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]" id="flight-search">
                             <div :class="['error-container', { show: errors.location }]">
                                 <svg v-if="errors.location" class="error-icon" xmlns="http://www.w3.org/2000/svg"
                                     width="16" height="16" viewBox="0 0 16 16">
@@ -332,8 +332,10 @@ const departureDateChange = (date) => {
                                 v-on:placechanged="handlePlaceChanged">
                             </vue-google-autocomplete>
                         </div>
+                        <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]" style="display: block;" id="flight-search">
                         <PButton v-if="flightType != null" design="gradient" label="Search for Flights"
                             @click="toFlightSearch" />
+                        </div>
                     </div>
 
 
