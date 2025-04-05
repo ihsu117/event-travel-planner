@@ -75,7 +75,6 @@ const handleEventClick = async (eventData) => {
         console.error('Failed to fetch the selected event:', error)
     }
     eventStore.setCurrentEvent(eventData)
-    console.log('!!Event:', eventData)
     if (isAttendee.value) {
         router.push({ name: 'Event' })
     } else if (isFinance.value) {

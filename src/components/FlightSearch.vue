@@ -13,7 +13,7 @@ const filterStops = ref('') // Declare filterStops to store the selected filteri
 const airlineSelection = ref('') // Declare airlineSelection to store the selected airline option
 const arrivalTimeRange = ref('') // Declare arrivalTimeRange to store the selected arrival time range
 const departureTimeRange = ref('') // Declare departureTimeRange to store the selected departure time range
-
+const loading = ref(false) // Declare loading to manage loading state
 //Function to handle the back button
 const handleBack = (targetRoute) => {
   router.push({ name: targetRoute });
@@ -65,6 +65,11 @@ const handleTimeRangeUpdate = ({ type, value }) => {
 };
 
 const filteredAndSortedFlights = computed(() => {
+  if (flightStore.flightResults.length === 0) {
+    loading.value = true; // Set loading to true if no flight results are available
+  } else {
+    loading.value = false; // Set loading to false if flight results are available
+  };
   if (!flightStore.flightResults) return [];
 
   let flights = [...flightStore.flightResults];
@@ -189,6 +194,11 @@ const filteredAndSortedFlights = computed(() => {
       </div>
 
       <div class="p-event__container">
+        <div v-if="loading" class="spinner">
+          <div class="loading-spinner" v-show="loading">
+            <span class="loader"></span>
+          </div>
+        </div>
         <PFlight v-for="(flight, index) in filteredAndSortedFlights"
           :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="block" :flightID="flight.flightID"
           :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
