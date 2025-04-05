@@ -159,8 +159,6 @@ body {
   min-height: 500px;
   gap: 7px;
   width: 87%;
-  overflow-y: auto;
-  overflow-x: hidden; 
 }
 
 .home {
@@ -172,9 +170,7 @@ body {
   max-width: 393px;
   background-color: #FFFFE2;
   padding-bottom: 20px;
-  overflow-y: hidden;
-  overflow-x: hidden;
-  max-height: 700px;
+
   min-height: 700px;
 }
 
