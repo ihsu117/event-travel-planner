@@ -8,7 +8,6 @@ import { onMounted, ref, computed } from 'vue'
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
 const router = useRouter()
-const sortPrice = ref('none')
 const sortOption = ref('') // Declare sortOption to store the selected sorting option
 const filterStops = ref('') // Declare filterStops to store the selected filtering option
 const airlineSelection = ref('') // Declare airlineSelection to store the selected airline option
@@ -69,6 +68,29 @@ const filteredAndSortedFlights = computed(() => {
   if (!flightStore.flightResults) return [];
 
   let flights = [...flightStore.flightResults];
+
+  if (flights.length > 0) {
+    flights.forEach(flight => {
+      const numStops = flight.itinerary[0].itinerary.length - 1;
+      flight.stops = numStops; // Add stops property to each flight object
+      flight.flightType = numStops === 0
+        ? 'Non-Stop'
+        : numStops === 1
+          ? '1 Stop'
+          : `${numStops} Stops`; // Set flightType based on numStops
+      flight.itinerary[0].itinerary.forEach((itinerary, index) => {
+        if (index < numStops) {
+          const arrivalTime = new Date(`1970-01-01T${itinerary.arrival_time}`);
+          const nextDepartureTime = new Date(`1970-01-01T${flight.itinerary[0].itinerary[index + 1].departure_time}`);
+          const layoverMinutes = (nextDepartureTime - arrivalTime) / (1000 * 60); // Calculate layover in minutes
+          const hours = Math.floor(layoverMinutes / 60);
+          const minutes = layoverMinutes % 60;
+          itinerary.layover = `${hours}h ${minutes}m`; // Add layover property in the format 00h 00m
+        }
+      });
+    });
+  }
+
 
   // Apply filtering based on stops
   switch (filterStops.value) {
@@ -173,7 +195,7 @@ const filteredAndSortedFlights = computed(() => {
           :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber"
           :seatAvailable="flight.seatAvailable" :price="flight.price" :flightType="flight.flightType"
           :flightClass="flight.flightClass" :flightGate="flight.flightGate" :airline="flight.airline"
-          :logoURL="flight.logoURL" @click="handleFlightClick(flight)" />
+          :logoURL="flight.logoURL" :itinerary="flight.itinerary" @click="handleFlightClick(flight)" />
       </div>
     </div>
   </div>

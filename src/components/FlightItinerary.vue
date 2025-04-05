@@ -13,12 +13,12 @@ const handleBack = (targetRoute) => {
 
 const confirmPurchase = async () => {
   const flightData = {
-        depart_loc: flightStore.currentFlight.origin,
-        arrive_loc: flightStore.currentFlight.destination,
-        depart_time: flightStore.currentFlight.flightDepTime,
-        arrive_time: flightStore.currentFlight.flightArrTime,
-        price: flightStore.currentFlight.price,
-        date: flightStore.currentFlight.flightDate
+    depart_loc: flightStore.currentFlight.origin,
+    arrive_loc: flightStore.currentFlight.destination,
+    depart_time: flightStore.currentFlight.flightDepTime,
+    arrive_time: flightStore.currentFlight.flightArrTime,
+    price: flightStore.currentFlight.price,
+    date: flightStore.currentFlight.flightDate
   }
   //Saves selected flight to local storage
   localStorage.setItem('selectedFlight', JSON.stringify(flightStore.currentFlight));
@@ -41,7 +41,7 @@ const confirmPurchase = async () => {
     router.push({ name: 'Event' })
   )
 }
-
+console.log(flightStore.currentFlight)
 </script>
 
 <template>
@@ -57,7 +57,15 @@ const confirmPurchase = async () => {
       </div>
 
       <div class="p-event__container">
-        <PFlight design="itinerary" v-bind="flightStore.currentFlight"></PFlight>
+        <div class="p-event__entry" v-for="(itinerary, index) in flightStore.currentFlight.itinerary[0].itinerary" :key="index">
+          <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+            :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
+            :flightDuration="itinerary.duration">
+          </PFlight>
+          <PFlight v-if="index !== flightStore.currentFlight.itinerary[0].itinerary.length - 1" design="layover" v-bind="itinerary"
+          :layoverDuration="itinerary.layover"></PFlight>
+        </div>
+
       </div>
       <div class="flight-itinerary-button">
         <PButton design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">

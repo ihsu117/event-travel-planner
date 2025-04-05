@@ -19,7 +19,7 @@ export const useFlightStore = defineStore('flight', {
             airline: '',
             logoURL: '',
             offer_id: '',
-            itinerary: ''
+            itinerary: []
         },
         flightResults: []
     }),
@@ -43,7 +43,7 @@ export const useFlightStore = defineStore('flight', {
                 airline: flight.airline,
                 logoURL: flight.logoURL,
                 offer_id: flight.offer_id,
-                itinerary: flight.details
+                itinerary: flight.itinerary
             };
             console.log('Current flight:', this.currentFlight);
         },
