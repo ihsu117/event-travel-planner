@@ -512,15 +512,9 @@ body {
 }
 
 .modal-container {
-  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform: translate(9%, 10%);
-  border-radius: 10px;
-  box-shadow: var(--drop-shadow);
-  z-index: 1000;
-  animation: fadeIn 0.15s ease-in-out;
   width: 335px;
   min-height: 625px;
   max-height: 625px;
@@ -919,7 +913,6 @@ body {
 .budget-modal {
   max-width: 300px;
   width: 90%;
-  z-index: 1000;
 }
 
 

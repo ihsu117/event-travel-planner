@@ -147,7 +147,7 @@ const handleModalOption = async (option) => {
     <template v-if="isModalVisible">
         <div>
             <div class="modal-overlay" @click="closeModal"></div>
-            <div class="modal-container">
+            <div class="modal modal-container">
                 <div class="modal-profile">
                     <div class="modal-profile-img-name">
                         <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
