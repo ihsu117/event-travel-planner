@@ -21,9 +21,10 @@ const arrivalDate = ref(null)
 const zipcode = ref('')
 const flightSelected = ref(false)
 const editView = ref(route.query.editView === 'true')
-const flightType = ref('one-way');
+const flightType = ref(null);
 const latitude = ref('');
 const longitude = ref('');
+const errors = ref({ date: '', location: '' })
 
 
 //Function to handle the date selection
@@ -70,6 +71,13 @@ const handleFlightClick = (flight) => {
 
 //Function to search for flights with Duffel API
 const toFlightSearch = () => {
+    if (!searchDate.value && !returnDate.value) {
+        errors.value.date = 'Date is required.'
+    }
+    if (!latitude.value || !longitude.value) {
+        errors.value.location = 'Departure airport is required.'
+    }
+
     flightStore.clearFlights()
     console.log(eventStore.currentEvent);
     console.log(new Date(searchDate.value).toISOString())
@@ -173,35 +181,35 @@ onMounted(async () => {
     checkAndLoadEvent()
     checkAndLoadSelectedFlight()
     console.log('Organization:', eventStore.currentEvent.org)
-//     try {
-//     const [financeResponse, eventResponse] = await Promise.all([
-//         api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
-//             credentials: 'include'
-//         }),
-//         api.apiFetch('/events/' + eventStore.currentEvent.id, {
-//             credentials: 'include'
-//         })
-//     ]);
+    //     try {
+    //     const [financeResponse, eventResponse] = await Promise.all([
+    //         api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
+    //             credentials: 'include'
+    //         }),
+    //         api.apiFetch('/events/' + eventStore.currentEvent.id, {
+    //             credentials: 'include'
+    //         })
+    //     ]);
 
-//     if (financeResponse.ok) {
-//         const financeMan = await financeResponse.json();
-//         financeMan.phoneNum = financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-//         eventStore.currentEvent.financeMan = financeMan;
-//     } else {
-//         console.error('Failed to fetch finance manager');
-//     }
+    //     if (financeResponse.ok) {
+    //         const financeMan = await financeResponse.json();
+    //         financeMan.phoneNum = financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+    //         eventStore.currentEvent.financeMan = financeMan;
+    //     } else {
+    //         console.error('Failed to fetch finance manager');
+    //     }
 
-//     if (eventResponse.ok) {
-//         const { createdBy } = await eventResponse.json();
-//         createdBy.phoneNum = createdBy.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-//         eventStore.currentEvent.createdBy = createdBy;
-//     } else {
-//         console.error('Failed to fetch current event');
-//     }
+    //     if (eventResponse.ok) {
+    //         const { createdBy } = await eventResponse.json();
+    //         createdBy.phoneNum = createdBy.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+    //         eventStore.currentEvent.createdBy = createdBy;
+    //     } else {
+    //         console.error('Failed to fetch current event');
+    //     }
 
-// } catch (error) {
-//     console.error('One or both requests failed:', error);
-// }
+    // } catch (error) {
+    //     console.error('One or both requests failed:', error);
+    // }
 
 })
 
@@ -244,13 +252,11 @@ const departureDateChange = (date) => {
                         </svg>
                         <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
                             :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
-                            jobTitle="Event Planner"
-                            :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                            jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                             :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                         <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
                             :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
-                            jobTitle="Finance Manager"
-                            :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                            jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                             :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                     </div>
                 </div>
@@ -276,32 +282,58 @@ const departureDateChange = (date) => {
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
                     <div>
-                        <h1>Flight Information</h1>
+                        <h1>Flight Search</h1>
                         <div class="selected-flight" v-if="flightSelected">
                             <PFlight design="block" v-bind="flightStore.currentFlight"
                                 @click="handleFlightClick(flightStore.currentFlight)" />
                         </div>
-                        <div class="flight-type">
-                            <label>
-                                <input type="radio" name="flightType" :value="0" v-model="flightType" />
+                        <div class="flight-type-toggle">
+                            <button :class="['flight-btn', flightType === 0 ? 'active' : '']" @click="flightType = 0">
                                 One-Way
-                            </label>
-                            <label>
-                                <input type="radio" name="flightType" :value="1" v-model="flightType" />
+                            </button>
+                            <button :class="['flight-btn', flightType === 1 ? 'active' : '']" @click="flightType = 1">
                                 Roundtrip
-                            </label>
+                            </button>
                         </div>
-                        <div class="p-dropdown__container">
+                        <div class="p-dropdown__container" id="flight-search">
                             <!-- <PTextField design="small" label="Departure Date" type="date" v-model="searchDate">
                             </PTextField> -->
-                            <VueDatePicker style="width: 150px;" v-if="flightType=== 0" v-model="searchDate" :enable-time-picker="false" :format="'MM/dd/yyyy'" :placeholder="'Departure'" @update:model-value="departureDateChange"></VueDatePicker>
+                            <div :class="['error-container', { show: errors.date }]">
+                                <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg"
+                                    width="16" height="16" viewBox="0 0 16 16">
+                                    <path fill="#FEB96E" fill-rule="evenodd"
+                                        d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p v-if="errors.date" class="input-error">{{ errors.date }}</p>
+                            </div>
+                            <VueDatePicker v-if="flightType === 0" v-model="searchDate" :enable-time-picker="false"
+                                :format="'MM/dd/yyyy'" :placeholder="'Departure Date'"
+                                @update:model-value="departureDateChange"></VueDatePicker>
                             <!-- <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField> -->
-                            <VueDatePicker style="width: 150px;" v-if="flightType === 1" :range="true" :enable-time-picker="false" v-model="returnDate" :format="'MM/dd/yyyy'" :placeholder="'Departure & Return'"></VueDatePicker>
-                            <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
+                            <VueDatePicker v-if="flightType === 1" :range="true" :enable-time-picker="false"
+                                v-model="returnDate" :format="'MM/dd/yyyy'" :placeholder="'Departure & Return Dates'">
+                            </VueDatePicker>
+
+                        </div>
+                        <div class="p-dropdown__container" id="flight-search">
+                            <div :class="['error-container', { show: errors.location }]">
+                                <svg v-if="errors.location" class="error-icon" xmlns="http://www.w3.org/2000/svg"
+                                    width="16" height="16" viewBox="0 0 16 16">
+                                    <path fill="#FEB96E" fill-rule="evenodd"
+                                        d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p v-if="errors.location" class="input-error">{{ errors.location }}</p>
+                            </div>
+                            <vue-google-autocomplete v-if="flightType != null" class="p-textfield--small" id="map"
+                                types="airport" country="us" classname="form-control" placeholder="Departure Airport"
+                                v-on:placechanged="handlePlaceChanged">
                             </vue-google-autocomplete>
                         </div>
-                        <PButton design="gradient" label="Search for Flights" @click="toFlightSearch" />
+                        <PButton v-if="flightType != null" design="gradient" label="Search for Flights"
+                            @click="toFlightSearch" />
                     </div>
 
 
@@ -309,13 +341,11 @@ const departureDateChange = (date) => {
                     <div class="finance-info">
                         <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
                             :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
-                            jobTitle="Event Planner"
-                            :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                            jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                             :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                         <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
                             :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
-                            jobTitle="Finance Manager"
-                            :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                            jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                             :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                     </div>
                 </div>

@@ -69,7 +69,6 @@
   text-align: left;
   
   gap: 5px;
-  margin-bottom: 7px;
   margin-left: 13px;
   height: 0;
   opacity: 0; /* Start hidden */
@@ -80,6 +79,7 @@
 .error-container.show {
   height: 19px;
   opacity: 1; /* Fully visible */
+  margin-bottom: 7px;
 }
 
 .error-icon {
@@ -277,9 +277,14 @@ body {
 }
 
 .event-page .p-dropdown__container {
-  margin-left: 5px;
   margin-bottom: 15px;
   max-width: 380px;
+}
+
+.event-page .p-dropdown__container#flight-search {
+  gap: 0;
+  align-items:normal;
+  flex-direction: column;
 }
 
 .selected-flight {
@@ -991,4 +996,34 @@ input:checked+.slider:before {
 
 .threshold-container {
   margin-top: 16px;
+}
+
+.flight-type {
+  color: black;
+  margin-bottom: 10px;
+}
+
+.flight-type-toggle {
+  display: inline-flex;
+  border: 1px solid #000;
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  margin-bottom:6px;
+}
+
+.flight-btn {
+  padding: 10px 24px;
+  border: none;
+  background-color: transparent;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+
+.flight-btn.active {
+  background: var(--top-gradient); /* Blue for active */
+  color: #fff;
 }
