@@ -219,7 +219,7 @@ const handleModalOption = async (option) => {
                         :description="event.description" :currentBudget="event.currentBudget"
                         :destinationCode="event.destinationCode" :financeMan="event.financeMan"
                         :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
-                        design="block" @event-click="handleEventClick" :class="{ 'fade-in': true, 'show': !loading }"/>
+                        design="block" @event-click="handleEventClick" :class="{ 'fade-in': true, 'show': !loading }" />
 
                 </div>
             </div>
@@ -239,6 +239,9 @@ const handleModalOption = async (option) => {
                 </div>
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
+                    <div class="loading-spinner" v-show="loading">
+                        <span class="loader"></span>
+                    </div>
                     <!--Dynamic Events-->
                     <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
@@ -267,6 +270,9 @@ const handleModalOption = async (option) => {
                 </div>
                 <h1>Upcoming Events</h1>
                 <div class="p-event__container">
+                    <div class="loading-spinner" v-show="loading">
+                        <span class="loader"></span>
+                    </div>
                     <!--Dynamic Events-->
                     <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
