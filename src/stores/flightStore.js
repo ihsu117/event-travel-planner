@@ -28,7 +28,7 @@ export const useFlightStore = defineStore('flight', {
         setCurrentFlight(flight) {
             this.currentFlight = {
                 flightID: null,
-                flightDate: new Date(flight.flightDate),
+                flightDate: flight.flightDate,
                 origin: flight.origin,
                 passID: flight.passID,
                 destination: flight.destination,
@@ -61,26 +61,33 @@ export const useFlightStore = defineStore('flight', {
                     console.error('Expected array of flights, got:', typeof flightData);
                     return;
                 }
-
-                this.flightResults = flightData.slice(1).map(flight => ({
-                    flightID: null,
-                    flightDate: new Date(flight.details[0].itinerary[0].departure_date),
-                    origin: flight.origin_airport,
-                    destination: flight.destination_airport,
-                    flightDepTime: flight.details[0].itinerary[0].departure_time,
-                    flightArrTime: flight.details[0].itinerary[flight.details[0].itinerary.length - 1].arrival_time,
-                    seatNumber: '' || 'TBD',
-                    seatAvailable: 1,
-                    passID: flight.passenger_id,
-                    price: Math.round(flight.price),
-                    flightType: flight.flight_type,
-                    flightClass: flight.flight_class,
-                    flightGate: flight.details[0].itinerary[0].terminal || 'TBD',
-                    airline: flight.airline,
-                    logoURL: flight.logo,
-                    offer_id: flight.offer_id,
-                    itinerary: flight.details
-                }));
+                
+                this.flightResults = flightData.slice(1).map(flight => {
+                    const [year, month, day] = flight.details[0].itinerary[0].departure_date.split('-');
+                    const aflightDate = new Date(year, month - 1, day);
+                    console.log('!!!Flight date:', aflightDate); 
+                
+                    return {
+                        flightID: null,
+                        flightDate: aflightDate,
+                        origin: flight.origin_airport,
+                        destination: flight.destination_airport,
+                        flightDepTime: flight.details[0].itinerary[0].departure_time,
+                        flightArrTime: flight.details[0].itinerary[flight.details[0].itinerary.length - 1].arrival_time,
+                        seatNumber: '' || 'TBD',
+                        seatAvailable: 1,
+                        passID: flight.passenger_id,
+                        price: Math.round(flight.price),
+                        flightType: flight.flight_type,
+                        flightClass: flight.flight_class,
+                        flightGate: flight.details[0].itinerary[0].terminal || 'TBD',
+                        airline: flight.airline,
+                        logoURL: flight.logo,
+                        offer_id: flight.offer_id,
+                        itinerary: flight.details
+                    };
+                });
+                
 
                 console.log('Processed flights:', this.flightResults);
             } catch (error) {

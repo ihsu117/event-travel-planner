@@ -257,7 +257,6 @@ body {
   font-size: 24px;
   text-align: left;
   margin-left: 0;
-  padding-left: 15px;
   margin-bottom: 12px;
 }
 
@@ -297,7 +296,6 @@ body {
 
 .finance-info {
   position: relative;
-  padding-left: 20px;
 }
 
 .flight-page {

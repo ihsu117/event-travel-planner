@@ -8,12 +8,15 @@ import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
 import VueGoogleAutocomplete from "vue-google-autocomplete"
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
 const router = useRouter()
 const route = useRoute()
 const searchDate = ref(null)
+const returnDate = ref(null)
 const arrivalDate = ref(null)
 const zipcode = ref('')
 const flightSelected = ref(false)
@@ -69,6 +72,7 @@ const handleFlightClick = (flight) => {
 const toFlightSearch = () => {
     flightStore.clearFlights()
     console.log(eventStore.currentEvent);
+    console.log(new Date(searchDate.value).toISOString())
     return api.apiFetch('/flights/search', {
         method: 'POST',
         credentials: 'include',
@@ -76,7 +80,7 @@ const toFlightSearch = () => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            departure_date: searchDate.value || eventStore.currentEvent.startDate,
+            departure_date: searchDate.value.toISOString().split('T')[0] || eventStore.currentEvent.startDate,
             lat: latitude.value,
             long: longitude.value,
             destination: eventStore.currentEvent.destinationCode,
@@ -200,6 +204,11 @@ onMounted(async () => {
 // }
 
 })
+
+const departureDateChange = (date) => {
+    console.log('Selected Departure Date:', date);
+}
+
 </script>
 
 <template>
@@ -283,10 +292,12 @@ onMounted(async () => {
                             </label>
                         </div>
                         <div class="p-dropdown__container">
-                            <PTextField design="small" label="Departure Date" type="date" v-model="searchDate">
-                            </PTextField>
-                            <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
-                                v-model="returnDate"></PTextField>
+                            <!-- <PTextField design="small" label="Departure Date" type="date" v-model="searchDate">
+                            </PTextField> -->
+                            <VueDatePicker v-if="flightType=== 0" v-model="searchDate" :enable-time-picker="false" :format="'MM/dd/yyyy'" :placeholder="'Departure Date'" @update:model-value="departureDateChange"></VueDatePicker>
+                            <!-- <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
+                                v-model="returnDate"></PTextField> -->
+                            <VueDatePicker v-if="flightType === 1" :range="true" :enable-time-picker="false" v-model="returnDate" :format="'MM/dd/yyyy'" :placeholder="'Departure & Return'"></VueDatePicker>
                             <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
                             </vue-google-autocomplete>
                         </div>

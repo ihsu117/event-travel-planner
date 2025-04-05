@@ -21,6 +21,7 @@ const handleBack = (targetRoute) => {
 
 //Function to handle the flight click
 const handleFlightClick = (flight) => {
+  console.log(flight)
   flightStore.setCurrentFlight(flight)
   router.push({ name: 'FlightItinerary' })
 }

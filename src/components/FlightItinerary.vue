@@ -57,13 +57,15 @@ console.log(flightStore.currentFlight)
       </div>
 
       <div class="p-event__container">
-        <div class="p-event__entry" v-for="(itinerary, index) in flightStore.currentFlight.itinerary[0].itinerary" :key="index">
+        <div class="p-event__entry" v-for="(itinerary, index) in flightStore.currentFlight.itinerary[0].itinerary"
+          :key="index">
           <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
             :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
-            :flightDuration="itinerary.duration">
+            :flightDuration="itinerary.duration"
+            :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
           </PFlight>
-          <PFlight v-if="index !== flightStore.currentFlight.itinerary[0].itinerary.length - 1" design="layover" v-bind="itinerary"
-          :layoverDuration="itinerary.layover"></PFlight>
+          <PFlight v-if="index !== flightStore.currentFlight.itinerary[0].itinerary.length - 1" design="layover"
+            v-bind="itinerary" :layoverDuration="itinerary.layover"></PFlight>
         </div>
 
       </div>

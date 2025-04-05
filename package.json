@@ -11,6 +11,7 @@
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
     "@poseidon/design-system": "file:Poseidon-Design-System/PoseidonDesignSys",
+    "@vuepic/vue-datepicker": "^11.0.2",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "pinia": "^2.3.1",
