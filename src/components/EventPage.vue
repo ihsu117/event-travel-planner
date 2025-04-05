@@ -294,10 +294,10 @@ const departureDateChange = (date) => {
                         <div class="p-dropdown__container">
                             <!-- <PTextField design="small" label="Departure Date" type="date" v-model="searchDate">
                             </PTextField> -->
-                            <VueDatePicker v-if="flightType=== 0" v-model="searchDate" :enable-time-picker="false" :format="'MM/dd/yyyy'" :placeholder="'Departure Date'" @update:model-value="departureDateChange"></VueDatePicker>
+                            <VueDatePicker style="width: 150px;" v-if="flightType=== 0" v-model="searchDate" :enable-time-picker="false" :format="'MM/dd/yyyy'" :placeholder="'Departure'" @update:model-value="departureDateChange"></VueDatePicker>
                             <!-- <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField> -->
-                            <VueDatePicker v-if="flightType === 1" :range="true" :enable-time-picker="false" v-model="returnDate" :format="'MM/dd/yyyy'" :placeholder="'Departure & Return'"></VueDatePicker>
+                            <VueDatePicker style="width: 150px;" v-if="flightType === 1" :range="true" :enable-time-picker="false" v-model="returnDate" :format="'MM/dd/yyyy'" :placeholder="'Departure & Return'"></VueDatePicker>
                             <vue-google-autocomplete class="p-textfield--small" id="map" types="airport" country="us" classname="form-control" placeholder="Start typing" v-on:placechanged="handlePlaceChanged">
                             </vue-google-autocomplete>
                         </div>
