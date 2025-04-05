@@ -522,7 +522,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform: translate(11%, 10%);
+  transform: translate(9%, 10%);
   border-radius: 10px;
   box-shadow: var(--drop-shadow);
   z-index: 1000;
