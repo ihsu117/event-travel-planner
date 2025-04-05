@@ -35,6 +35,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 350px;
 }
 
 .login-input {
@@ -43,6 +44,7 @@
   justify-content: center;
   gap: 18px;
   margin-top: 30px;
+  width: 100%;
 }
 
 .email-container {
@@ -444,10 +446,9 @@ body {
 }
 
 .modal {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
-  width: 300px;
   transform: translate(-50%, -50%);
   background: var(--pos-inner-yellow);
   padding: 20px;
@@ -915,16 +916,9 @@ body {
 }
 
 .budget-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   max-width: 300px;
   width: 90%;
   z-index: 1000;
-  font-family: 'Segoe UI', sans-serif;
 }
 
 
