@@ -195,7 +195,7 @@ const filteredAndSortedFlights = computed(() => {
 
       <div class="p-event__container">
         <div v-if="loading" class="spinner">
-          <div class="loading-spinner" v-show="loading">
+          <div class="loading-spinner" v-show="loading" style="margin-top:0">
             <span class="loader"></span>
           </div>
         </div>
