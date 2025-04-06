@@ -7,6 +7,7 @@ import api from '../assets/scripts/api.js'
 const router = useRouter()
 const flightStore = useFlightStore()
 
+
 const handleBack = (targetRoute) => {
   router.push({ name: targetRoute });
 }
@@ -21,8 +22,11 @@ const confirmPurchase = async () => {
     date: flightStore.currentFlight.flightDate
   }
   //Saves selected flight to local storage
-  localStorage.setItem('selectedFlight', JSON.stringify(flightStore.currentFlight));
-  localStorage.setItem('flightSelected', 'true');
+  //localStorage.setItem('selectedFlight', JSON.stringify(flightStore.currentFlight));
+  //localStorage.setItem('flightSelected', 'true');
+
+  const localStorageData = JSON.parse(localStorage.getItem('eventData'));
+  const eventID = localStorageData?.id; // Extract the eventID
 
   return api.apiFetch('/flights/hold', {
     method: 'POST',
@@ -33,7 +37,8 @@ const confirmPurchase = async () => {
     body: JSON.stringify({
       offerID: flightStore.currentFlight.offer_id,
       passID: flightStore.currentFlight.passID,
-      flight: flightData
+      flight: flightData,
+      eventID: eventID
     })
   }).then(
     response => console.log(response)
