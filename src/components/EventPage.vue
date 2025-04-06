@@ -311,29 +311,32 @@ const handleOneWayDate = (date) => {
                                 Roundtrip
                             </button>
                         </div>
-                        <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]" id="flight-search">
+                        <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
+                            id="flight-search">
                             <!-- <PTextField design="small" label="Departure Date" type="date" v-model="searchDate">
                             </PTextField> -->
                             <div :class="['error-container', { show: errors.date }]">
-                                <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg"
-                                    width="16" height="16" viewBox="0 0 16 16">
+                                <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" viewBox="0 0 16 16">
                                     <path fill="#FEB96E" fill-rule="evenodd"
                                         d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
                                         clip-rule="evenodd" />
                                 </svg>
                                 <p v-if="errors.date" class="input-error">{{ errors.date }}</p>
                             </div>
-                            <VueDatePicker v-if="flightType === 0" v-model="departDate" :enable-time-picker="false"
-                                :placeholder="'Departure Date'" exactMatch="true" 
+                            <VueDatePicker v-if="flightType === 0" v-model="departDate" :min-date="new Date()"
+                                :enable-time-picker="false" :placeholder="'Departure Date'" exactMatch="true" :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
                                 @update:model-value="handleOneWayDate"></VueDatePicker>
                             <!-- <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField> -->
-                            <VueDatePicker v-if="flightType === 1" :range="true" :enable-time-picker="false"
-                                v-model="roundtripRange" :format="'MM/dd/yyyy'" :placeholder="'Departure & Return Dates'" @update:model-value="handleRoundtripDate">
+                            <VueDatePicker v-if="flightType === 1" :range="true" :min-date="new Date()"
+                                :enable-time-picker="false" v-model="roundtripRange" :format="'MM/dd/yyyy'"
+                                :placeholder="'Departure & Return Dates'" :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply @update:model-value="handleRoundtripDate">
                             </VueDatePicker>
 
                         </div>
-                        <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]" id="flight-search">
+                        <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
+                            id="flight-search">
                             <div :class="['error-container', { show: errors.location }]">
                                 <svg v-if="errors.location" class="error-icon" xmlns="http://www.w3.org/2000/svg"
                                     width="16" height="16" viewBox="0 0 16 16">
@@ -348,9 +351,10 @@ const handleOneWayDate = (date) => {
                                 v-on:placechanged="handlePlaceChanged">
                             </vue-google-autocomplete>
                         </div>
-                        <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]" style="display: block;" id="flight-search">
-                        <PButton v-if="flightType != null" design="gradient" label="Search for Flights"
-                            @click="toFlightSearch" />
+                        <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
+                            style="display: block;" id="flight-search">
+                            <PButton v-if="flightType != null" design="gradient" label="Search for Flights"
+                                @click="toFlightSearch" />
                         </div>
                     </div>
 
