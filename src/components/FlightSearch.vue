@@ -59,15 +59,6 @@ const filteredAndSortedFlights = computed(() => {
   let flights = [...flightStore.flightResults];
   console.log('!!!FLIGHTS!!!', flights)
 
-  // console.log(combineIdenticalFlights(flights))
-
-  if (route?.query?.type == '1') {
-    flights = combineIdenticalFlights(flights); // Combine identical flights
-    console.log('!!!COMBINED FLIGHTS!!!', flights)
-  } else {
-    console.log("Skipping combineIdenticalFlights")
-  }
-
 
   if (flights.length > 0 && flights[0].itinerary.length > 1) {
     console.log('!!!ROUND-TRIP!!!')
@@ -110,7 +101,14 @@ const filteredAndSortedFlights = computed(() => {
     });
   }
 
+  // console.log(combineIdenticalFlights(flights))
 
+  if (route?.query?.type == '1') {
+    flights = combineIdenticalFlights(flights); // Combine identical flights
+    console.log('!!!COMBINED FLIGHTS!!!', flights)
+  } else {
+    console.log("Skipping combineIdenticalFlights")
+  }
 
   // Apply filtering based on stops
   switch (filterStops.value) {
