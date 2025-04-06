@@ -16,6 +16,7 @@ const flightStore = useFlightStore()
 const router = useRouter()
 const route = useRoute()
 const searchDate = ref(null)
+const departDate = ref(null)
 const returnDate = ref(null)
 const arrivalDate = ref(null)
 const zipcode = ref('')
@@ -25,6 +26,7 @@ const flightType = ref(null);
 const latitude = ref('');
 const longitude = ref('');
 const errors = ref({ date: '', location: '' })
+const roundtripRange = ref(null)
 
 
 //Function to handle the date selection
@@ -80,7 +82,8 @@ const toFlightSearch = () => {
 
     flightStore.clearFlights()
     console.log(eventStore.currentEvent);
-    console.log(new Date(searchDate.value).toISOString())
+    console.log('date being sent to api:', searchDate.value);
+    // console.log(searchDate.value.toISOString())
     return api.apiFetch('/flights/search', {
         method: 'POST',
         credentials: 'include',
@@ -88,16 +91,17 @@ const toFlightSearch = () => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            departure_date: searchDate.value.toISOString().split('T')[0] || eventStore.currentEvent.startDate,
+            departure_date: searchDate.value || eventStore.currentEvent.startDate,
             lat: latitude.value,
             long: longitude.value,
             destination: eventStore.currentEvent.destinationCode,
-            type: flightType.value
+            type: flightType.value,
+            ...(returnDate.value ? { return_date: returnDate.value } : {})
         })
     }).then(
         response => flightStore.setFlightResults(response.json())
     ).then(
-        router.push({ name: 'Flight' })
+        router.push({ name: 'Flight', query: { type: flightType.value } })
     )
 }
 const editableName = ref(eventStore.currentEvent.eventName)
@@ -213,8 +217,20 @@ onMounted(async () => {
 
 })
 
-const departureDateChange = (date) => {
-    console.log('Selected Departure Date:', date);
+const handleRoundtripDate = (date) => {
+    // console.log('!!!DATE CHANGE:', date);
+    console.log('date input:', date);
+    searchDate.value = date[0].toLocaleDateString('sv-SE')
+    returnDate.value = date[1].toLocaleDateString('sv-SE')
+    console.log('date output', searchDate.value, returnDate.value);
+
+}
+
+const handleOneWayDate = (date) => {
+    searchDate.value = date.toLocaleDateString('sv-SE')
+    console.log('date input:', date);
+    console.log('date output:', searchDate.value);
+
 }
 
 </script>
@@ -307,13 +323,13 @@ const departureDateChange = (date) => {
                                 </svg>
                                 <p v-if="errors.date" class="input-error">{{ errors.date }}</p>
                             </div>
-                            <VueDatePicker v-if="flightType === 0" v-model="searchDate" :enable-time-picker="false"
-                                :format="'MM/dd/yyyy'" :placeholder="'Departure Date'"
-                                @update:model-value="departureDateChange"></VueDatePicker>
+                            <VueDatePicker v-if="flightType === 0" v-model="departDate" :enable-time-picker="false"
+                                :placeholder="'Departure Date'" exactMatch="true" 
+                                @update:model-value="handleOneWayDate"></VueDatePicker>
                             <!-- <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
                                 v-model="returnDate"></PTextField> -->
                             <VueDatePicker v-if="flightType === 1" :range="true" :enable-time-picker="false"
-                                v-model="returnDate" :format="'MM/dd/yyyy'" :placeholder="'Departure & Return Dates'">
+                                v-model="roundtripRange" :format="'MM/dd/yyyy'" :placeholder="'Departure & Return Dates'" @update:model-value="handleRoundtripDate">
                             </VueDatePicker>
 
                         </div>
