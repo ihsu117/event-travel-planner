@@ -62,7 +62,7 @@ export const useFlightStore = defineStore('flight', {
                     return;
                 }
                 
-                this.flightResults = flightData.slice(1).map(flight => {
+                this.flightResults = flightData.slice(0).map(flight => {
                     const [year, month, day] = flight.details[0].itinerary[0].departure_date.split('-');
                     const aflightDate = new Date(year, month - 1, day);
                     console.log('!!!Flight date:', aflightDate); 
