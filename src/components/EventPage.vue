@@ -305,10 +305,10 @@ const handleOneWayDate = (date) => {
                         </div>
                         <div class="flight-type-toggle">
                             <button :class="['flight-btn', flightType === 0 ? 'active' : '']" @click="flightType = 0">
-                                One-Way
+                                One way
                             </button>
                             <button :class="['flight-btn', flightType === 1 ? 'active' : '']" @click="flightType = 1">
-                                Roundtrip
+                                Round trip
                             </button>
                         </div>
                         <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"

@@ -166,7 +166,7 @@ console.log("ITINERARIES: ", itineraries.value)
         </PButton>
       </div>
       <div>
-        <PButton v-if="flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1" design="gradient" label="Choose Return Flight"
+        <PButton v-if="flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1" design="gradient" label="Search for Returning Flights"
           @click="handleReturnFlightClick()"></PButton>
       </div>
     </div>
