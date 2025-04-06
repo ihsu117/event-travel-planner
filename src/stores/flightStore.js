@@ -21,7 +21,8 @@ export const useFlightStore = defineStore('flight', {
             offer_id: '',
             itinerary: []
         },
-        flightResults: []
+        flightResults: [],
+        returnFlightResults: []
     }),
 
     actions: {
@@ -136,6 +137,50 @@ export const useFlightStore = defineStore('flight', {
 
         clearFlights() {
             this.flightResults = []
+        },
+
+        setReturningFlightResults(flightData) {
+            try {
+                console.log('Flight data type:', typeof flightData);
+                console.log('Flight data:', flightData);
+
+                // Ensure we have an array to work with
+                // if (!Array.isArray(flightData)) {
+                //     console.error('Expected array of flights, got:', typeof flightData);
+                //     return;
+                // }
+                
+                this.flightResults = flightData.slice(0).map(flight => {
+                    const [year, month, day] = flight.flightDate.split('-');
+                    const aflightDate = new Date(year, month - 1, day);
+                
+                    return {
+                        flightID: null,
+                        flightDate: aflightDate,
+                        origin: flight.origin,
+                        destination: flight.destination,
+                        flightDepTime: flight.flightDepTime,
+                        flightArrTime: flight.flightArrTime,
+                        seatNumber: '' || 'TBD',
+                        seatAvailable: 1,
+                        passID: flight.passID,
+                        price: Math.round(flight.price),
+                        flightType: flight.flight_type,
+                        flightClass: flight.flightClass,
+                        flightGate:'TBD', // Not working
+                        airline: flight.airline,
+                        logoURL: flight.logoURL,
+                        offer_id: flight.offer_id,
+                        itinerary: flight.itinerary
+                    };
+                });
+                
+
+                console.log('Processed flights:', this.flightResults);
+            } catch (error) {
+                console.error('Error processing flight data:', error);
+                this.flightResults = [];
+            }
         }
     },
 

@@ -1,10 +1,11 @@
 <script setup>
 import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { PEvent, PButton, PDropDown, PFlight, PTimeRangeDropDown } from '@poseidon-components'
 import { onMounted, ref, computed } from 'vue'
 
+const route = useRoute()
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
 const router = useRouter()
@@ -14,6 +15,7 @@ const airlineSelection = ref('') // Declare airlineSelection to store the select
 const arrivalTimeRange = ref('') // Declare arrivalTimeRange to store the selected arrival time range
 const departureTimeRange = ref('') // Declare departureTimeRange to store the selected departure time range
 const loading = ref(false) // Declare loading to manage loading state
+const groupedByOutbound = ref(null) // Declare groupedByOutbound to store grouped flights by outbound leg
 //Function to handle the back button
 const handleBack = (targetRoute) => {
   router.push({ name: targetRoute });
@@ -25,25 +27,6 @@ const handleFlightClick = (flight) => {
   flightStore.setCurrentFlight(flight)
   router.push({ name: 'FlightItinerary' })
 }
-
-// const handlePriceSort = (option) => {
-//   sortPrice.value = option
-// }
-
-// const sortedFlights = computed(() => {
-//   if (!flightStore.flightResults) return []
-
-//   const flights = [...flightStore.flightResults]
-
-//   switch (sortPrice.value) {
-//     case 'Lowest':
-//       return flights.sort((a, b) => a.price - b.price)
-//     case 'Highest':
-//       return flights.sort((a, b) => b.price - a.price)
-//     case 'Price':
-//       return flights
-//   }
-// })
 
 const handleSortSelection = (option) => {
   sortOption.value = option; // Update sortOption with the selected option
@@ -74,28 +57,59 @@ const filteredAndSortedFlights = computed(() => {
   if (!flightStore.flightResults) return [];
 
   let flights = [...flightStore.flightResults];
+  console.log('!!!FLIGHTS!!!', flights)
+
+  // console.log(combineIdenticalFlights(flights))
+
+  if (route?.query?.type == '1') {
+    flights = combineIdenticalFlights(flights); // Combine identical flights
+    console.log('!!!COMBINED FLIGHTS!!!', flights)
+  } else {
+    console.log("Skipping combineIdenticalFlights")
+  }
+
+
+  if (flights.length > 0 && flights[0].itinerary.length > 1) {
+    console.log('!!!ROUND-TRIP!!!')
+  }
 
   if (flights.length > 0) {
     flights.forEach(flight => {
-      const numStops = flight.itinerary[0].itinerary.length - 1;
+      // Normalize itinerary segments for each flight.
+      const flightItinerary = flight.itinerary;
+      let segments = [];
+      if (flightItinerary && flightItinerary.length > 0) {
+        const firstItem = flightItinerary[0];
+        segments = (firstItem.itinerary && Array.isArray(firstItem.itinerary) && firstItem.itinerary.length > 0)
+          ? firstItem.itinerary
+          : flightItinerary;
+      }
+
+      // Calculate number of stops based on normalized segments.
+      const numStops = segments.length - 1;
       flight.stops = numStops; // Add stops property to each flight object
       flight.flightType = numStops === 0
         ? 'Non-Stop'
         : numStops === 1
           ? '1 Stop'
           : `${numStops} Stops`; // Set flightType based on numStops
-      flight.itinerary[0].itinerary.forEach((itinerary, index) => {
+
+      // Calculate layover durations for each segment (except the last one).
+      segments.forEach((segment, index) => {
         if (index < numStops) {
-          const arrivalTime = new Date(`1970-01-01T${itinerary.arrival_time}`);
-          const nextDepartureTime = new Date(`1970-01-01T${flight.itinerary[0].itinerary[index + 1].departure_time}`);
+          const arrivalTime = new Date(`1970-01-01T${segment.arrival_time}`);
+          const nextDepartureTime = new Date(`1970-01-01T${segments[index + 1].departure_time}`);
           const layoverMinutes = (nextDepartureTime - arrivalTime) / (1000 * 60); // Calculate layover in minutes
           const hours = Math.floor(layoverMinutes / 60);
-          const minutes = layoverMinutes % 60;
-          itinerary.layover = `${hours}h ${minutes}m`; // Add layover property in the format 00h 00m
+          const minutes = Math.floor(layoverMinutes % 60);
+          segment.layover = hours > 0
+            ? (minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`)
+            : (minutes > 0 ? `${minutes}m` : ''); // Add layover property, omit hours if 0 and minutes if 0
         }
       });
     });
   }
+
 
 
   // Apply filtering based on stops
@@ -164,6 +178,60 @@ const filteredAndSortedFlights = computed(() => {
 
   return flights;
 });
+
+// Helper function to recursively sort object keys and stringify them.
+// This ensures that objects with the same content but different key order produce the same string.
+function stableStringify(obj) {
+  if (obj === null || typeof obj !== 'object') {
+    return JSON.stringify(obj);
+  }
+  if (Array.isArray(obj)) {
+    return '[' + obj.map(item => stableStringify(item)).join(',') + ']';
+  }
+  const keys = Object.keys(obj).sort();
+  const keyValuePairs = keys.map(key => JSON.stringify(key) + ':' + stableStringify(obj[key]));
+  return '{' + keyValuePairs.join(',') + '}';
+}
+
+function combineIdenticalFlights(flights) {
+  // This object will map composite keys to unique flight objects.
+  const flightMap = {};
+
+  flights.forEach(flight => {
+    // Extract the first itinerary element. If it doesn't exist, default to an empty object.
+    const itinerary0 = (flight.itinerary && flight.itinerary.length > 0)
+      ? flight.itinerary[0]
+      : {};
+
+    // Build a composite key using the key flight properties and a stable string of itinerary[0].
+    const key = [
+      flight.airline,
+      new Date(flight.flightDate).toISOString(),
+      flight.flightDepTime,
+      flight.flightArrTime,
+      flight.flightClass,
+      flight.flightGate,
+      flight.flightType,
+      flight.origin,
+      flight.destination,
+      flight.stops,
+      stableStringify(itinerary0)
+    ].join('|');
+
+    // If the key exists, update the price to be the minimum.
+    if (flightMap[key]) {
+      flightMap[key].price = Math.min(flightMap[key].price, flight.price);
+    } else {
+      // Clone the flight so that the original is not modified.
+      flightMap[key] = { ...flight };
+    }
+  });
+
+  // Return an array of the unique flight objects.
+  return Object.values(flightMap);
+}
+
+
 
 
 </script>

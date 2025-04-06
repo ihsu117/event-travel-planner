@@ -1018,7 +1018,7 @@ input:checked+.slider:before {
   border: 1px solid #000;
   border-radius: 999px;
   overflow: hidden;
-  background-color: #f0f0f0;
+  background-color: var(--pos-outer-yellow);
   margin-bottom:6px;
 }
 
@@ -1036,4 +1036,16 @@ input:checked+.slider:before {
 .flight-btn.active {
   background: var(--top-gradient); /* Blue for active */
   color: #fff;
+}
+
+.dp__input{
+  border-radius: 6px !important;
+  background-color: var(--pos-grey) !important;
+  font-family: var(--font-primary) !important;
+}
+
+.dp__input::placeholder {
+  opacity: 1 !important;
+  font-family: var(--font-primary) !important;
+  font-weight: 400 !important;
 }
