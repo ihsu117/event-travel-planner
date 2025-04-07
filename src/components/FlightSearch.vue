@@ -25,7 +25,11 @@ const handleBack = (targetRoute) => {
 const handleFlightClick = (flight) => {
   console.log(flight)
   flightStore.setCurrentFlight(flight)
-  router.push({ name: 'FlightItinerary' })
+  if (route?.query?.type === 'return') {
+    router.push({ name: 'FlightItinerary', query: { type: 'returnItinerary' } });
+  } else {
+    router.push({ name: 'FlightItinerary' });
+  }
 }
 
 const handleSortSelection = (option) => {
@@ -243,7 +247,7 @@ function combineIdenticalFlights(flights) {
           :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Event')" />
       </div>
 
-      <h1>Upcoming Flights</h1>
+      <h1>{{ route.query?.type == '1' ? 'Departing Flights' : (route.query?.type == 'return' ? 'Returning Flights' : 'Upcoming Flights') }}</h1>
       <div class="p-dropdown__container" style="margin-bottom: 15px;">
         <PDropDown design="flight" dropDownLabel="Stops"
           :options="['Any number of stops', 'Nonstop only', '1 stop or fewer', '2 stops or fewer']"

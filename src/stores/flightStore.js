@@ -22,7 +22,7 @@ export const useFlightStore = defineStore('flight', {
             itinerary: []
         },
         flightResults: [],
-        returnFlightResults: []
+        itineraries: []
     }),
 
     actions: {
@@ -181,6 +181,24 @@ export const useFlightStore = defineStore('flight', {
                 console.error('Error processing flight data:', error);
                 this.flightResults = [];
             }
+        },
+
+        setItinerary(itineraryData) {
+            try {
+            if (!Array.isArray(itineraryData)) {
+                console.error('Expected array of itinerary data, got:', typeof itineraryData);
+                return;
+            }
+
+            this.itineraries = [...this.itineraries, ...itineraryData];
+            console.log('Updated itineraries:', this.itineraries);
+            } catch (error) {
+            console.error('Error setting itinerary data:', error);
+            }
+        },
+
+        clearItinerary() {
+            this.itineraries = []
         }
     },
 
