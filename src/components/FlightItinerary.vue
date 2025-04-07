@@ -148,12 +148,10 @@ console.log("ITINERARIES: ", itineraries.value)
 </script>
 
 <template>
-  <div class="phone-container">
-    <div class="flight-itinerary">
-
-      <PEvent design="itinerary-header" :airline="flightStore.currentFlight.airline" :name="'Flight Itinerary'"
-        :pictureLink="flightStore.currentFlight.logoURL" @back-click="() => handleBack('Flight')" />
-
+  <div class="flight-itinerary">
+    <PEvent design="itinerary-header" :airline="flightStore.currentFlight.airline" :name="'Flight Itinerary'"
+      :pictureLink="flightStore.currentFlight.logoURL" @back-click="() => handleBack('Flight')" />
+    <div>
       <!-- <div class="flight-itinerary-status">
         <h3>Flight Confimation Status</h3>
         <h2>Pending</h2>
@@ -177,7 +175,7 @@ console.log("ITINERARIES: ", itineraries.value)
             design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
           </PButton>
         </div>
-        <div>
+        <div class="flight-itinerary-button">
           <PButton
             v-if="flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1 && $route?.query?.type !== 'return'"
             design="gradient" label="Search for Returning Flights" @click="handleReturnFlightClick()"></PButton>
@@ -215,17 +213,16 @@ console.log("ITINERARIES: ", itineraries.value)
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 
-          <div class="flight-itinerary-button">
-          <PButton
-            v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
-            design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
-          </PButton>
-        </div>
+          <div class="flight-hold-button">
+            <PButton
+              v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
+              design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
+            </PButton>
+          </div>
 
         </div>
 
       </div>
-
     </div>
   </div>
 </template>

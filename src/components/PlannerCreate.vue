@@ -70,7 +70,7 @@ const createEvent = async () => {
             lastCreatedEventId.value = result.eventId
             console.log('Last created event ID:', lastCreatedEventId.value)
             return lastCreatedEventId.value
-            
+
         } else {
             console.error('Failed to create event:', await response.json())
         }
@@ -106,7 +106,7 @@ const handleSendInvites = async () => {
         } else {
             console.log('No new users to invite.');
         }
-        router.push({ name: 'Home' }) 
+        router.push({ name: 'Home' })
     } catch (error) {
         console.error('Error sending invites:', error)
     }
@@ -219,90 +219,85 @@ onMounted(() => {
 
 <template>
     <template v-if="isInvitePage">
-        <div class="phone-container">
-            <div class="planner-event">
+        <div class="planner-event">
 
-                <PEvent design="small-header" name="Invitations" @back-click="isInvitePage = false" />
-                <div class="event-invite">
+            <PEvent design="small-header" eventName="Invitations" @back-click="isInvitePage = false" />
+            <div class="event-invite">
 
-                    <h2>Finance Manager</h2>
-                    <div class="p-event__container">
-                        <PFinanceBlock design="invite"
-                            v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
-                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                            :profileImage="user.profile_picture"
-                            :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                            @click="selectFinanceManager(user.user_id)" required />
-                    </div>
-
-                    <h2>Attendees</h2>
-                    <div class="p-event__container">
-                        <PFinanceBlock design="invite"
-                            v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')"
-                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                            :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
-                            @click="toggleUserSelection(user.user_id)" />
-
-                        <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.user_id"
-                            :email="user.email" :profileImage="user.profile_picture"
-                            :class="{ selected: isUserSelected(user.user_id) }"
-                            @click="toggleUserSelection(user.user_id)" />
-
-                        <PButton design="planner" @click="openModal" label="Add User"></PButton>
-                    </div>
-                    <PButton label="Send Invites" @click="handleSendInvites" design="gradient"></PButton>
+                <h2>Finance Manager</h2>
+                <div class="p-event__container">
+                    <PFinanceBlock design="invite"
+                        v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
+                        :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                        :profileImage="user.profile_picture"
+                        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
+                        @click="selectFinanceManager(user.user_id)" required />
                 </div>
+
+                <h2>Attendees</h2>
+                <div class="p-event__container">
+                    <PFinanceBlock design="invite"
+                        v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
+                        :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                        :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
+                        @click="toggleUserSelection(user.user_id)" />
+
+                    <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.user_id" :email="user.email"
+                        :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
+                        @click="toggleUserSelection(user.user_id)" />
+
+                    <PButton design="planner" @click="openModal" label="Add User"></PButton>
+                </div>
+                <PButton label="Send Invites" @click="handleSendInvites" design="gradient"></PButton>
             </div>
         </div>
+
     </template>
 
     <template v-else>
-        <div class="phone-container">
 
-            <div class="planner-event">
+        <div class="planner-event">
 
-                <PEvent design="small-header" name="Create an Event" @back-click="handleBack('Home')" />
-                <div class="event-form">
-                    <div>
-                        <h2>Name</h2>
-                        <PTextField label="Event Name" v-model="eventName" required />
-                    </div>
-                    <div>
-                        <h2>Destination</h2>
-                        <PTextField label="Destination Zip" v-model="destinationCode" required />
-                    </div>
-                    <div class="planner-description">
-                        <h2>Description</h2>
-                        <PTextField design="textarea" :maxlength=400 label="Description" v-model="description"
-                            required />
-                    </div>
-
-                    <div class="planner-dates">
-                        <div>
-                            <h2>Start Date</h2>
-                            <PTextField type="date" label="Start Date" v-model="startDate" required />
-                        </div>
-                        <div>
-                            <h2>End Date</h2>
-                            <PTextField type="date" label="End Date" v-model="endDate" required />
-                        </div>
-
-                    </div>
-
-                    <div>
-                        <h2>Picture</h2>
-                        <!-- File input for image upload -->
-                        <input type="file" accept="image/*" @change="handleImageUpload" />
-                        <p v-if="pictureLink">Image uploaded successfully!</p>
-                    </div>
-                    <div>
-                        <h2>Max Budget</h2>
-                        <PTextField label="Max Budget" v-model="maxBudget" required />
-                    </div>
+            <PEvent design="small-header" eventName="Create an Event" @back-click="handleBack('Home')" />
+            <div class="event-form">
+                <div class="planner-event-name">
+                    <h2>Name</h2>
+                    <PTextField label="Event Name" v-model="eventName" required />
                 </div>
-                <PButton label="Create Event" @click="toEventPage" design="gradient"></PButton>
+                <div class="planner-event-destination">
+                    <h2>Destination</h2>
+                    <PTextField label="Destination Zip" v-model="destinationCode" required />
+                </div>
+                <div class="planner-description">
+                    <h2>Description</h2>
+                    <PTextField design="textarea" :maxlength=400 label="Description" v-model="description" required />
+                </div>
+
+                <div class="planner-dates">
+                    <div class="planner-start-date">
+                        <h2>Start Date</h2>
+                        <PTextField type="date" label="Start Date" v-model="startDate" required />
+                    </div>
+                    <div class="planner-end-date">
+                        <h2>End Date</h2>
+                        <PTextField type="date" label="End Date" v-model="endDate" required />
+                    </div>
+
+                </div>
+
+                <div class="planner-event-picture">
+                    <h2>Picture</h2>
+                    <!-- File input for image upload -->
+                    <input type="file" accept="image/*" @change="handleImageUpload" />
+                    <p v-if="pictureLink">Image uploaded successfully!</p>
+                </div>
+                <div class="planner-event-budget">
+                    <h2>Max Budget</h2>
+                    <PTextField label="Max Budget" v-model="maxBudget" required />
+                </div>
             </div>
         </div>
+        <PButton label="Create Event" @click="toEventPage" design="gradient"></PButton>
     </template>
 
     <template v-if="isModalVisible">

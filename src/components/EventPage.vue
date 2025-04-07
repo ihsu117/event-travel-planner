@@ -223,14 +223,13 @@ const handleOneWayDate = (date) => {
 <template>
 
     <template v-if="route?.query?.editView">
-        <div class="phone-container">
             <div class="event-page">
-                <div>
+               
                     <PEvent :organization="eventStore.currentEvent.org" :eventName="editableName"
                         :startDate="editableStartDate" :endDate="editableEndDate"
                         :pictureLink="eventStore.currentEvent.pictureLink" design="header-edit" @update="handleUpdate"
                         @back-click="() => handleBack('Home')" />
-                </div>
+               
                 <div>
                     <h1>Description</h1>
                     <div class="event-description">
@@ -256,24 +255,22 @@ const handleOneWayDate = (date) => {
                     <PButton design="gradient" label="Save Changes" @click="saveChanges" />
                 </div>
             </div>
-        </div>
     </template>
 
     <template v-else>
-        <div class="phone-container">
             <div class="event-page">
-                <div>
+                
                     <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                         :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
                         :pictureLink="eventStore.currentEvent.pictureLink" design="header"
                         @back-click="() => handleBack('Home')" />
-                </div>
-                <div>
+                
+                <div class="event-content">
                     <h1>Description</h1>
                     <div class="event-description">
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
-                    <div>
+                    <div class="flight-search-form">
                         <h1>Flight Search</h1>
                         <div class="selected-flight" v-if="flightSelected">
                             <PFlight design="block" v-bind="flightStore.currentFlight"
@@ -348,7 +345,6 @@ const handleOneWayDate = (date) => {
                     </div>
                 </div>
             </div>
-        </div>
     </template>
 
 </template>

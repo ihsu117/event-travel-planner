@@ -233,19 +233,12 @@ function combineIdenticalFlights(flights) {
   return Object.values(flightMap);
 }
 
-
-
-
 </script>
-
 <template>
-  <div class="phone-container">
     <div class="flight-page">
-      <div>
         <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
           :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
           :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Event')" />
-      </div>
 
       <h1>{{ route.query?.type == '1' ? 'Departing Flights' : (route.query?.type == 'return' ? 'Returning Flights' : 'Upcoming Flights') }}</h1>
       <div class="p-dropdown__container" style="margin-bottom: 15px;">
@@ -279,5 +272,4 @@ function combineIdenticalFlights(flights) {
           :logoURL="flight.logoURL" :itinerary="flight.itinerary" @click="handleFlightClick(flight)" />
       </div>
     </div>
-  </div>
 </template>
