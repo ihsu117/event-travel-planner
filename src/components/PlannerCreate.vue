@@ -5,6 +5,8 @@ import { PButton, PTextField, PEvent, PFinanceBlock } from '@poseidon-components
 import { useEventStore } from '../stores/eventStore.js'
 import { useUserStore } from '../stores/userStore.js'
 import api from '../assets/scripts/api.js'
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const router = useRouter()
 const eventName = ref('')
@@ -266,7 +268,7 @@ onMounted(() => {
                 </div>
                 <div class="planner-event-destination">
                     <h2>Destination</h2>
-                    <PTextField label="Destination Zip" v-model="destinationCode" required />
+                    <PTextField label="Destination Airport Code" v-model="destinationCode" required />
                 </div>
                 <div class="planner-description">
                     <h2>Description</h2>
@@ -276,11 +278,17 @@ onMounted(() => {
                 <div class="planner-dates">
                     <div class="planner-start-date">
                         <h2>Start Date</h2>
-                        <PTextField type="date" label="Start Date" v-model="startDate" required />
+                        <VueDatePicker v-model="startDate" :enable-time-picker="false"
+                            :placeholder="'Start Date'" exactMatch="true"
+                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
+                        </VueDatePicker>
                     </div>
                     <div class="planner-end-date">
                         <h2>End Date</h2>
-                        <PTextField type="date" label="End Date" v-model="endDate" required />
+                        <VueDatePicker v-model="endDate" :enable-time-picker="false"
+                            :placeholder="'End Date'" exactMatch="true"
+                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
+                        </VueDatePicker>
                     </div>
 
                 </div>
