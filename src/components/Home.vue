@@ -195,7 +195,6 @@ const handleModalOption = async (option) => {
 
     <!--Home Page for Attendee-->
     <template v-if="isAttendee">
-        <div class="phone-container">
             <div class="home">
                 <div class="home-header">
 
@@ -223,12 +222,10 @@ const handleModalOption = async (option) => {
 
                 </div>
             </div>
-        </div>
     </template>
 
     <!--Home Page for Finance-->
     <template v-if="isFinance">
-        <div class="phone-container">
             <div class="home">
                 <div class="home-header">
                     <div class="home-header__text">
@@ -253,12 +250,10 @@ const handleModalOption = async (option) => {
                         @event-click="handleEventClick" />
                 </div>
             </div>
-        </div>
     </template>
 
     <!--Home Page for Event Planner-->
     <template v-if="isEventPlanner">
-        <div class="phone-container">
             <div class="home">
                 <div class="home-header">
 
@@ -281,11 +276,10 @@ const handleModalOption = async (option) => {
                         :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
                         :financeMan="event.financeMan" :autoApprove="event.autoApprove"
                         :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
-                        @editClick="handleEditEventClick(event)" @event-click="handleEventClick" />
+                        @editClick="handleEditEventClick(event)" @event-click="handleEventClick(event)" />
                     <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
             </div>
-        </div>
     </template>
 
 </template>

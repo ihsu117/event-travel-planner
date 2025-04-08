@@ -25,18 +25,22 @@ const handleBack = (targetRoute) => {
 const handleFlightClick = (flight) => {
   console.log(flight)
   flightStore.setCurrentFlight(flight)
-  router.push({ name: 'FlightItinerary' })
+  if (route?.query?.type === 'return') {
+    router.push({ name: 'FlightItinerary', query: { type: 'returnItinerary' } });
+  } else {
+    router.push({ name: 'FlightItinerary' });
+  }
 }
 
-const handleSortSelection = (option) => {
+const handleSortSelection = ({filter, option}) => {
   sortOption.value = option; // Update sortOption with the selected option
 }
 
-const handleStopsSelection = (option) => {
+const handleStopsSelection = ({filter, option}) => {
   filterStops.value = option; // Update filterStops with the selected option
 }
 
-const handleAirlineSelection = (option) => {
+const handleAirlineSelection = ({filter, option}) => {
   airlineSelection.value = option; // Update airlineSelection with the selected option
 }
 
@@ -58,15 +62,6 @@ const filteredAndSortedFlights = computed(() => {
 
   let flights = [...flightStore.flightResults];
   console.log('!!!FLIGHTS!!!', flights)
-
-  // console.log(combineIdenticalFlights(flights))
-
-  if (route?.query?.type == '1') {
-    flights = combineIdenticalFlights(flights); // Combine identical flights
-    console.log('!!!COMBINED FLIGHTS!!!', flights)
-  } else {
-    console.log("Skipping combineIdenticalFlights")
-  }
 
 
   if (flights.length > 0 && flights[0].itinerary.length > 1) {
@@ -110,7 +105,14 @@ const filteredAndSortedFlights = computed(() => {
     });
   }
 
+  // console.log(combineIdenticalFlights(flights))
 
+  if (route?.query?.type == '1') {
+    flights = combineIdenticalFlights(flights); // Combine identical flights
+    console.log('!!!COMBINED FLIGHTS!!!', flights)
+  } else {
+    console.log("Skipping combineIdenticalFlights")
+  }
 
   // Apply filtering based on stops
   switch (filterStops.value) {
@@ -231,21 +233,14 @@ function combineIdenticalFlights(flights) {
   return Object.values(flightMap);
 }
 
-
-
-
 </script>
-
 <template>
-  <div class="phone-container">
     <div class="flight-page">
-      <div>
         <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
           :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
           :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Event')" />
-      </div>
 
-      <h1>Upcoming Flights</h1>
+      <h1>{{ route.query?.type == '1' ? 'Departing Flights' : (route.query?.type == 'return' ? 'Returning Flights' : 'Upcoming Flights') }}</h1>
       <div class="p-dropdown__container" style="margin-bottom: 15px;">
         <PDropDown design="flight" dropDownLabel="Stops"
           :options="['Any number of stops', 'Nonstop only', '1 stop or fewer', '2 stops or fewer']"
@@ -277,5 +272,4 @@ function combineIdenticalFlights(flights) {
           :logoURL="flight.logoURL" :itinerary="flight.itinerary" @click="handleFlightClick(flight)" />
       </div>
     </div>
-  </div>
 </template>

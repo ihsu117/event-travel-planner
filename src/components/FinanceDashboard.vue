@@ -149,14 +149,11 @@ console.log(eventStore.currentEvent.id)
 </script>
 
 <template>
-    <div class="phone-container">
         <div class="finance-dashboard">
-            <div>
                 <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                     :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
                     :pictureLink="eventStore.currentEvent.pictureLink" design="header"
                     @back-click="() => handleBack('Home')" />
-            </div>
             <div class="content-grid">
                 <h1>Description</h1>
                 <div class="event-description">
@@ -269,5 +266,4 @@ console.log(eventStore.currentEvent.id)
 
             </div>
         </div>
-    </div>
 </template>

@@ -7,6 +7,7 @@ import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight } from '
 import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
+import { format, parseISO } from 'date-fns';
 import VueGoogleAutocomplete from "vue-google-autocomplete"
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -109,22 +110,35 @@ const editableStartDate = ref(eventStore.currentEvent.startDate)
 const editableEndDate = ref(eventStore.currentEvent.endDate)
 const description = ref(eventStore.currentEvent.description)
 
+const parseDate = (date) => {
+    if (!date) return null;
+    return typeof date === 'string' ? parseISO(date) : date;
+};
+
+const formatDateForBackend = (date) => {
+    const parsedDate = parseDate(date);
+    if (!parsedDate) return '';
+    return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
+};
+
 // Function to handle the update of the fields for the event
 const handleUpdate = ({ field, value }) => {
     if (field === 'name') editableName.value = value
     if (field === 'startDate') editableStartDate.value = value
     if (field === 'endDate') editableEndDate.value = value
     if (field === 'description') description.value = value
+    console.log("HANDLE",field, value)
 }
 
 const saveChanges = async () => {
     console.log('Event ID:', eventStore.currentEvent.id)
     console.log('Editable Name:', editableName.value)
     console.log('Description:', description.value)
+    console.log('DATE SET TO:', editableStartDate.value)
     const updatedEvent = {
-        name: editableName.value,
-        startDate: editableStartDate.value,
-        endDate: editableEndDate.value,
+        name: editableName.value || eventStore.currentEvent.eventName,
+        startDate: formatDateForBackend(editableStartDate.value),
+        endDate: formatDateForBackend(editableEndDate.value),
         description: description.value,
     }
     try {
@@ -185,35 +199,6 @@ onMounted(async () => {
     checkAndLoadEvent()
     checkAndLoadSelectedFlight()
     console.log('Organization:', eventStore.currentEvent.org)
-    //     try {
-    //     const [financeResponse, eventResponse] = await Promise.all([
-    //         api.apiFetch('/user/' + eventStore.currentEvent.financeMan.id, {
-    //             credentials: 'include'
-    //         }),
-    //         api.apiFetch('/events/' + eventStore.currentEvent.id, {
-    //             credentials: 'include'
-    //         })
-    //     ]);
-
-    //     if (financeResponse.ok) {
-    //         const financeMan = await financeResponse.json();
-    //         financeMan.phoneNum = financeMan.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-    //         eventStore.currentEvent.financeMan = financeMan;
-    //     } else {
-    //         console.error('Failed to fetch finance manager');
-    //     }
-
-    //     if (eventResponse.ok) {
-    //         const { createdBy } = await eventResponse.json();
-    //         createdBy.phoneNum = createdBy.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-    //         eventStore.currentEvent.createdBy = createdBy;
-    //     } else {
-    //         console.error('Failed to fetch current event');
-    //     }
-
-    // } catch (error) {
-    //     console.error('One or both requests failed:', error);
-    // }
 
 })
 
@@ -237,15 +222,14 @@ const handleOneWayDate = (date) => {
 
 <template>
 
-    <template v-if="editView">
-        <div class="phone-container">
+    <template v-if="route?.query?.editView">
             <div class="event-page">
-                <div>
+               
                     <PEvent :organization="eventStore.currentEvent.org" :eventName="editableName"
                         :startDate="editableStartDate" :endDate="editableEndDate"
                         :pictureLink="eventStore.currentEvent.pictureLink" design="header-edit" @update="handleUpdate"
                         @back-click="() => handleBack('Home')" />
-                </div>
+               
                 <div>
                     <h1>Description</h1>
                     <div class="event-description">
@@ -257,15 +241,6 @@ const handleOneWayDate = (date) => {
 
                     <h1>Planning Team</h1>
                     <div class="finance-info">
-                        <svg class="x-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                            viewBox="0 0 24 24">
-                            <g fill="none" fill-rule="evenodd">
-                                <path
-                                    d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" />
-                                <path fill="#4c365d"
-                                    d="m12 13.414l5.657 5.657a1 1 0 0 0 1.414-1.414L13.414 12l5.657-5.657a1 1 0 0 0-1.414-1.414L12 10.586L6.343 4.929A1 1 0 0 0 4.93 6.343L10.586 12l-5.657 5.657a1 1 0 1 0 1.414 1.414z" />
-                            </g>
-                        </svg>
                         <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
                             :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
                             jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
@@ -280,24 +255,22 @@ const handleOneWayDate = (date) => {
                     <PButton design="gradient" label="Save Changes" @click="saveChanges" />
                 </div>
             </div>
-        </div>
     </template>
 
     <template v-else>
-        <div class="phone-container">
             <div class="event-page">
-                <div>
+                
                     <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                         :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
                         :pictureLink="eventStore.currentEvent.pictureLink" design="header"
                         @back-click="() => handleBack('Home')" />
-                </div>
-                <div>
+                
+                <div class="event-content">
                     <h1>Description</h1>
                     <div class="event-description">
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
-                    <div>
+                    <div class="flight-search-form">
                         <h1>Flight Search</h1>
                         <div class="selected-flight" v-if="flightSelected">
                             <PFlight design="block" v-bind="flightStore.currentFlight"
@@ -305,10 +278,10 @@ const handleOneWayDate = (date) => {
                         </div>
                         <div class="flight-type-toggle">
                             <button :class="['flight-btn', flightType === 0 ? 'active' : '']" @click="flightType = 0">
-                                One-Way
+                                One way
                             </button>
                             <button :class="['flight-btn', flightType === 1 ? 'active' : '']" @click="flightType = 1">
-                                Roundtrip
+                                Round trip
                             </button>
                         </div>
                         <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
@@ -372,7 +345,6 @@ const handleOneWayDate = (date) => {
                     </div>
                 </div>
             </div>
-        </div>
     </template>
 
 </template>

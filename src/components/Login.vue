@@ -3,8 +3,11 @@ import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/userStore'
 import { PButton, PTextField, PProfilePic, PDropDown } from '@poseidon-components'
+import { format, parseISO } from 'date-fns';
 import '@poseidon-styles/index.css'
 import api from '../assets/scripts/api.js'
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const loginPage = ref(true)
 const email = ref('')
@@ -35,6 +38,11 @@ const mfaInput = ref(null)
 const passwordInput = ref(null)
 const emailInput = ref(null)
 
+// Function to handle the update of the dropdowns
+const handleUpdate = ({ field, option }) => {
+  if (field === 'title') title.value = option
+  if (field === 'gender') gender.value = option
+}
 
 const onFileChange = (event) => {
   const file = event.target.files[0]
@@ -73,10 +81,22 @@ const validatePassword = () => {
   return true
 }
 
+const parseDate = (date) => {
+    if (!date) return null;
+    return typeof date === 'string' ? parseISO(date) : date;
+};
+
+const formatDateForBackend = (date) => {
+    const parsedDate = parseDate(date);
+    if (!parsedDate) return '';
+    return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
+};
+
 const handleSubmit = async () => {
   if (!validatePassword()) {
     return // Stop submission if validation fails
   }
+  dob.value = formatDateForBackend(dob.value)
   await updateUser() // Proceed with the user update
 }
 
@@ -124,11 +144,11 @@ const loginUser = async () => {
       console.log('Login successful')
       loading.value = false
       nextTick(() => {
-    // Focus on the MFA input field after the modal is visible
-    if (mfaInput.value && mfaInput.value.focus) {
-      mfaInput.value.focus()
-    }
-  })
+        // Focus on the MFA input field after the modal is visible
+        if (mfaInput.value && mfaInput.value.focus) {
+          mfaInput.value.focus()
+        }
+      })
     } else {
       closeModal()
       throw new Error('Invalid Email or Password')
@@ -172,6 +192,7 @@ const checkMFA = async () => {
       if (!userStore.first_name && !userStore.last_name) {
         console.log('Redirecting to registration page')
         loginPage.value = false // Show the registration page
+        password.value = '' // Clear the password field
         closeModal()
       } else {
         userStore.setUser(user)
@@ -192,7 +213,9 @@ const updateUser = async () => {
     phoneNumber: phoneNumber.value,
     dob: dob.value,
     password: password.value,
-    profileImage: profileImage.value
+    profileImage: profileImage.value,
+    gender: gender.value,
+    title: title.value
   })
   try {
     const apiResponse = await api.apiFetch(`/user/${userStore.user_id}`, {
@@ -207,7 +230,9 @@ const updateUser = async () => {
         phoneNum: phoneNumber.value,
         dob: dob.value,
         password: password.value,
-        profilePic: profileImage.value
+        profilePic: profileImage.value,
+        gender: gender.value,
+        title: title.value
       })
     })
     if (apiResponse.ok) {
@@ -255,7 +280,8 @@ const updateUser = async () => {
               <p v-if="errors.password" class="input-error">{{ errors.password }}</p>
             </div>
             <div class="forgot-pass">
-              <PTextField v-model="password" ref="passwordInput" type="password" label="Enter Password" @keyup.enter="loginUser" />
+              <PTextField v-model="password" ref="passwordInput" type="password" label="Enter Password"
+                @keyup.enter="loginUser" />
               <p><a href="#">Forgot Password?</a></p>
             </div>
           </div>
@@ -283,9 +309,10 @@ const updateUser = async () => {
             </svg>
             <h5 v-if="errors.mfaCode" class="input-error">{{ errors.mfaCode }}</h5>
           </div>
-          <PTextField v-model="mfaCode" ref="mfaInput" label="Enter MFA Code" inputmode="numeric" type="tel" @keyup.enter="checkMFA"/>
+          <PTextField v-model="mfaCode" ref="mfaInput" label="Enter MFA Code" inputmode="numeric" type="tel"
+            @keyup.enter="checkMFA" />
           <div class="mfa-button">
-            <PButton @click="checkMFA" design="login" label="Submit" >Submit</PButton>
+            <PButton @click="checkMFA" design="login" label="Submit">Submit</PButton>
           </div>
         </div>
       </div>
@@ -308,17 +335,19 @@ const updateUser = async () => {
           </div>
         </div>
 
-        <!-- <div id="genderAndTitle">
+        <div id="genderAndTitle">
           <div>
             <h1>Title</h1>
-            <PDropDown design="login" v-model="title" dropDownLabel="Title" :options="titleOptions" />
+            <PDropDown design="login" v-model="title" description="title" dropDownLabel="Title" :options="titleOptions"
+              @option-selected="handleUpdate" />
           </div>
 
           <div>
             <h1>Gender</h1>
-            <PDropDown design="login" v-model="gender" dropDownLabel="Gender" :options="genderOptions" />
+            <PDropDown design="login" v-model="gender" description="gender" dropDownLabel="Gender"
+              :options="genderOptions" @option-selected="handleUpdate" />
           </div>
-        </div> -->
+        </div>
 
         <div>
           <h1>Phone Number</h1>
@@ -330,7 +359,8 @@ const updateUser = async () => {
         </div> -->
         <div>
           <h1>Date of Birth</h1>
-          <PTextField v-model="dob" type="date" label="MM/DD/YYYY" min="1920-01-02" :max="today" />
+          <VueDatePicker id="dob" v-model="dob" :enable-time-picker="false" :placeholder="'MM/DD/YYYY'" exactMatch="true"
+            :config="{ closeOnAutoApply: false, keepActionRow: true }" :text-input="{ format: 'MM/dd/yyyy' }" :max-date="today" autocomplete="off" hide-input-icon ></VueDatePicker>
         </div>
         <div>
           <h1>Password</h1>
