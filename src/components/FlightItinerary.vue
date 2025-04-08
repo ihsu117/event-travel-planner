@@ -11,6 +11,13 @@ const flightStore = useFlightStore()
 const userStore = useUserStore()
 const matchingReturnOptions = ref(null)
 
+const isMobile = ref(window.innerWidth <= 768);
+
+const updateScreenSize = () => {
+    isMobile.value = window.innerWidth <= 768;
+};
+
+
 const handleBack = (targetRoute) => {
   router.push({ name: targetRoute });
 }
