@@ -80,7 +80,7 @@ onMounted(async () => {
 })
 
 //Send flightID back with approval
-const updateFlight = async () => {
+const updateFlight = async (selection) => {
     console.log(flightSelected)
     try {
         const response = await api.apiFetch('/flights/booking', {
@@ -91,7 +91,9 @@ const updateFlight = async () => {
             },
             body: JSON.stringify({
                 flightID: flightSelected.value.flightID,
-                price: flightSelected.value.price
+                price: flightSelected.value.price,
+                eventID: eventStore.currentEvent.id,
+                selection: selection
             })
         })
         if (response.ok) {
@@ -119,7 +121,9 @@ const handleModalOption = (option) => {
     console.log(`Selected option: ${option}`)
 
     if (option == "Approve") {
-        updateFlight()
+        updateFlight(0)
+    } else {
+        updateFlight(1)
     }
 
     closeModal()
