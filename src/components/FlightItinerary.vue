@@ -4,7 +4,7 @@ import { useFlightStore } from '../stores/flightStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
 import api from '../assets/scripts/api.js'
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 
 const router = useRouter()
 const flightStore = useFlightStore()
@@ -64,7 +64,7 @@ const confirmPurchase = async () => {
 console.log("CURRENTFLIGHT! ", flightStore.currentFlight)
 
 onMounted(async () => {
-
+  window.addEventListener('resize', updateScreenSize);
   if (flightStore.currentFlight.itinerary.length > 1 && flightStore.currentFlight.itinerary[0].itinerary) {
     const flights = flightStore.flightResults;
     console.log("FLIGHT RESULTS: ", flights)
@@ -143,6 +143,9 @@ const itineraries = computed(() => {
   return flightItinerary;
 });
 
+onUnmounted(() => {
+    window.removeEventListener('resize', updateScreenSize);
+});
 
 console.log("ITINERARIES: ", itineraries.value)
 
