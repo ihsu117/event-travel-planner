@@ -42,7 +42,6 @@ const emailInput = ref(null)
 const handleUpdate = ({ field, option }) => {
   if (field === 'title') title.value = option
   if (field === 'gender') gender.value = option
-  console.log("HANDLE", field, option)
 }
 
 const onFileChange = (event) => {
