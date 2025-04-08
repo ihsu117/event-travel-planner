@@ -39,7 +39,7 @@ const confirmPurchase = async () => {
   //localStorage.setItem('selectedFlight', JSON.stringify(flightStore.currentFlight));
   //localStorage.setItem('flightSelected', 'true');
 
-  const localStorageData = JSON.parse(localStorage.getItem('eventData'));
+  const localStorageData = JSON.parse(localStorage.getItem('currentEvent'));
   const eventID = localStorageData?.id; // Extract the eventID
 
   return api.apiFetch('/flights/hold', {
