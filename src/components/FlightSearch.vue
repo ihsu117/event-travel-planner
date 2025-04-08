@@ -239,7 +239,11 @@ function combineIdenticalFlights(flights) {
     }
   });
 
-  onMounted(() => {
+  // Return an array of the unique flight objects.
+  return Object.values(flightMap);
+}
+
+onMounted(() => {
     checkAuth()
     window.addEventListener('resize', updateScreenSize);
   });
@@ -247,10 +251,6 @@ function combineIdenticalFlights(flights) {
   onUnmounted(() => {
     window.removeEventListener('resize', updateScreenSize);
   });
-
-  // Return an array of the unique flight objects.
-  return Object.values(flightMap);
-}
 
 </script>
 <template>
