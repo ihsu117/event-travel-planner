@@ -32,15 +32,15 @@ const handleFlightClick = (flight) => {
   }
 }
 
-const handleSortSelection = (option) => {
+const handleSortSelection = ({filter, option}) => {
   sortOption.value = option; // Update sortOption with the selected option
 }
 
-const handleStopsSelection = (option) => {
+const handleStopsSelection = ({filter, option}) => {
   filterStops.value = option; // Update filterStops with the selected option
 }
 
-const handleAirlineSelection = (option) => {
+const handleAirlineSelection = ({filter, option}) => {
   airlineSelection.value = option; // Update airlineSelection with the selected option
 }
 
