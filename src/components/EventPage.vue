@@ -295,8 +295,7 @@ const openInviteModal = () => {
                         </div>
                         <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
                             id="flight-search">
-                            <!-- <PTextField design="small" label="Departure Date" type="date" v-model="searchDate">
-                            </PTextField> -->
+
                             <div :class="['error-container', { show: errors.date }]">
                                 <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
                                     height="16" viewBox="0 0 16 16">
@@ -309,8 +308,6 @@ const openInviteModal = () => {
                             <VueDatePicker v-if="flightType === 0" v-model="departDate" :min-date="new Date()"
                                 :enable-time-picker="false" :placeholder="'Departure Date'" exactMatch="true" :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
                                 @update:model-value="handleOneWayDate"></VueDatePicker>
-                            <!-- <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
-                                v-model="returnDate"></PTextField> -->
                             <VueDatePicker v-if="flightType === 1" :range="true" :min-date="new Date()"
                                 :enable-time-picker="false" v-model="roundtripRange" :format="'MM/dd/yyyy'"
                                 :placeholder="'Departure & Return Dates'" :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply @update:model-value="handleRoundtripDate">
