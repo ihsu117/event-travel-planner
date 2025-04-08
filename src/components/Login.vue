@@ -35,6 +35,12 @@ const mfaInput = ref(null)
 const passwordInput = ref(null)
 const emailInput = ref(null)
 
+// Function to handle the update of the dropdowns
+const handleUpdate = ({field, option}) => {
+    if (field === 'title') title.value = option
+    if (field === 'gender') gender.value = option
+    console.log("HANDLE",field,option)
+}
 
 const onFileChange = (event) => {
   const file = event.target.files[0]
@@ -192,7 +198,9 @@ const updateUser = async () => {
     phoneNumber: phoneNumber.value,
     dob: dob.value,
     password: password.value,
-    profileImage: profileImage.value
+    profileImage: profileImage.value,
+    gender: gender.value,
+    title: title.value
   })
   try {
     const apiResponse = await api.apiFetch(`/user/${userStore.user_id}`, {
@@ -207,7 +215,9 @@ const updateUser = async () => {
         phoneNum: phoneNumber.value,
         dob: dob.value,
         password: password.value,
-        profilePic: profileImage.value
+        profilePic: profileImage.value,
+        gender: gender.value,
+        title: title.value
       })
     })
     if (apiResponse.ok) {
@@ -297,7 +307,7 @@ const updateUser = async () => {
     </div>
   </template>
 
-  <template v-else-if="!loginPage">
+  <template v-else-if="true">
     <div class="login-container">
       <div class="register-form">
         <div>
@@ -308,17 +318,17 @@ const updateUser = async () => {
           </div>
         </div>
 
-        <!-- <div id="genderAndTitle">
+        <div id="genderAndTitle">
           <div>
             <h1>Title</h1>
-            <PDropDown design="login" v-model="title" dropDownLabel="Title" :options="titleOptions" />
+            <PDropDown design="login" v-model="title" description="title" dropDownLabel="Title" :options="titleOptions" @option-selected="handleUpdate"/>
           </div>
 
           <div>
             <h1>Gender</h1>
-            <PDropDown design="login" v-model="gender" dropDownLabel="Gender" :options="genderOptions" />
+            <PDropDown design="login" v-model="gender" description="gender" dropDownLabel="Gender" :options="genderOptions" @option-selected="handleUpdate" />
           </div>
-        </div> -->
+        </div>
 
         <div>
           <h1>Phone Number</h1>

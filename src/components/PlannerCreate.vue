@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { PButton, PTextField, PEvent, PFinanceBlock } from '@poseidon-components'
 import { useEventStore } from '../stores/eventStore.js'
 import { useUserStore } from '../stores/userStore.js'
+import { format, parseISO } from 'date-fns';
 import api from '../assets/scripts/api.js'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -46,8 +47,8 @@ const createEvent = async () => {
         const eventData = {
             name: eventName.value,
             description: description.value,
-            startDate: startDate.value,
-            endDate: endDate.value,
+            startDate: formatDateForBackend(startDate.value),
+            endDate: formatDateForBackend(endDate.value),
             destinationCode: destinationCode.value,
             pictureLink: pictureLink.value, // Send the base64-encoded image
             maxBudget: maxBudget.value,
@@ -213,6 +214,17 @@ const closeModal = () => {
 const openModal = () => {
     isModalVisible.value = true
 }
+
+const parseDate = (date) => {
+    if (!date) return null;
+    return typeof date === 'string' ? parseISO(date) : date;
+};
+
+const formatDateForBackend = (date) => {
+    const parsedDate = parseDate(date);
+    if (!parsedDate) return '';
+    return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
+};
 
 onMounted(() => {
     loadOrgUsers()
