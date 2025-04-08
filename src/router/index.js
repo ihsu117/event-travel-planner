@@ -7,6 +7,7 @@ import FlightSearch from '../components/FlightSearch.vue'
 import FlightItinerary from '../components/FlightItinerary.vue'
 import FinanceDashboard from '../components/FinanceDashboard.vue'
 import PlannerCreate from '../components/PlannerCreate.vue'
+import PlannerInvite from '../components/PlannerInvite.vue'
 
 const routes = [
   {
@@ -50,6 +51,12 @@ const routes = [
     path: '/planner/create',
     name: 'EventCreate',
     component: PlannerCreate,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/planner/invite',
+    name: 'Invite',
+    component: PlannerInvite,
     meta: { requiresAuth: true }
   }
 

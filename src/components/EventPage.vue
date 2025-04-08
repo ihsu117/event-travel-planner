@@ -4,6 +4,7 @@ import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useRouter, useRoute } from 'vue-router'
 import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight } from '@poseidon-components'
+import { PlannerInvite } from './PlannerInvite.vue'
 import { computed, ref, onMounted } from 'vue'
 import api from '../assets/scripts/api.js'
 import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
@@ -28,6 +29,7 @@ const latitude = ref('');
 const longitude = ref('');
 const errors = ref({ date: '', location: '' })
 const roundtripRange = ref(null)
+const showInviteModal = ref(false)
 
 
 //Function to handle the date selection
@@ -218,6 +220,10 @@ const handleOneWayDate = (date) => {
 
 }
 
+const openInviteModal = () => {
+    showInviteModal.value = true
+ }
+
 </script>
 
 <template>
@@ -250,6 +256,9 @@ const handleOneWayDate = (date) => {
                             jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                             :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                     </div>
+                </div>
+                <div class="event-edit-button">
+                    <PButton design="gradient" label="Add/Edit Users" @click="openInviteModal()"></PButton>
                 </div>
                 <div class="event-edit-button">
                     <PButton design="gradient" label="Save Changes" @click="saveChanges" />
@@ -345,6 +354,10 @@ const handleOneWayDate = (date) => {
                     </div>
                 </div>
             </div>
+    </template>
+
+    <template v-if="route?.query?.editView && showInviteModal">
+        <PlannerInvite></PlannerInvite>
     </template>
 
 </template>
