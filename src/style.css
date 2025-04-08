@@ -1481,33 +1481,25 @@ input:checked+.slider:before {
   .flight-search-form {
     display: flex;
     flex-direction: column;
-    /* Keep toggle above the search bar */
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    /* Add spacing between the toggle and the search bar */
     max-width: 100%;
     margin: 1rem auto;
-    /* Center the form and add spacing from other content */
   }
 
   .flight-search-bar {
     display: flex;
     flex-direction: row;
-    /* Arrange inputs and button in a row */
     align-items: center;
     justify-content: space-between;
-    /* Space out the elements */
     gap: 0.5rem;
-    /* Add spacing between inputs and button */
     width: 100%;
     max-width: 600px;
-    /* Limit the width of the search bar */
   }
 
   .flight-search-bar input {
     flex: 1;
-    /* Allow inputs to take up available space */
     padding: 0.5rem;
     font-size: 1rem;
     border: 1px solid #ccc;
@@ -1559,4 +1551,45 @@ input:checked+.slider:before {
     background-color: var(--pos-inner-yellow);
     padding-bottom: 1.25rem;
   }
+
+  .flight-itinerary-desktop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    background-color: var(--pos-inner-yellow);
+  }
+
+  .itinerary-event-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .itinerary-event-container .p-event--desktop-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 12rem;
+  }
+
+  .itinerary-event-container .p-event--desktop-header .p-event__details h4 {
+    padding-bottom: 10%;
+  }
+
+  .itinerary-title {
+    background: var(--top-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+    text-align: left;
+    padding: 1%;
+  }
+
+
+
 }
