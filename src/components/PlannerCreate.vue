@@ -4,7 +4,10 @@ import { useRouter } from 'vue-router'
 import { PButton, PTextField, PEvent, PFinanceBlock } from '@poseidon-components'
 import { useEventStore } from '../stores/eventStore.js'
 import { useUserStore } from '../stores/userStore.js'
+import { format, parseISO } from 'date-fns';
 import api from '../assets/scripts/api.js'
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const router = useRouter()
 const eventName = ref('')
@@ -44,8 +47,8 @@ const createEvent = async () => {
         const eventData = {
             name: eventName.value,
             description: description.value,
-            startDate: startDate.value,
-            endDate: endDate.value,
+            startDate: formatDateForBackend(startDate.value),
+            endDate: formatDateForBackend(endDate.value),
             destinationCode: destinationCode.value,
             pictureLink: pictureLink.value, // Send the base64-encoded image
             maxBudget: maxBudget.value,
@@ -212,6 +215,17 @@ const openModal = () => {
     isModalVisible.value = true
 }
 
+const parseDate = (date) => {
+    if (!date) return null;
+    return typeof date === 'string' ? parseISO(date) : date;
+};
+
+const formatDateForBackend = (date) => {
+    const parsedDate = parseDate(date);
+    if (!parsedDate) return '';
+    return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
+};
+
 onMounted(() => {
     loadOrgUsers()
 })
@@ -266,7 +280,7 @@ onMounted(() => {
                 </div>
                 <div class="planner-event-destination">
                     <h2>Destination</h2>
-                    <PTextField label="Destination Zip" v-model="destinationCode" required />
+                    <PTextField label="Destination Airport Code" v-model="destinationCode" required />
                 </div>
                 <div class="planner-description">
                     <h2>Description</h2>
@@ -276,11 +290,17 @@ onMounted(() => {
                 <div class="planner-dates">
                     <div class="planner-start-date">
                         <h2>Start Date</h2>
-                        <PTextField type="date" label="Start Date" v-model="startDate" required />
+                        <VueDatePicker v-model="startDate" :enable-time-picker="false"
+                            :placeholder="'Start Date'" exactMatch="true"
+                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
+                        </VueDatePicker>
                     </div>
                     <div class="planner-end-date">
                         <h2>End Date</h2>
-                        <PTextField type="date" label="End Date" v-model="endDate" required />
+                        <VueDatePicker v-model="endDate" :enable-time-picker="false"
+                            :placeholder="'End Date'" exactMatch="true"
+                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
+                        </VueDatePicker>
                     </div>
 
                 </div>

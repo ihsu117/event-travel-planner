@@ -952,6 +952,7 @@ body {
 .event-edit-button {
   margin-top: 1.25rem;
   /* 20px */
+  width: 15rem;
 }
 
 .budget-card {
