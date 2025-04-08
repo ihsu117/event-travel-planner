@@ -1,14 +1,15 @@
 <script setup>
-import { PButton, PFlight, PEvent } from '@poseidon-components'
+import { PButton, PFlight, PEvent, PProfilePic } from '@poseidon-components'
 import { useFlightStore } from '../stores/flightStore'
+import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
 import api from '../assets/scripts/api.js'
 import { onMounted, ref, computed } from 'vue'
 
 const router = useRouter()
 const flightStore = useFlightStore()
+const userStore = useUserStore()
 const matchingReturnOptions = ref(null)
-
 
 const handleBack = (targetRoute) => {
   router.push({ name: targetRoute });
@@ -148,6 +149,23 @@ console.log("ITINERARIES: ", itineraries.value)
 </script>
 
 <template>
+
+<template v-if="!isMobile">
+  <div class="home-desktop">
+            <div class="home-header-desktop">
+                <div class="home-header__text-desktop">
+                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+                    <p>Welcome, {{ userStore.first_name }}!</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
+                </div>
+            </div>
+            <div class="flight-itinerary-desktop">
+              
+            </div>
+  </div>
+</template>
+
+<template v-else>
   <div class="flight-itinerary">
     <PEvent design="itinerary-header" :airline="flightStore.currentFlight.airline" :name="'Flight Itinerary'"
       :pictureLink="flightStore.currentFlight.logoURL" @back-click="() => handleBack('Flight')" />
@@ -225,4 +243,6 @@ console.log("ITINERARIES: ", itineraries.value)
       </div>
     </div>
   </div>
+</template>
+
 </template>

@@ -9,7 +9,7 @@ import '@poseidon-styles/index.css'
 import { useEventStore } from '../stores/eventStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
 import { format } from 'date-fns'
@@ -21,9 +21,36 @@ const events = ref([])
 const userInfo = ref({});
 const editView = ref(false)
 const loading = ref(false)
+const eventContainer = ref(null);
+
+const isMobile = ref(window.innerWidth <= 768);
+
+const updateScreenSize = () => {
+    isMobile.value = window.innerWidth <= 768;
+};
+
+const scrollLeft = () => {
+    if (eventContainer.value) {
+        eventContainer.value.scrollBy({
+            left: -300, // Adjust scroll distance as needed
+            behavior: 'smooth',
+        });
+    }
+};
+
+const scrollRight = () => {
+    if (eventContainer.value) {
+        eventContainer.value.scrollBy({
+            left: 300, // Adjust scroll distance as needed
+            behavior: 'smooth',
+        });
+    }
+};
+
 
 //Fetch events from the API
 onMounted(async () => {
+    window.addEventListener('resize', updateScreenSize);
     checkAuth()
     loading.value = true
     try {
@@ -41,6 +68,10 @@ onMounted(async () => {
         loading.value = false // Set loading to false after API call
     }
 })
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateScreenSize);
+});
 
 const fetchUserData = async () => {
     try {
@@ -142,9 +173,121 @@ const handleModalOption = async (option) => {
 }
 
 </script>
+
 <template>
+
+    <!-------------------------------------------------------------------DESKTOP VIEW------------------------------------------------------------------->
+
+    <template v-if="isModalVisible && !isMobile">
+        <div>
+            <div class="modal-overlay" @click="closeModal"></div>
+            <div class="modal modal-container">
+                <div class="modal-profile">
+                    <div class="modal-profile-img-name">
+                        <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
+                        <PProfilePic design="big" :profileImage='userStore.profile_picture' />
+                        <div class="modal-profile-title-org">
+                            <h5>{{ userStore.role_id }}</h5>
+                            <p>{{ userStore.org.name }}</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-profile-info-container">
+                        <div class="modal-profile-info">
+                            <div class="profile-content">
+                                <h5>Email</h5>
+                                <p>{{ userStore.email }}</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Phone</h5>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
+                            </div>
+
+                            <div class="profile-content">
+                                <h5>Gender</h5>
+                                <p v-if="userInfo.gender == 'm'">Male</p>
+                                <p v-else>Female</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Date of Birth</h5>
+                                <p>{{ format(userInfo.dob, 'MMMM do, yyyy') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-profile-options">
+                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')">Edit
+                        </PButton>
+                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')">
+                            Logout
+                        </PButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template v-if="isAttendee && !isMobile">
+
+        <div class="home-desktop">
+            <div class="home-header-desktop">
+                <div class="home-header__text-desktop">
+                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+                    <p>Welcome, {{ userStore.first_name }}!</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
+                </div>
+            </div>
+            <h1>Upcoming Events</h1>
+            <div class="p-event__wrapper">
+
+                <div class="p-event__container-desktop" ref="eventContainer">
+                    <div v-if="loading" class="spinner">
+                        <div class="loading-spinner" v-show="loading">
+                            <span class="loader"></span>
+                        </div>
+                    </div>
+                    <!--Dynamic Events-->
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                        :eventName="event.name" :startDate="new Date(event.startDate)"
+                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
+                        :description="event.description" :currentBudget="event.currentBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                        :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                        design="block" @event-click="handleEventClick" />
+                </div>
+
+            </div>
+            <hr>
+            <h1>Previous Events</h1>
+            <div class="p-event__wrapper">
+                <div v-if="loading" class="spinner">
+                    <div class="loading-spinner" v-show="loading">
+                        <span class="loader"></span>
+                    </div>
+                </div>
+                <!-- Previous Button -->
+                <button class="scroll-button prev" @click="scrollLeft">❮</button>
+                <div class="p-event__container-desktop" ref="eventContainer">
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                        :eventName="event.name" :startDate="new Date(event.startDate)"
+                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
+                        :description="event.description" :currentBudget="event.currentBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                        :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                        design="block" @event-click="handleEventClick" />
+                </div>
+                <!-- Next Button -->
+                <button class="scroll-button next" @click="scrollRight">❯</button>
+            </div>
+            <hr>
+        </div>
+    </template>
+
+
+    <!-------------------------------------------------------------------MOBILE VIEW------------------------------------------------------------------->
+
     <!--Modal for User info-->
-    <template v-if="isModalVisible">
+    <template v-if="isModalVisible && isMobile">
         <div>
             <div class="modal-overlay" @click="closeModal"></div>
             <div class="modal modal-container">
@@ -194,92 +337,91 @@ const handleModalOption = async (option) => {
     </template>
 
     <!--Home Page for Attendee-->
-    <template v-if="isAttendee">
-            <div class="home">
-                <div class="home-header">
+    <template v-if="isAttendee && isMobile">
+        <div class="home">
+            <div class="home-header">
 
-                    <div class="home-header__text">
-                        <p>Welcome, {{ userStore.first_name }}</p>
-                        <p class="role-bubble">{{ userStore.role_id }}</p>
-                    </div>
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+                <div class="home-header__text">
+                    <p>Welcome, {{ userStore.first_name }}</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
                 </div>
-                <h1>Upcoming Events</h1>
-                <div class="p-event__container">
-                    <div v-if="loading" class="spinner">
-                        <div class="loading-spinner" v-show="loading">
-                            <span class="loader"></span>
-                        </div>
-                    </div>
-                    <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
-                        :eventName="event.name" :startDate="new Date(event.startDate)"
-                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
-                        :description="event.description" :currentBudget="event.currentBudget"
-                        :destinationCode="event.destinationCode" :financeMan="event.financeMan"
-                        :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
-                        design="block" @event-click="handleEventClick" :class="{ 'fade-in': true, 'show': !loading }" />
-
-                </div>
+                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
             </div>
+            <h1>Upcoming Events</h1>
+            <div class="p-event__container">
+                <div v-if="loading" class="spinner">
+                    <div class="loading-spinner" v-show="loading">
+                        <span class="loader"></span>
+                    </div>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :destinationCode="event.destinationCode"
+                    :financeMan="event.financeMan" :autoApprove="event.autoApprove"
+                    :autoApproveThreshold="event.autoApproveThreshold" design="block" @event-click="handleEventClick"
+                    :class="{ 'fade-in': true, 'show': !loading }" />
+
+            </div>
+        </div>
     </template>
 
     <!--Home Page for Finance-->
-    <template v-if="isFinance">
-            <div class="home">
-                <div class="home-header">
-                    <div class="home-header__text">
-                        <p>Welcome {{ userStore.first_name }} </p>
-                        <p class="role-bubble">{{ userStore.role_id }}</p>
-                    </div>
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+    <template v-if="isFinance && isMobile">
+        <div class="home">
+            <div class="home-header">
+                <div class="home-header__text">
+                    <p>Welcome {{ userStore.first_name }} </p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
                 </div>
-                <h1>Upcoming Events</h1>
-                <div class="p-event__container">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
-                    <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
-                        :eventName="event.name" :startDate="new Date(event.startDate)"
-                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
-                        :description="event.description" :currentBudget="event.currentBudget"
-                        :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
-                        :financeMan="event.financeMan" :autoApprove="event.autoApprove"
-                        :autoApproveThreshold="event.autoApproveThreshold" design="block-finance"
-                        @event-click="handleEventClick" />
-                </div>
+                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
             </div>
+            <h1>Upcoming Events</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-finance" @event-click="handleEventClick" />
+            </div>
+        </div>
     </template>
 
     <!--Home Page for Event Planner-->
-    <template v-if="isEventPlanner">
-            <div class="home">
-                <div class="home-header">
+    <template v-if="isEventPlanner && isMobile">
+        <div class="home">
+            <div class="home-header">
 
-                    <div class="home-header__text">
-                        <p>Welcome, {{ userStore.first_name }}</p>
-                        <p class="role-bubble">{{ userStore.role_id }}</p>
-                    </div>
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+                <div class="home-header__text">
+                    <p>Welcome, {{ userStore.first_name }}</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
                 </div>
-                <h1>Upcoming Events</h1>
-                <div class="p-event__container">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
-                    <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
-                        :eventName="event.name" :startDate="new Date(event.startDate)"
-                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
-                        :description="event.description" :currentBudget="event.currentBudget"
-                        :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
-                        :financeMan="event.financeMan" :autoApprove="event.autoApprove"
-                        :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
-                        @editClick="handleEditEventClick(event)" @event-click="handleEditEventClick(event)" />
-                    <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
-                </div>
+                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
             </div>
+            <h1>Upcoming Events</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-planner" @editClick="handleEditEventClick(event)"
+                    @event-click="handleEditEventClick(event)" />
+                <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
+            </div>
+        </div>
     </template>
 
 </template>

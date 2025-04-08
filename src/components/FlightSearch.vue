@@ -1,13 +1,16 @@
 <script setup>
 import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
+import { useUserStore } from '../stores/userStore'
 import { useRouter, useRoute } from 'vue-router'
-import { PEvent, PButton, PDropDown, PFlight, PTimeRangeDropDown } from '@poseidon-components'
-import { onMounted, ref, computed } from 'vue'
+import { PEvent, PButton, PDropDown, PFlight, PTimeRangeDropDown, PProfilePic } from '@poseidon-components'
+import { onMounted, ref, computed, onUnmounted } from 'vue'
+import { checkAuth } from '../assets/scripts/checkAuth.js'
 
 const route = useRoute()
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
+const userStore = useUserStore()
 const router = useRouter()
 const sortOption = ref('') // Declare sortOption to store the selected sorting option
 const filterStops = ref('') // Declare filterStops to store the selected filtering option
@@ -16,6 +19,13 @@ const arrivalTimeRange = ref('') // Declare arrivalTimeRange to store the select
 const departureTimeRange = ref('') // Declare departureTimeRange to store the selected departure time range
 const loading = ref(false) // Declare loading to manage loading state
 const groupedByOutbound = ref(null) // Declare groupedByOutbound to store grouped flights by outbound leg
+
+const isMobile = ref(window.innerWidth <= 768);
+
+const updateScreenSize = () => {
+  isMobile.value = window.innerWidth <= 768;
+};
+
 //Function to handle the back button
 const handleBack = (targetRoute) => {
   router.push({ name: targetRoute });
@@ -229,18 +239,78 @@ function combineIdenticalFlights(flights) {
     }
   });
 
+  onMounted(() => {
+    checkAuth()
+    window.addEventListener('resize', updateScreenSize);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('resize', updateScreenSize);
+  });
+
   // Return an array of the unique flight objects.
   return Object.values(flightMap);
 }
 
 </script>
 <template>
-    <div class="flight-page">
-        <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
-          :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
-          :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Event')" />
 
-      <h1>{{ route.query?.type == '1' ? 'Departing Flights' : (route.query?.type == 'return' ? 'Returning Flights' : 'Upcoming Flights') }}</h1>
+  <template v-if="!isMobile">
+    <div class="home-header-desktop">
+      <div class="home-header__text-desktop">
+        <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+        <p>Welcome, {{ userStore.first_name }}!</p>
+        <p class="role-bubble">{{ userStore.role_id }}</p>
+      </div>
+    </div>
+    <div class="flight-desktop-search">
+      <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
+        :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
+        :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" />
+      <h1>{{ route.query?.type == '1' ? 'Departing Flights' : (route.query?.type == 'return' ? 'Returning Flights' :
+        'Upcoming Flights') }}</h1>
+      <div class="flight-dropdown">
+        <PDropDown design="flight" dropDownLabel="Stops"
+          :options="['Any number of stops', 'Nonstop only', '1 stop or fewer', '2 stops or fewer']"
+          @option-selected="handleStopsSelection"></PDropDown>
+        <PDropDown design="flight" dropDownLabel="Airline"
+          :options="['Any', ...new Set(flightStore.flightResults.map(flight => flight.airline))]"
+          @option-selected="handleAirlineSelection"></PDropDown>
+        <PTimeRangeDropDown dropDownLabel="Select Time Range" design="flight" :minTime="0" :maxTime="1440"
+          @range-updated="handleTimeRangeUpdate">
+        </PTimeRangeDropDown>
+        <PDropDown design="flight" dropDownLabel="Sort By" :options="['Departure Time', 'Price']"
+          @option-selected="handleSortSelection"></PDropDown>
+      </div>
+
+      <div class="desktop-flights">
+        <PFlight v-for="(flight, index) in filteredAndSortedFlights"
+        :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="desktop-block" :flightID="flight.flightID"
+        :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
+        :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber"
+        :seatAvailable="flight.seatAvailable" :price="flight.price" :flightType="flight.flightType"
+        :flightClass="flight.flightClass" :flightGate="flight.flightGate" :airline="flight.airline"
+        :logoURL="flight.logoURL" :itinerary="flight.itinerary" @click="handleFlightClick(flight)" />
+        <div v-if="loading" class="spinner">
+          <div class="loading-spinner" v-show="loading" style="margin-top:0">
+            <span class="loader"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </template>
+
+  <template v-else>
+    <div class="flight-page">
+      <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
+        :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
+        :pictureLink="eventStore.currentEvent.pictureLink" design="header" @back-click="() => handleBack('Event')" />
+
+      <h1>{{ route.query?.type == '1' ? 'Departing Flights' : (route.query?.type == 'return' ? 'Returning Flights' :
+        'Upcoming Flights') }}</h1>
       <div class="p-dropdown__container" style="margin-bottom: 15px;">
         <PDropDown design="flight" dropDownLabel="Stops"
           :options="['Any number of stops', 'Nonstop only', '1 stop or fewer', '2 stops or fewer']"
@@ -272,4 +342,6 @@ function combineIdenticalFlights(flights) {
           :logoURL="flight.logoURL" :itinerary="flight.itinerary" @click="handleFlightClick(flight)" />
       </div>
     </div>
+  </template>
+
 </template>

@@ -28,7 +28,6 @@
 
 .login-container img {
   height: 14.75rem;
-  /* 236px / 16 = 14.75rem */
   width: 14.75rem;
 }
 
@@ -38,7 +37,6 @@
   align-items: center;
   justify-content: center;
   width: 21.88rem;
-  /* 350px / 16 = 21.88rem */
 }
 
 .login-input {
@@ -46,9 +44,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 1.13rem;
-  /* 18px / 16 = 1.125rem */
   margin-top: 1.88rem;
-  /* 30px / 16 = 1.875rem */
   width: 100%;
 }
 
@@ -58,9 +54,7 @@
 
 .forgot-pass p {
   margin-top: 0.38rem;
-  /* 6px / 16 */
   margin-left: 1.63rem;
-  /* 26px / 16 */
   text-align: left;
 }
 
@@ -68,7 +62,6 @@
   color: var(--pos-yellow);
   text-decoration: none;
   font-size: 0.75rem;
-  /* 12px / 16 */
 }
 
 .error-container {
@@ -76,9 +69,7 @@
   flex-direction: row;
   text-align: left;
   gap: 0.31rem;
-  /* 5px / 16 */
   margin-left: 0.81rem;
-  /* 13px / 16 */
   height: 0;
   opacity: 0;
   /* Start hidden */
@@ -89,16 +80,13 @@
 
 .error-container.show {
   height: 1.19rem;
-  /* 19px / 16 */
   opacity: 1;
   /* Fully visible */
   margin-bottom: 0.44rem;
-  /* 7px / 16 */
 }
 
 .error-icon {
   margin-top: 0.13rem;
-  /* 2px / 16 */
 }
 
 .input-error {
@@ -106,7 +94,6 @@
   color: var(--pos-yellow);
   font-weight: 600;
   font-size: 0.88rem;
-  /* 14px / 16 */
   margin: 0;
 }
 
@@ -121,13 +108,11 @@
   align-items: center;
   justify-content: center;
   max-width: 24.56rem;
-  /* 393px / 16 = 24.56rem */
 }
 
 .register-form h1 {
   color: var(--pos-yellow);
   font-size: 1.25rem;
-  /* 20px / 16 */
   font-weight: 400;
   text-align: left;
 }
@@ -136,14 +121,12 @@
   display: flex;
   flex-direction: row;
   gap: 0.63rem;
-  /* 10px / 16 ≈ 0.625rem */
 }
 
 .register-form #password {
   display: flex;
   flex-direction: column;
   gap: 0.88rem;
-  /* 14px / 16 ≈ 0.875rem */
 }
 
 .register-form #button {
@@ -161,9 +144,7 @@
   display: flex;
   flex-direction: row;
   gap: 0.63rem;
-  /* 10px / 16 ≈ 0.63rem */
   max-width: 24.56rem;
-  /* 393px / 16 = 24.56rem */
 }
 
 body {
@@ -174,9 +155,7 @@ body {
 .home .p-event__container {
   max-height: none;
   min-height: 31.25rem;
-  /* 500px / 16 = 31.25rem */
   gap: 0.44rem;
-  /* 7px / 16 ≈ 0.44rem */
   width: 87%;
 }
 
@@ -188,7 +167,8 @@ body {
   width: 24.56rem;
   background-color: var(--pos-inner-yellow);
   padding-bottom: 1.25rem;
-  min-height: 100vh; /* Ensure it covers the full viewport height */
+  min-height: 100vh;
+  /* Ensure it covers the full viewport height */
 }
 
 .home-header {
@@ -198,20 +178,12 @@ body {
   align-items: center;
   margin: 0;
   margin-bottom: 0.94rem;
-  /* 15px / 16 ≈ 0.94rem */
   color: var(--pos-white);
   font-size: 0.81rem;
-  /* 13px / 16 ≈ 0.81rem */
-  min-width: 24.56rem;
-  /* 393px / 16 = 24.56rem */
-  max-width: 24.56rem;
-  /* 393px / 16 = 24.56rem */
+  width: 24.56rem;
   height: 4.69rem;
-  /* 75px / 16 ≈ 4.69rem */
   padding-top: 0.44rem;
-  /* 7px / 16 ≈ 0.44rem */
   padding-bottom: 0.44rem;
-  /* 7px / 16 ≈ 0.44rem */
 }
 
 .home-header p {
@@ -275,7 +247,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: 100vh; /* Set height to 100% of the viewport height */
+  height: 100vh;
+  /* Set height to 100% of the viewport height */
   max-width: 24.56rem;
   /* 393px */
   background-color: var(--pos-inner-yellow);
@@ -448,14 +421,18 @@ body {
 
 .flight-itinerary-button {
   display: flex;
-  justify-content: center; /* Horizontally center */
-  align-items: center; /* Vertically center */
+  justify-content: center;
+  /* Horizontally center */
+  align-items: center;
+  /* Vertically center */
 }
 
 .flight-hold-button {
   display: flex;
-  justify-content: center; /* Horizontally center */
-  align-items: center; /* Vertically center */
+  justify-content: center;
+  /* Horizontally center */
+  align-items: center;
+  /* Vertically center */
   width: 30%;
   padding-top: 5%;
   padding-left: 50%;
@@ -839,14 +816,19 @@ body {
   background-color: var(--pos-inner-yellow);
   padding-bottom: 1.25rem;
   /* 20px */
-  width: 100%; /* Allow the container to stretch */
-  max-width: 24.56rem; /* Ensure it doesn't restrict the inputs */
+  width: 100%;
+  /* Allow the container to stretch */
+  max-width: 24.56rem;
+  /* Ensure it doesn't restrict the inputs */
 }
 
 .planner-event input {
-  width: 100%; /* Keep inputs responsive */
-  max-width: none; /* Remove the restriction on maximum width */
-  box-sizing: border-box; /* Include padding and borders in the width */
+  width: 100%;
+  /* Keep inputs responsive */
+  max-width: none;
+  /* Remove the restriction on maximum width */
+  box-sizing: border-box;
+  /* Include padding and borders in the width */
 }
 
 .planner-event h1 {
@@ -901,20 +883,25 @@ body {
   padding-bottom: 1.25rem;
   /* 20px */
   gap: 0.625rem;
-  width: 100%; /* Allow the container to stretch */
-  max-width: 24.56rem; /* Ensure it doesn't restrict the inputs */
+  width: 100%;
+  /* Allow the container to stretch */
+  max-width: 24.56rem;
+  /* Ensure it doesn't restrict the inputs */
 }
 
 .event-form input {
-  width: 100%; /* Make them responsive to the container */
-  max-width: 20rem; /* Set a maximum width, e.g., 320px */
-  box-sizing: border-box; /* Include padding and borders in the width */
+  width: 100%;
+  /* Make them responsive to the container */
+  max-width: 20rem;
+  /* Set a maximum width, e.g., 320px */
+  box-sizing: border-box;
+  /* Include padding and borders in the width */
 }
 
 .event-form .planner-event-name,
-.event-form .planner-event-destination, 
-.event-form .planner-description, 
-.event-form .planner-dates, 
+.event-form .planner-event-destination,
+.event-form .planner-description,
+.event-form .planner-dates,
 .event-form .planner-event-picture,
 .event-form .planner-event-budget {
   display: flex;
@@ -1151,7 +1138,8 @@ input:checked+.slider:before {
 
 .flight-search-form input,
 .p-textfield--small {
-  box-sizing: border-box; /* Include padding and border in the width */
+  box-sizing: border-box;
+  /* Include padding and border in the width */
 }
 
 .flight-type {
@@ -1166,8 +1154,10 @@ input:checked+.slider:before {
   border-radius: 62.44rem;
   overflow: hidden;
   background-color: var(--pos-inner-yellow);
-  margin: 0.375rem auto; /* Center the element horizontally */
-  justify-content: center; /* Ensure buttons inside are centered */
+  margin: 0.375rem auto;
+  /* Center the element horizontally */
+  justify-content: center;
+  /* Ensure buttons inside are centered */
   margin-bottom: 5%;
 }
 
@@ -1254,14 +1244,14 @@ input:checked+.slider:before {
   .flight-page {
     max-width: 100%;
     padding-bottom: 1rem;
-  } 
+  }
 
   .flight-itinerary {
     max-width: 100%;
     padding-bottom: 1rem;
     height: 120vh;
   }
-  
+
   .finance-dashboard {
     max-width: 100%;
     padding-bottom: 1rem;
@@ -1274,5 +1264,302 @@ input:checked+.slider:before {
 
   .planner-event input {
     width: 100%;
+  }
+}
+
+
+/*---------------DESKTOP------------------*/
+
+@media only screen and (min-width: 48rem) {
+  .home-desktop {
+    background-color: var(--pos-inner-yellow);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
+    /* Ensure padding and borders are included in height */
+  }
+
+  .home-desktop h1 {
+    background: var(--top-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+    /* 32px */
+    margin-top: 0.94rem;
+    margin-bottom: 0.94rem;
+    text-align: left;
+    position: relative;
+    right: 35%;
+    font-weight: 600;
+    padding-top: 3%;
+  }
+
+  .home-desktop hr {
+    color: var(--pos-grey);
+    width: 90%;
+    margin-top: 1%;
+    margin-left: 6%;
+  }
+
+  .home-header-desktop {
+    background: var(--top-gradient);
+    color: var(--pos-white);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    gap: 1%;
+  }
+
+  .home-header-desktop img {}
+
+  .home-header__text-desktop {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0;
+    gap: 1%;
+    line-height: 1;
+    width: 100%;
+    padding-left: 1%;
+  }
+
+  .role-bubble {
+    color: var(--pos-green);
+    background-color: #BBF7D0;
+    border-radius: 2.5rem;
+    border: var(--pos-green) 1px solid;
+    text-align: center;
+    font-size: 0.69rem;
+    padding: 0.25rem 0.5rem;
+    margin-right: 1.88rem;
+    font-weight: 600;
+    width: 3%;
+    max-width: 8%;
+  }
+
+  .p-event__container-desktop {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    padding: 0 2rem;
+    gap: 1%;
+  }
+
+  .p-event__wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 95%;
+    overflow: hidden;
+    border-radius: 15%;
+  }
+
+  .p-event__wrapper::before,
+  .p-event__wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 5%;
+    /* Adjust the width of the fade */
+    pointer-events: none;
+    /* Ensure it doesn't block interactions */
+    z-index: 1;
+  }
+
+  .p-event__wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--pos-inner-yellow), rgba(255, 255, 255, 0));
+  }
+
+  .p-event__wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--pos-inner-yellow), rgba(255, 255, 255, 0));
+  }
+
+  .p-event__container-desktop {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 3%;
+    margin-right: 3%;
+    gap: 0%;
+    overflow: hidden;
+    scroll-behavior: smooth;
+    width: 90%;
+    max-width: none;
+    white-space: nowrap;
+    /* Prevent wrapping of items */
+    justify-content: flex-start;
+    /* Align items to the start */
+  }
+
+  .scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--pos-yellow);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    z-index: 1;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .scroll-button.prev {
+    left: 0%;
+    z-index: 998;
+  }
+
+  .scroll-button.next {
+    right: 0%;
+    z-index: 998;
+  }
+
+  .scroll-button:hover {
+    background-color: var(--pos-dark-yellow);
+  }
+
+  .event-page-desktop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    background-color: var(--pos-inner-yellow);
+  }
+
+
+  .event-desktop-content {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    justify-content: left;
+    width: 50%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    white-space: nowrap;
+    /* Prevent wrapping of items */
+    justify-content: flex-start;
+    /* Align items to the start */
+    margin-right: 5%;
+    margin-top: 2%;
+  }
+
+  .event-desktop-content h2 {
+    display: inline-block;
+    background: var(--top-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+    text-align: left;
+    margin: 0;
+  }
+
+  .event-desktop-content p {
+    color: black;
+  }
+
+  .event-date-desktop {
+    margin-right: 5%;
+    min-width: 60%;
+  }
+
+  .flight-search-form {
+    display: flex;
+    flex-direction: column;
+    /* Keep toggle above the search bar */
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    /* Add spacing between the toggle and the search bar */
+    max-width: 100%;
+    margin: 1rem auto;
+    /* Center the form and add spacing from other content */
+  }
+
+  .flight-search-bar {
+    display: flex;
+    flex-direction: row;
+    /* Arrange inputs and button in a row */
+    align-items: center;
+    justify-content: space-between;
+    /* Space out the elements */
+    gap: 0.5rem;
+    /* Add spacing between inputs and button */
+    width: 100%;
+    max-width: 600px;
+    /* Limit the width of the search bar */
+  }
+
+  .flight-search-bar input {
+    flex: 1;
+    /* Allow inputs to take up available space */
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+  }
+
+  .flight-search-bar button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: var(--top-gradient);
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .flight-search-bar button:hover {
+    background-color: var(--pos-dark-yellow);
+  }
+
+  .flight-desktop-search {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 100%;
+    height: 100vh;
+    background-color: var(--pos-inner-yellow);
+  }
+
+  .flight-desktop-search h1 {
+    background: var(--top-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+    padding: 1%;
+  }
+
+  .flight-dropdown {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 100%;
+    gap: 2%;
+    background-color: var(--pos-inner-yellow);
+    padding-bottom: 1.25rem;
   }
 }
