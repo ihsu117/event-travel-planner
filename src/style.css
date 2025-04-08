@@ -605,10 +605,6 @@ body {
   align-items: center;
   width: 20.94rem;
   /* 335px */
-  min-height: 39.06rem;
-  /* 625px */
-  max-height: 39.06rem;
-  /* 625px */
   background: var(--pos-grey);
   color: black;
 }

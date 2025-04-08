@@ -5,6 +5,7 @@ import { useFlightStore } from '../stores/flightStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter, useRoute } from 'vue-router'
 import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight, PProfilePic } from '@poseidon-components'
+import { PlannerInvite } from './PlannerInvite.vue'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import api from '../assets/scripts/api.js'
 import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
@@ -31,6 +32,7 @@ const latitude = ref('');
 const longitude = ref('');
 const errors = ref({ date: '', location: '' })
 const roundtripRange = ref(null)
+const showInviteModal = ref(false)
 const isMobile = ref(window.innerWidth <= 768);
 
 const updateScreenSize = () => {
@@ -211,6 +213,10 @@ const handleOneWayDate = (date) => {
 
 }
 
+const openInviteModal = () => {
+    showInviteModal.value = true
+ }
+
 </script>
 
 <template>
@@ -349,6 +355,9 @@ const handleOneWayDate = (date) => {
                         :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                 </div>
             </div>
+                <div class="event-edit-button">
+                    <PButton design="gradient" label="Add/Edit Users" @click="openInviteModal()"></PButton>
+                </div>
             <div class="event-edit-button">
                 <PButton design="gradient" label="Save Changes" @click="saveChanges" />
             </div>
@@ -446,6 +455,10 @@ const handleOneWayDate = (date) => {
                 </div>
             </div>
         </div>
+    </template>
+
+    <template v-if="route?.query?.editView && showInviteModal">
+        <PlannerInvite></PlannerInvite>
     </template>
 
 </template>
