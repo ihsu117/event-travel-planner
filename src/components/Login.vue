@@ -74,6 +74,7 @@ const loginUser = async () => {
         }
       })
     } else {
+      loading.value = false
       closeModal()
       throw new Error('Invalid Email or Password')
     }
