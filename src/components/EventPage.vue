@@ -304,12 +304,6 @@ const openInviteModal = () => {
                         </button>
                     </div>
                 <div class="flight-search-form">
-                    
-                    <div class="selected-flight" v-if="bookingData">
-                        <PFlight design="block" v-bind="flightStore.currentFlight"
-                            @click="handleFlightClick(flightStore.currentFlight)" />
-                    </div>
-                    
                     <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
                         id="flight-search">
                         <div :class="['error-container', { show: errors.date }]">
@@ -355,6 +349,13 @@ const openInviteModal = () => {
                             @click="toFlightSearch" />
                     </div>
                 </div>
+            </div>
+            <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
+                <PFlight design="block" :airline="bookingItinerary.airline" :logoURL="bookingItinerary.logoURL"
+                :price="bookingPrice" :flightClass="segment.class" :flightType="segment.flight_type" 
+                :origin="segment.origin" :destination="segment.destination" :flightDate="new Date(segment.departure_time)" 
+                :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time" :flightDuration="segment.duration"
+                    @click="handleFlightClick(flightStore.currentFlight)" />
             </div>
         </div>
 
