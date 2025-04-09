@@ -90,7 +90,7 @@ const updateFlight = async (selection) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                flightID: flightSelected.value.flightID,
+                id: flightSelected.value.flightID,
                 price: flightSelected.value.price,
                 eventID: eventStore.currentEvent.id,
                 selection: selection
