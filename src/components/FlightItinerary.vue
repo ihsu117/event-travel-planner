@@ -172,124 +172,40 @@ console.log("ITINERARIES: ", itineraries.value)
           <p class="role-bubble">{{ userStore.role_id }}</p>
         </div>
       </div>
-      <div>
 
-<div v-if="$route?.query?.type !== 'bookingSummary'">
-  <div class="itnry-desktop-container">
-    <div class="" v-for="(itinerary, index) in itineraries" :key="index">
-      <PFlight design="desktop-itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
-        :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
-        :flightDuration="itinerary.duration"
-        :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
-      </PFlight>
-      <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
-        :layoverDuration="itinerary.layover"></PFlight>
-    </div>
-  </div>
-
-  <div class="flight-itinerary-button">
-    <PButton
-      v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
-      design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
-    </PButton>
-  </div>
-  <div class="flight-itinerary-button">
-    <PButton
-      v-if="flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1 && $route?.query?.type !== 'return'"
-      design="gradient" label="Search for Returning Flights" @click="handleReturnFlightClick()"></PButton>
-  </div>
-  <div>
-    <PButton v-if="$route?.query?.type == 'returnItinerary'" design="gradient" label="Go to Booking Summary"
-      @click="handleGoToSummary()"></PButton>
-  </div>
-</div>
-
-<div v-if="$route?.query?.type == 'bookingSummary'">
-  <div class="p-event__container">
-
-    <h1>Departing Itinerary</h1>
-
-    <div class="p-event__entry" v-for="(itinerary, index) in flightStore.itineraries[0]" :key="index">
-      <PFlight design="desktop-itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
-        :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
-        :flightDuration="itinerary.duration"
-        :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
-      </PFlight>
-      <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
-        :layoverDuration="itinerary.layover"></PFlight>
-    </div>
-
-    <h1>Returning Itinerary</h1>
-
-    <div class="p-event__entry" v-for="(itinerary, index) in flightStore.itineraries[1]" :key="index">
-      <PFlight design="desktop-itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
-        :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
-        :flightDuration="itinerary.duration"
-        :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
-      </PFlight>
-      <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
-        :layoverDuration="itinerary.layover"></PFlight>
-    </div>
-
-    <div class="flight-hold-button">
-      <PButton
-        v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
-        design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
-      </PButton>
-    </div>
-
-  </div>
-
-</div>
-</div>
-    </div>
-  </template>
-
-
-  <!-----------------------------------------------------------MOBILE------------------------------------------------------------>
-  <template v-else>
-    <div class="flight-itinerary">
-      <PEvent design="itinerary-header" :airline="flightStore.currentFlight.airline" :name="'Flight Itinerary'"
-        :pictureLink="flightStore.currentFlight.logoURL" @back-click="() => handleBack('Flight')" />
-      <div>
-
-        <div v-if="$route?.query?.type !== 'bookingSummary'">
-          <div class="p-event__container">
-            <div class="p-event__entry" v-for="(itinerary, index) in itineraries" :key="index">
-              <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
-                :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
-                :flightDuration="itinerary.duration"
-                :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
-              </PFlight>
-              <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
-                :layoverDuration="itinerary.layover"></PFlight>
-            </div>
-
+      <div v-if="$route?.query?.type !== 'bookingSummary'">
+        <div class="itnry-container">
+          <div v-for="(itinerary, index) in itineraries" :key="index">
+            <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="flightStore.currentFlight.airline"
+              :logoURL="flightStore.currentFlight.logoURL" :flightDepTime="itinerary.departure_time"
+              :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
+              :flightDuration="itinerary.duration"
+              :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
+            </PFlight>
+            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+              :layoverDuration="itinerary.layover"></PFlight>
           </div>
+
+
           <div class="flight-itinerary-button">
             <PButton
               v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
               design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
             </PButton>
-          </div>
-          <div class="flight-itinerary-button">
             <PButton
               v-if="flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1 && $route?.query?.type !== 'return'"
               design="gradient" label="Search for Returning Flights" @click="handleReturnFlightClick()"></PButton>
-          </div>
-          <div>
             <PButton v-if="$route?.query?.type == 'returnItinerary'" design="gradient" label="Go to Booking Summary"
               @click="handleGoToSummary()"></PButton>
           </div>
         </div>
 
         <div v-if="$route?.query?.type == 'bookingSummary'">
-          <div class="p-event__container">
+          <div class="itnry-container">
 
             <h1>Departing Itinerary</h1>
-
-            <div class="p-event__entry" v-for="(itinerary, index) in flightStore.itineraries[0]" :key="index">
-              <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+            <div v-for="(itinerary, index) in flightStore.itineraries[0]" :key="index">
+              <PFlight design="desktop-itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
                 :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
                 :flightDuration="itinerary.duration"
                 :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
@@ -299,9 +215,8 @@ console.log("ITINERARIES: ", itineraries.value)
             </div>
 
             <h1>Returning Itinerary</h1>
-
-            <div class="p-event__entry" v-for="(itinerary, index) in flightStore.itineraries[1]" :key="index">
-              <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+            <div v-for="(itinerary, index) in flightStore.itineraries[1]" :key="index">
+              <PFlight design="desktop-itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
                 :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
                 :flightDuration="itinerary.duration"
                 :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
@@ -321,6 +236,84 @@ console.log("ITINERARIES: ", itineraries.value)
 
         </div>
       </div>
+    </div>
+  </template>
+
+
+  <!-----------------------------------------------------------MOBILE------------------------------------------------------------>
+  <template v-else>
+    <div class="flight-itinerary">
+      <PEvent design="itinerary-header" :airline="flightStore.currentFlight.airline" :name="'Flight Itinerary'"
+        :pictureLink="flightStore.currentFlight.logoURL" @back-click="() => handleBack('Flight')" />
+
+      <div v-if="$route?.query?.type !== 'bookingSummary'">
+        <div class="p-event__container">
+          <div class="p-event__entry" v-for="(itinerary, index) in itineraries" :key="index">
+            <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+              :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
+              :flightDuration="itinerary.duration"
+              :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
+            </PFlight>
+            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+              :layoverDuration="itinerary.layover"></PFlight>
+          </div>
+
+        </div>
+        <div class="flight-itinerary-button">
+          <PButton
+            v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
+            design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
+          </PButton>
+        </div>
+        <div class="flight-itinerary-button">
+          <PButton
+            v-if="flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1 && $route?.query?.type !== 'return'"
+            design="gradient" label="Search for Returning Flights" @click="handleReturnFlightClick()"></PButton>
+        </div>
+        <div>
+          <PButton v-if="$route?.query?.type == 'returnItinerary'" design="gradient" label="Go to Booking Summary"
+            @click="handleGoToSummary()"></PButton>
+        </div>
+      </div>
+
+      <div v-if="$route?.query?.type == 'bookingSummary'">
+        <div class="p-event__container">
+
+          <h1>Departing Itinerary</h1>
+
+          <div class="p-event__entry" v-for="(itinerary, index) in flightStore.itineraries[0]" :key="index">
+            <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+              :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
+              :flightDuration="itinerary.duration"
+              :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
+            </PFlight>
+            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+              :layoverDuration="itinerary.layover"></PFlight>
+          </div>
+
+          <h1>Returning Itinerary</h1>
+
+          <div class="p-event__entry" v-for="(itinerary, index) in flightStore.itineraries[1]" :key="index">
+            <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+              :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
+              :flightDuration="itinerary.duration"
+              :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
+            </PFlight>
+            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+              :layoverDuration="itinerary.layover"></PFlight>
+          </div>
+
+          <div class="flight-hold-button">
+            <PButton
+              v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
+              design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
+            </PButton>
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
   </template>
 </template>

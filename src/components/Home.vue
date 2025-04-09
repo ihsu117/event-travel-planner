@@ -32,7 +32,7 @@ const updateScreenSize = () => {
 const scrollLeft = () => {
     if (eventContainer.value) {
         eventContainer.value.scrollBy({
-            left: -300, // Adjust scroll distance as needed
+            left: -775, // Adjust scroll distance as needed
             behavior: 'smooth',
         });
     }
@@ -41,7 +41,7 @@ const scrollLeft = () => {
 const scrollRight = () => {
     if (eventContainer.value) {
         eventContainer.value.scrollBy({
-            left: 300, // Adjust scroll distance as needed
+            left: 775, // Adjust scroll distance as needed
             behavior: 'smooth',
         });
     }
