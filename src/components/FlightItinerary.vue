@@ -153,6 +153,7 @@ const itineraries = computed(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', updateScreenSize);
+  flightStore.setCurrentFlight(null)
 });
 
 console.log("ITINERARIES: ", itineraries.value)

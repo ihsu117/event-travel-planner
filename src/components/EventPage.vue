@@ -25,8 +25,8 @@ const departDate = ref(null)
 const returnDate = ref(null)
 const arrivalDate = ref(null)
 const zipcode = ref('')
-const flightSelected = ref(false)
 const bookingData = ref(null)
+const bookingItinerary = ref(null)
 const bookingPrice = ref(null)
 const editView = ref(route.query.editView === 'true')
 const flightType = ref(null);
@@ -172,12 +172,15 @@ const checkAndLoadFlightBooking = async () => {
             })
             if (response.status === 404) {
                 console.warn('No flight data found for the selected event.')
-                flightStore.setCurrentFlight(null)
+
             } else if (response.ok) {
                 const flightData = await response.json()
                 console.log(flightData)
                 flightStore.setCurrentFlight(flightData)
                 console.log(flightStore.currentFlight)
+
+                bookingData.value = flightData
+                bookingPrice.value = bookingData.price
             }
                 
         } catch (error) {
@@ -190,9 +193,8 @@ const checkAndLoadFlightBooking = async () => {
 
 
     if (flightStore.currentFlight.itinerary) {
-        bookingData.value = flightStore.currentFlight.itinerary;
+        bookingItinerary.value = flightStore.currentFlight.itinerary;
         bookingPrice.value = flightStore.currentFlight.price;
-        flightSelected.value = true;
     }
 }
 
@@ -298,7 +300,7 @@ const openInviteModal = () => {
                     </div>
                 <div class="flight-search-form">
                     
-                    <div class="selected-flight" v-if="flightSelected">
+                    <div class="selected-flight" v-if="bookingData">
                         <PFlight design="block" v-bind="flightStore.currentFlight"
                             @click="handleFlightClick(flightStore.currentFlight)" />
                     </div>
@@ -405,8 +407,8 @@ const openInviteModal = () => {
                 <div class="event-description">
                     <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                 </div>
-                <div class="selected-flight" v-if="flightSelected" v-for="(segment, index) in bookingData.itinerary">
-                        <PFlight design="block" :airline="bookingData.airline" :logoURL="bookingData.logoURL"
+                <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
+                        <PFlight design="block" :airline="bookingItinerary.airline" :logoURL="bookingItinerary.logoURL"
                         :price="bookingPrice" :flightClass="segment.class" :flightType="segment.flight_type" 
                         :origin="segment.origin" :destination="segment.destination" :flightDate="new Date(segment.departure_time)" 
                         :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time" :flightDuration="segment.duration"
