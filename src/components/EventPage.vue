@@ -27,6 +27,7 @@ const arrivalDate = ref(null)
 const zipcode = ref('')
 const flightSelected = ref(false)
 const bookingData = ref(null)
+const bookingPrice = ref(null)
 const editView = ref(route.query.editView === 'true')
 const flightType = ref(null);
 const latitude = ref('');
@@ -162,9 +163,35 @@ const checkAndLoadEvent = () => {
     }
 }
 
-const checkAndLoadSelectedFlight = () => {
+const isAttendee = computed(() => userStore.role_id === 'Attendee')
+const checkAndLoadFlightBooking = async () => {
+    if (isAttendee.value) {
+        try {
+            const response = await api.apiFetch('/flights/bookedflight/' + eventStore.currentEvent.id, {
+                credentials: 'include'
+            })
+            if (response.status === 404) {
+                console.warn('No flight data found for the selected event.')
+                flightStore.setCurrentFlight(null)
+            } else if (response.ok) {
+                const flightData = await response.json()
+                console.log(flightData)
+                flightStore.setCurrentFlight(flightData)
+                console.log(flightStore.currentFlight)
+            }
+                
+        } catch (error) {
+            console.error('Failed to fetch current booking data:', error)
+        }
+    }
+        
+
+
+
+
     if (flightStore.currentFlight.itinerary) {
         bookingData.value = flightStore.currentFlight.itinerary;
+        bookingPrice.value = flightStore.currentFlight.price;
         flightSelected.value = true;
     }
 }
@@ -187,7 +214,7 @@ onMounted(async () => {
     checkAuth()
     window.addEventListener('resize', updateScreenSize);
     checkAndLoadEvent()
-    checkAndLoadSelectedFlight()
+    checkAndLoadFlightBooking()
     console.log('Organization:', eventStore.currentEvent.org)
 
 })
@@ -380,8 +407,8 @@ const openInviteModal = () => {
                 </div>
                 <div class="selected-flight" v-if="flightSelected" v-for="(segment, index) in bookingData.itinerary">
                         <PFlight design="block" :airline="bookingData.airline" :logoURL="bookingData.logoURL"
-                        :price="bookingData.price" :flightClass="segment.class" :flightType="segment.flight_type" 
-                        :origin="segment.origin" :destination="segment.destination" :flightDate="segment.departure_date" 
+                        :price="bookingPrice" :flightClass="segment.class" :flightType="segment.flight_type" 
+                        :origin="segment.origin" :destination="segment.destination" :flightDate="new Date(segment.departure_time)" 
                         :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time" :flightDuration="segment.duration"
                             @click="handleFlightClick(flightStore.currentFlight)" />
                 </div>
