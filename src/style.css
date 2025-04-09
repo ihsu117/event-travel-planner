@@ -1321,7 +1321,6 @@ input:checked+.slider:before {
     gap: 1%;
   }
 
-  .home-header-desktop img {}
 
   .home-header__text-desktop {
     display: flex;

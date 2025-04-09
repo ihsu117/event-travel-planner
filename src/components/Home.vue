@@ -234,9 +234,9 @@ const handleModalOption = async (option) => {
         <div class="home-desktop">
             <div class="home-header-desktop">
                 <div class="home-header__text-desktop">
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
                     <p>Welcome, {{ userStore.first_name }}!</p>
                     <p class="role-bubble">{{ userStore.role_id }}</p>
+                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
                 </div>
             </div>
             <h1>Upcoming Events</h1>
