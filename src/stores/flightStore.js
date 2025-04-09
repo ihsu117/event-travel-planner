@@ -7,6 +7,7 @@ export const useFlightStore = defineStore('flight', {
             flightDate: null,
             origin: '',
             passID: '',
+            flightNumber: '',
             destination: '',
             flightDepTime: '',
             flightArrTime: '',
@@ -19,7 +20,7 @@ export const useFlightStore = defineStore('flight', {
             airline: '',
             logoURL: '',
             offer_id: '',
-            itinerary: []
+            itinerary: {}
         },
         flightResults: [],
         itineraries: []
@@ -30,6 +31,7 @@ export const useFlightStore = defineStore('flight', {
             this.currentFlight = {
                 flightID: null,
                 flightDate: flight.flightDate,
+                flightNumber: flight.flightNumber,
                 origin: flight.origin,
                 passID: flight.passID,
                 destination: flight.destination,
@@ -71,6 +73,7 @@ export const useFlightStore = defineStore('flight', {
                     return {
                         flightID: null,
                         flightDate: aflightDate,
+                        flightNumber: flight.details[0].itinerary[0].flight_num,
                         origin: flight.origin_airport,
                         destination: flight.destination_airport,
                         flightDepTime: flight.details[0].itinerary[0].departure_time,
@@ -112,6 +115,7 @@ export const useFlightStore = defineStore('flight', {
                 this.flightResults = flightData.map(flight => ({
                     flightID: flight.flight_id,
                     flightDate: new Date(flight.depart_time),
+                    flightNumber: flight.flight_num,
                     origin: flight.depart_loc,
                     destination: flight.arrive_loc,
                     flightDepTime: flight.depart_time,
@@ -157,6 +161,7 @@ export const useFlightStore = defineStore('flight', {
                     return {
                         flightID: null,
                         flightDate: aflightDate,
+                        flightNumber: flight.flightNumber,
                         origin: flight.origin,
                         destination: flight.destination,
                         flightDepTime: flight.flightDepTime,
