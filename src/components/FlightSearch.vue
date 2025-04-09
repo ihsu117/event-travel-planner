@@ -42,15 +42,15 @@ const handleFlightClick = (flight) => {
   }
 }
 
-const handleSortSelection = ({filter, option}) => {
+const handleSortSelection = ({ filter, option }) => {
   sortOption.value = option; // Update sortOption with the selected option
 }
 
-const handleStopsSelection = ({filter, option}) => {
+const handleStopsSelection = ({ filter, option }) => {
   filterStops.value = option; // Update filterStops with the selected option
 }
 
-const handleAirlineSelection = ({filter, option}) => {
+const handleAirlineSelection = ({ filter, option }) => {
   airlineSelection.value = option; // Update airlineSelection with the selected option
 }
 
@@ -244,13 +244,13 @@ function combineIdenticalFlights(flights) {
 }
 
 onMounted(() => {
-    checkAuth()
-    window.addEventListener('resize', updateScreenSize);
-  });
+  checkAuth()
+  window.addEventListener('resize', updateScreenSize);
+});
 
-  onUnmounted(() => {
-    window.removeEventListener('resize', updateScreenSize);
-  });
+onUnmounted(() => {
+  window.removeEventListener('resize', updateScreenSize);
+});
 
 </script>
 <template>
@@ -258,9 +258,11 @@ onMounted(() => {
   <template v-if="!isMobile">
     <div class="home-header-desktop">
       <div class="home-header__text-desktop">
-        <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
-        <p>Welcome, {{ userStore.first_name }}!</p>
-        <p class="role-bubble">{{ userStore.role_id }}</p>
+        <div class="home-header__text-desktop">
+          <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+          <p>Welcome, {{ userStore.first_name }}!</p>
+          <p class="role-bubble">{{ userStore.role_id }}</p>
+        </div>
       </div>
     </div>
     <div class="flight-desktop-search">
@@ -285,12 +287,13 @@ onMounted(() => {
 
       <div class="desktop-flights">
         <PFlight v-for="(flight, index) in filteredAndSortedFlights"
-        :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="desktop-block" :flightID="flight.flightID"
-        :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
-        :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber"
-        :seatAvailable="flight.seatAvailable" :price="flight.price" :flightType="flight.flightType"
-        :flightClass="flight.flightClass" :flightGate="flight.flightGate" :airline="flight.airline"
-        :logoURL="flight.logoURL" :itinerary="flight.itinerary" :flightDuration="flight.itinerary.duration" @click="handleFlightClick(flight)" />
+          :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="desktop-block" :flightID="flight.flightID"
+          :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
+          :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber"
+          :seatAvailable="flight.seatAvailable" :price="flight.price" :flightType="flight.flightType"
+          :flightClass="flight.flightClass" :flightGate="flight.flightGate" :airline="flight.airline"
+          :logoURL="flight.logoURL" :itinerary="flight.itinerary" :flightDuration="flight.itinerary.duration"
+          @click="handleFlightClick(flight)" />
         <div v-if="loading" class="spinner">
           <div class="loading-spinner" v-show="loading" style="margin-top:0">
             <span class="loader"></span>
