@@ -23,6 +23,8 @@ const inviteEmail = ref('')
 // The parent is responsible for showing/hiding this component.
 
 // Functions remain the same:
+
+
 const addUser = () => {
     if (newEmail.value.trim() === '') {
         console.error('Email cannot be empty')
@@ -125,6 +127,10 @@ const selectFinanceManager = (userID) => {
 const isFinanceManagerSelected = (userID) => {
     return selectedFinman.value === userID
 }
+const handleUpdate = ({ field, value }) => {
+    if (field === 'newEmailAddress') newEmail.value = value
+    console.log("HANDLE", field, value)
+}
 
 onMounted(() => {
     loadOrgUsers()
@@ -150,9 +156,11 @@ onMounted(() => {
                 <div class="p-event__container">
                     <PFinanceBlock design="invite"
                         v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
-                        :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                        :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
+                        :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
+                        :email="user.email" :profileImage="user.profile_picture"
+                        :class="{ selected: isUserSelected(user.user_id) }"
                         @click="toggleUserSelection(user.user_id)" />
+
 
                     <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
                         :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
@@ -162,6 +170,12 @@ onMounted(() => {
                 </div>
 
                 <PButton label="Send Invites" @click="handleSendInvites" design="gradient" />
+                <div>
+                    <PTextField v-model="newEmail" design="textarea-edit"
+                        @update:modelValue="value => handleUpdate({ field: 'newEmailAddress', value })">
+                    </PTextField>
+                    <PButton label="Send Invite to New User" design="gradient" @click="addUser" />
+                </div>
             </div>
         </div>
     </div>
