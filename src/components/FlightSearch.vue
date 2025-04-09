@@ -243,8 +243,16 @@ function combineIdenticalFlights(flights) {
   return Object.values(flightMap);
 }
 
+const checkAndLoadEvent = () => {
+    const eventData = localStorage.getItem('currentEvent');
+    if (eventData) {
+        eventStore.loadCurrentEvent();
+    }
+}
+
 onMounted(() => {
   checkAuth()
+  checkAndLoadEvent()
   window.addEventListener('resize', updateScreenSize);
 });
 
@@ -288,7 +296,7 @@ onUnmounted(() => {
       <div class="desktop-flights">
         <PFlight v-for="(flight, index) in filteredAndSortedFlights"
           :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="desktop-block" :flightID="flight.flightID"
-          :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
+          :flightDate="flight.flightDate" :flightNumber="flight.flightNumber" :origin="flight.origin" :destination="flight.destination"
           :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber"
           :seatAvailable="flight.seatAvailable" :price="flight.price" :flightType="flight.flightType"
           :flightClass="flight.flightClass" :flightGate="flight.flightGate" :airline="flight.airline"
