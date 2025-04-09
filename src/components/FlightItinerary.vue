@@ -199,7 +199,7 @@ console.log("ITINERARIES: ", itineraries.value)
               @click="handleGoToSummary()"></PButton>
           </div>
         </div>
-
+      </div>
         <div v-if="$route?.query?.type == 'bookingSummary'">
           <div class="itnry-container">
 
@@ -236,7 +236,6 @@ console.log("ITINERARIES: ", itineraries.value)
 
         </div>
       </div>
-    </div>
   </template>
 
 
