@@ -26,6 +26,7 @@ const returnDate = ref(null)
 const arrivalDate = ref(null)
 const zipcode = ref('')
 const flightSelected = ref(false)
+const bookingData = ref(null)
 const editView = ref(route.query.editView === 'true')
 const flightType = ref(null);
 const latitude = ref('');
@@ -162,10 +163,8 @@ const checkAndLoadEvent = () => {
 }
 
 const checkAndLoadSelectedFlight = () => {
-    const selectedFlightData = localStorage.getItem('selectedFlight');
-    const isFlightSelected = localStorage.getItem('flightSelected') === 'true';
-    if (isFlightSelected && selectedFlightData) {
-        flightStore.setCurrentFlight(JSON.parse(selectedFlightData));
+    if (flightStore.currentFlight.itinerary) {
+        bookingData.value = flightStore.currentFlight.itinerary;
         flightSelected.value = true;
     }
 }
@@ -216,6 +215,8 @@ const handleOneWayDate = (date) => {
 const openInviteModal = () => {
     showInviteModal.value = true
  }
+
+//  console.log(bookingData.itinerary[0])
 
 </script>
 
@@ -377,11 +378,15 @@ const openInviteModal = () => {
                 <div class="event-description">
                     <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                 </div>
+                <div class="selected-flight" v-if="flightSelected" v-for="(segment, index) in bookingData.itinerary">
+                        <PFlight design="block" :airline="bookingData.airline" :logoURL="bookingData.logoURL"
+                        :price="bookingData.price" :flightClass="segment.class" :flightType="segment.flight_type" 
+                        :origin="segment.origin" :destination="segment.destination" :flightDate="segment.departure_date" 
+                        :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time" :flightDuration="segment.duration"
+                            @click="handleFlightClick(flightStore.currentFlight)" />
+                </div>
                 <div class="flight-search-form">
                     <h1>Flight Search</h1>
-                    <div class="selected-flight" v-if="flightSelected">
-                        <PFlight design="block" v-bind="flightStore.currentFlight"
-                            @click="handleFlightClick(flightStore.currentFlight)" />
                     </div>
                     <div class="flight-type-toggle">
                         <button :class="['flight-btn', flightType === 0 ? 'active' : '']" @click="flightType = 0">
@@ -408,8 +413,7 @@ const openInviteModal = () => {
                             :enable-time-picker="false" :placeholder="'Departure Date'" exactMatch="true"
                             :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
                             @update:model-value="handleOneWayDate"></VueDatePicker>
-                        <!-- <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
-                                v-model="returnDate"></PTextField> -->
+
                         <VueDatePicker v-if="flightType === 1" :range="true" :min-date="new Date()"
                             :enable-time-picker="false" v-model="roundtripRange" :format="'MM/dd/yyyy'"
                             :placeholder="'Departure & Return Dates'"
@@ -454,7 +458,6 @@ const openInviteModal = () => {
                         :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                 </div>
             </div>
-        </div>
     </template>
 
     <template v-if="route?.query?.editView && showInviteModal">

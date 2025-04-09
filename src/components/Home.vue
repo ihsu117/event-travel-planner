@@ -7,6 +7,7 @@ import {
 } from '@poseidon-components'
 import '@poseidon-styles/index.css'
 import { useEventStore } from '../stores/eventStore'
+import { useFlightStore } from '../stores/flightStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
@@ -15,6 +16,7 @@ import api from '../assets/scripts/api.js'
 import { format } from 'date-fns'
 
 const eventStore = useEventStore()
+const flightStore = useFlightStore()
 const userStore = useUserStore()
 const router = useRouter()
 const events = ref([])
@@ -107,6 +109,23 @@ const handleEventClick = async (eventData) => {
     }
     eventStore.setCurrentEvent(eventData)
     if (isAttendee.value) {
+        try {
+            const response = await api.apiFetch('/flights/bookedflight/' + eventData.id, {
+                credentials: 'include'
+            })
+            if (response.status === 404) {
+                console.warn('No flight data found for the selected event.')
+                flightStore.setCurrentFlight(null)
+            } else if (response.ok) {
+                const flightData = await response.json()
+                console.log(flightData)
+                flightStore.setCurrentFlight(flightData)
+                console.log(flightStore.currentFlight)
+            }
+                
+        } catch (error) {
+            console.error('Failed to fetch current booking data:', error)
+        }
         router.push({ name: 'Event' })
     } else if (isFinance.value) {
         router.push({ name: 'Finance' })
