@@ -93,7 +93,7 @@ const updateFlight = async (selection) => {
                 id: flightSelected.value.flightID,
                 price: flightSelected.value.price,
                 eventID: eventStore.currentEvent.id,
-                selection: selection
+                selection: Boolean(selection)
             })
         })
         if (response.ok) {
