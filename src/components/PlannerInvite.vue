@@ -15,8 +15,7 @@ const eventStore = useEventStore()
 const userStore = useUserStore()
 const selectedUsers = ref([])
 const selectedFinman = ref('')
-const newUsers = ref([])
-const newEmail = ref('')
+const emailInput = ref('')
 const inviteEmail = ref('')
 
 // Modal-specific reactive: do not include modal display logic here.
@@ -24,25 +23,46 @@ const inviteEmail = ref('')
 
 // Functions remain the same:
 
-
-const addUser = () => {
-    if (newEmail.value.trim() === '') {
+// Validate email and add to newUser array
+const addUser = async (emailAddress) => {
+    if (emailAddress.trim() === '') {
         console.error('Email cannot be empty')
         return;
+    } else {
+        try {
+            const schema = {
+                eventId: eventStore.currentEvent.id,
+                attendee: { email: emailAddress }
+            }
+
+            console.log('Creating user:', schema)
+
+            const response = await api.apiFetch('/events/invite/new', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(schema),
+                credentials: 'include'
+            })
+
+            if (response.ok) {
+                const result = await response.json()
+                emailInput.value = ''
+                console.log('User created successfully:', result)
+                loadOrgUsers()
+            } else {
+                console.error('FAILED to create user:', await response.json())
+            }
+
+        } catch (error) {
+            console.error('Error creating user:', error)
+        }
     }
-    const newUser = { email: newEmail.value, profile_picture: '' }
-    newUsers.value.push(newUser)
-    inviteEmail.value = newEmail.value
-    newEmail.value = ''
-    // You may want to notify parent that the modal should close.
-    console.log('User added:', newUser)
+    
+
 }
 
 const handleSendInvites = async () => {
     try {
-        await createEvent()
-        console.log('EventID: ', lastCreatedEventId.value)
-
         if (newUsers.value.length > 0) {
             await createUser()
         } else {
@@ -57,7 +77,7 @@ const handleSendInvites = async () => {
 const createUser = async () => {
     try {
         const schema = {
-            eventId: lastCreatedEventId.value,
+            eventId: eventStore.currentEvent.id,
             attendee: { email: inviteEmail.value }
         }
 
@@ -127,10 +147,6 @@ const selectFinanceManager = (userID) => {
 const isFinanceManagerSelected = (userID) => {
     return selectedFinman.value === userID
 }
-const handleUpdate = ({ field, value }) => {
-    if (field === 'newEmailAddress') newEmail.value = value
-    console.log("HANDLE", field, value)
-}
 
 onMounted(() => {
     loadOrgUsers()
@@ -139,44 +155,41 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="modal-overlay">
-        <div class="modal modal-container">
-            <div class="event-invite">
-                <h2>Finance Manager</h2>
-                <div class="p-event__container">
-                    <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
-                        :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                        :profileImage="user.profile_picture"
-                        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                        @click="selectFinanceManager(user.user_id)" required />
-                </div>
 
-                <h2>Attendees</h2>
-                <div class="p-event__container">
-                    <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
-                        :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
-                        :email="user.email" :profileImage="user.profile_picture"
-                        :class="{ selected: isUserSelected(user.user_id) }"
-                        @click="toggleUserSelection(user.user_id)" />
+<h2>Finance Manager</h2>
+<div class="p-event__container">
+    <PFinanceBlock design="invite"
+        v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
+        :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+        :profileImage="user.profile_picture"
+        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
+        @click="selectFinanceManager(user.user_id)" required />
+</div>
+
+<h2>Attendees</h2>
+<div class="p-event__container">
+    <PFinanceBlock design="invite"
+        v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
+        :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
+        :email="user.email" :profileImage="user.profile_picture"
+        :class="{ selected: isUserSelected(user.user_id) }"
+        @click="toggleUserSelection(user.user_id)" />
 
 
-                    <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
-                        :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
-                        @click="toggleUserSelection(user.user_id)" />
+    <!-- <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
+        :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
+        @click="toggleUserSelection(user.user_id)" /> -->
 
-                    <!-- Optionally, add user functionality can also be part of the modal content -->
-                </div>
+    <!-- Optionally, add user functionality can also be part of the modal content -->
+</div>
 
-                <PButton label="Send Invites" @click="handleSendInvites" design="gradient" />
-                <div>
-                    <PTextField v-model="newEmail" design="textarea-edit"
-                        @update:modelValue="value => handleUpdate({ field: 'newEmailAddress', value })">
-                    </PTextField>
-                    <PButton label="Send Invite to New User" design="gradient" @click="addUser" />
-                </div>
-            </div>
-        </div>
-    </div>
+<PButton label="Send Invites" @click="handleSendInvites" design="gradient" />
+
+
+<div>
+    <PTextField v-model="emailInput">
+    </PTextField>
+    <PButton label="Send Invite to New User" design="gradient" @click="addUser(emailInput)" />
+</div>
+
 </template>

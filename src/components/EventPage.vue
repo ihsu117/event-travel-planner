@@ -276,7 +276,7 @@ const openInviteModal = () => {
                 <div class="event-people-desktop">
 
                     <div class="finance-info-desktop">
-                        <div v-if="eventStore.currentEvent.financeMan.id" >
+                        <div v-if="eventStore.currentEvent.financeMan?.id" >
                             <h2>Finance Lead</h2>
                             <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
                                 :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
@@ -384,7 +384,7 @@ const openInviteModal = () => {
                         :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
                         jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                         :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
-                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan.id" :email="eventStore.currentEvent.financeMan?.email"
+                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan?.id" :email="eventStore.currentEvent.financeMan?.email"
                         :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
                         jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                         :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
@@ -486,7 +486,7 @@ const openInviteModal = () => {
                         :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
                         jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                         :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
-                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan.id" :email="eventStore.currentEvent.financeMan?.email"
+                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan?.id" :email="eventStore.currentEvent.financeMan?.email"
                         :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
                         jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                         :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
@@ -494,8 +494,13 @@ const openInviteModal = () => {
             </div>
     </template>
 
-    <template v-if="route?.query?.editView && showInviteModal">
-        <PlannerInvite></PlannerInvite>
+    <template v-if="route?.query?.editView && showInviteModal && isMobile">
+        <div class="modal-overlay" @click="showInviteModal = false"></div>
+        <div class="modal modal-container">
+            <div class="event-invite">
+                <PlannerInvite></PlannerInvite>
+            </div>
+        </div>
     </template>
 
 </template>
