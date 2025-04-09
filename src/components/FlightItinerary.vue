@@ -5,6 +5,7 @@ import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
 import api from '../assets/scripts/api.js'
 import { onMounted, onUnmounted, ref, computed } from 'vue'
+import { onDuffelAncillariesPayloadReady, renderDuffelAncillariesCustomElement } from "@duffel/components/custom-elements";
 
 const router = useRouter()
 const flightStore = useFlightStore()
@@ -41,7 +42,8 @@ const confirmPurchase = async () => {
     depart_time: flightStore.currentFlight.flightDepTime,
     arrive_time: flightStore.currentFlight.flightArrTime,
     price: flightStore.currentFlight.price,
-    date: flightStore.currentFlight.flightDate
+    date: flightStore.currentFlight.flightDate,
+    seatNumber: flightStore.currentFlight.seatNumber
   }
   //Saves selected flight to local storage
   //localStorage.setItem('selectedFlight', JSON.stringify(flightStore.currentFlight));
@@ -71,6 +73,29 @@ const confirmPurchase = async () => {
 console.log("CURRENTFLIGHT! ", flightStore.currentFlight)
 
 onMounted(async () => {
+  renderDuffelAncillariesCustomElement({
+    offer_id: flightStore.currentFlight.offer_id,
+    services: ["seats"],
+    passengers: [
+        {
+          given_name: userStore.first_name,
+          family_name: userStore.last_name,
+          gender: "m",
+          title: "mr",
+          born_on: userStore.dob,
+          email: userStore.email,
+          phone_number: "+16177562626"
+        }
+      ],
+    client_key: flightStore.currentFlight.search_key
+    });
+
+  onDuffelAncillariesPayloadReady((data, metadata) => {
+    console.table(data);
+    flightStore.currentFlight.price = data.payments[0].amount;
+    flightStore.currentFlight.seatNumber = metadata.seat_services[0].serviceInformation.designator;
+  })
+
   window.addEventListener('resize', updateScreenSize);
   if (flightStore.currentFlight.itinerary.length > 1 && flightStore.currentFlight.itinerary[0].itinerary) {
     const flights = flightStore.flightResults;
@@ -189,13 +214,18 @@ console.log("ITINERARIES: ", itineraries.value)
           <div class="p-event__entry" v-for="(itinerary, index) in itineraries" :key="index">
             <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
               :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
-              :flightDuration="itinerary.duration"
+              :flightDuration="itinerary.duration" :seatNumber="flightStore.currentFlight.seatNumber"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
             <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 
+        </div>
+        <div>
+          <duffel-ancillaries>
+            
+          </duffel-ancillaries>
         </div>
         <div class="flight-itinerary-button">
           <PButton

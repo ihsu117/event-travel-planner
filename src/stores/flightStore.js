@@ -19,7 +19,8 @@ export const useFlightStore = defineStore('flight', {
             airline: '',
             logoURL: '',
             offer_id: '',
-            itinerary: []
+            itinerary: [],
+            search_key: ''
         },
         flightResults: [],
         itineraries: []
@@ -44,7 +45,8 @@ export const useFlightStore = defineStore('flight', {
                 airline: flight.airline,
                 logoURL: flight.logoURL,
                 offer_id: flight.offer_id,
-                itinerary: flight.itinerary
+                itinerary: flight.itinerary,
+                search_key: flight.search_key
             };
             console.log('Current flight:', this.currentFlight);
         },
@@ -85,7 +87,8 @@ export const useFlightStore = defineStore('flight', {
                         airline: flight.airline,
                         logoURL: flight.logo,
                         offer_id: flight.offer_id,
-                        itinerary: flight.details
+                        itinerary: flight.details,
+                        search_key: flight.search_key
                     };
                 });
                 

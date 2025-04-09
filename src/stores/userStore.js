@@ -13,7 +13,8 @@ export const useUserStore = defineStore('user', {
     dob: '',
     title: '',
     KTN: '',
-    users: []
+    users: [],
+    search_key: ''
   }),
 
   actions: {
@@ -90,7 +91,8 @@ export const useUserStore = defineStore('user', {
       this.dob = '',
       this.title = '',
       this.KTN = '',
-      this.users = [];
+      this.users = [],
+      this.search_key = '';
       localStorage.removeItem('user')
       console.log('User state cleared')
     }
