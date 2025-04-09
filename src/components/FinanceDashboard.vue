@@ -121,9 +121,9 @@ const handleModalOption = (option) => {
     console.log(`Selected option: ${option}`)
 
     if (option == "Approve") {
-        updateFlight(0)
-    } else {
         updateFlight(1)
+    } else {
+        updateFlight(0)
     }
 
     closeModal()
