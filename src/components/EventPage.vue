@@ -218,6 +218,7 @@ onMounted(async () => {
     checkAndLoadEvent()
     checkAndLoadFlightBooking()
     console.log('Organization:', eventStore.currentEvent.org)
+    console.log(eventStore.currentEvent)
 
 })
 
@@ -275,16 +276,20 @@ const openInviteModal = () => {
                 <div class="event-people-desktop">
 
                     <div class="finance-info-desktop">
-                        <h2>Finance Lead</h2>
-                        <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
-                            :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
-                            jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
-                            :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
-                        <h2>Event Planner</h2>
-                        <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
-                            :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
-                            jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
-                            :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                        <div v-if="eventStore.currentEvent.financeMan.id" >
+                            <h2>Finance Lead</h2>
+                            <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                                :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                                jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                                :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                        </div>
+                        <div>
+                            <h2>Event Planner</h2>
+                            <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                                :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                                jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                                :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                        </div>
                     </div>
                     
                 </div>
@@ -379,7 +384,7 @@ const openInviteModal = () => {
                         :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
                         jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                         :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
-                    <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan.id" :email="eventStore.currentEvent.financeMan?.email"
                         :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
                         jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                         :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
@@ -481,7 +486,7 @@ const openInviteModal = () => {
                         :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
                         jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                         :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
-                    <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan.id" :email="eventStore.currentEvent.financeMan?.email"
                         :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
                         jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                         :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
