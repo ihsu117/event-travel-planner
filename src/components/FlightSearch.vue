@@ -6,6 +6,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { PEvent, PButton, PDropDown, PFlight, PTimeRangeDropDown, PProfilePic } from '@poseidon-components'
 import { onMounted, ref, computed, onUnmounted } from 'vue'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
+import { formatISODurationShort } from '../assets/scripts/durationParse.js'
 
 const route = useRoute()
 const eventStore = useEventStore()
@@ -300,7 +301,7 @@ onUnmounted(() => {
           :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber"
           :seatAvailable="flight.seatAvailable" :price="flight.price" :flightType="flight.flightType"
           :flightClass="flight.flightClass" :flightGate="flight.flightGate" :airline="flight.airline"
-          :logoURL="flight.logoURL" :itinerary="flight.itinerary" :flightDuration="flight.itinerary.duration"
+          :logoURL="flight.logoURL" :itinerary="flight.itinerary" :flightDuration="formatISODurationShort(flight.itinerary.duration)"
           @click="handleFlightClick(flight)" />
         <div v-if="loading" class="spinner">
           <div class="loading-spinner" v-show="loading" style="margin-top:0">

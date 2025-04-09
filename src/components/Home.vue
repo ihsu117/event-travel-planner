@@ -109,23 +109,6 @@ const handleEventClick = async (eventData) => {
     }
     eventStore.setCurrentEvent(eventData)
     if (isAttendee.value) {
-        try {
-            const response = await api.apiFetch('/flights/bookedflight/' + eventData.id, {
-                credentials: 'include'
-            })
-            if (response.status === 404) {
-                console.warn('No flight data found for the selected event.')
-                flightStore.setCurrentFlight(null)
-            } else if (response.ok) {
-                const flightData = await response.json()
-                console.log(flightData)
-                flightStore.setCurrentFlight(flightData)
-                console.log(flightStore.currentFlight)
-            }
-                
-        } catch (error) {
-            console.error('Failed to fetch current booking data:', error)
-        }
         router.push({ name: 'Event' })
     } else if (isFinance.value) {
         router.push({ name: 'Finance' })
