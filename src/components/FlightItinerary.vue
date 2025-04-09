@@ -74,6 +74,25 @@ console.log("CURRENTFLIGHT! ", flightStore.currentFlight)
 
 onMounted(async () => {
   checkAuth()
+
+  var gender;
+  var title;
+  var phoneNum;
+
+  const userDetails = await api.apiFetch(`/user/${userStore.user_id}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'applications/json'
+    }
+  }).then(
+    response => {
+      gender = response.gender,
+      title = response.title,
+      phoneNum = "+1" + response.phone_num
+    }
+  )
+
   renderDuffelAncillariesCustomElement({
     offer_id: flightStore.currentFlight.offer_id,
     services: ["seats"],
@@ -81,11 +100,11 @@ onMounted(async () => {
         {
           given_name: userStore.first_name,
           family_name: userStore.last_name,
-          gender: "m",
-          title: "mr",
+          gender: gender,
+          title: title,
           born_on: userStore.dob,
           email: userStore.email,
-          phone_number: "+16177562626"
+          phone_number: phoneNum
         }
       ],
     client_key: flightStore.currentFlight.search_key
