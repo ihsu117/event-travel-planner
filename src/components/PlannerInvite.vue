@@ -101,10 +101,11 @@ const createUser = async () => {
 
 const loadOrgUsers = async () => {
     try {
-        const response = await api.apiFetch('/organization/users', {
+        const response = await api.apiFetch(`/organization/${userStore.org.id}/users`, {
             method: 'GET',
             credentials: 'include'
         })
+
 
         if (response.ok) {
             const result = await response.json()

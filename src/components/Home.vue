@@ -177,6 +177,15 @@ const handleModalOption = async (option) => {
     }
     closeModal()
 }
+
+// Filter past events for Previous Events section
+const previousEvents = computed(() =>
+    events.value.filter(event => new Date(event.endDate) < new Date())
+)
+const upcomingEvents = computed(() =>
+    events.value.filter(event => new Date(event.endDate) >= new Date())
+)
+
 </script>
 
 <template>
@@ -249,7 +258,7 @@ const handleModalOption = async (option) => {
                         </div>
                     </div>
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
                         :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
                         :description="event.description" :currentBudget="event.currentBudget"
@@ -270,7 +279,7 @@ const handleModalOption = async (option) => {
                 <!-- Previous Button -->
                 <button class="scroll-button prev" @click="scrollLeft">❮</button>
                 <div class="p-event__container-desktop" ref="eventContainer">
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
                         :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
                         :description="event.description" :currentBudget="event.currentBudget"
