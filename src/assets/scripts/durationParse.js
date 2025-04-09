@@ -9,8 +9,12 @@ import { format, formatISO } from "date-fns";
  * @param {string} duration - The ISO 8601 duration string.
  * @returns {string} A short formatted string.
  */
-export async function formatISODurationShort(duration) {
+export function formatISODurationShort(duration) {
     // Regular expression to capture the various parts of an ISO 8601 duration.
+    console.log(duration)
+    if (!duration || typeof duration !== "string") {
+        return "Invalid ISO 8601 duration format";
+    }
     const isoRegex = /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/;
     const matches = duration.match(isoRegex);
   
@@ -60,8 +64,8 @@ export async function formatISODurationShort(duration) {
 
   
   // Example usage:
-  console.log(formatISODurationShort("P1DT5H20M"));         // Output: "1d 5h 20m"
-  console.log(formatISODurationShort("P3Y6M4DT12H30M5S"));    // Output: "3y 6mo 4d 12h 30m 5s"
-  console.log(formatISODurationShort("PT15M"));               // Output: "15m"
-  console.log(formatISODurationShort("P1DT2H"));              // Output: "1d 2h"
+//   console.log(formatISODurationShort("P1DT5H20M"));         // Output: "1d 5h 20m"
+//   console.log(formatISODurationShort("P3Y6M4DT12H30M5S"));    // Output: "3y 6mo 4d 12h 30m 5s"
+//   console.log(formatISODurationShort("PT15M"));               // Output: "15m"
+//   console.log(formatISODurationShort("P1DT2H"));              // Output: "1d 2h"
   
