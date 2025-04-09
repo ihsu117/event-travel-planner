@@ -25,7 +25,9 @@ const departDate = ref(null)
 const returnDate = ref(null)
 const arrivalDate = ref(null)
 const zipcode = ref('')
-const flightSelected = ref(false)
+const bookingData = ref(null)
+const bookingItinerary = ref(null)
+const bookingPrice = ref(null)
 const editView = ref(route.query.editView === 'true')
 const flightType = ref(null);
 const latitude = ref('');
@@ -161,12 +163,38 @@ const checkAndLoadEvent = () => {
     }
 }
 
-const checkAndLoadSelectedFlight = () => {
-    const selectedFlightData = localStorage.getItem('selectedFlight');
-    const isFlightSelected = localStorage.getItem('flightSelected') === 'true';
-    if (isFlightSelected && selectedFlightData) {
-        flightStore.setCurrentFlight(JSON.parse(selectedFlightData));
-        flightSelected.value = true;
+const isAttendee = computed(() => userStore.role_id === 'Attendee')
+const checkAndLoadFlightBooking = async () => {
+    if (isAttendee.value) {
+        try {
+            const response = await api.apiFetch('/flights/bookedflight/' + eventStore.currentEvent.id, {
+                credentials: 'include'
+            })
+            if (response.status === 404) {
+                console.warn('No flight data found for the selected event.')
+
+            } else if (response.ok) {
+                const flightData = await response.json()
+                console.log(flightData)
+                flightStore.setCurrentFlight(flightData)
+                console.log(flightStore.currentFlight)
+
+                bookingData.value = flightData
+                bookingPrice.value = bookingData.price
+            }
+                
+        } catch (error) {
+            console.error('Failed to fetch current booking data:', error)
+        }
+    }
+        
+
+
+
+
+    if (flightStore.currentFlight.itinerary) {
+        bookingItinerary.value = flightStore.currentFlight.itinerary;
+        bookingPrice.value = flightStore.currentFlight.price;
     }
 }
 
@@ -188,8 +216,9 @@ onMounted(async () => {
     checkAuth()
     window.addEventListener('resize', updateScreenSize);
     checkAndLoadEvent()
-    checkAndLoadSelectedFlight()
+    checkAndLoadFlightBooking()
     console.log('Organization:', eventStore.currentEvent.org)
+    console.log(eventStore.currentEvent)
 
 })
 
@@ -216,6 +245,8 @@ const handleOneWayDate = (date) => {
 const openInviteModal = () => {
     showInviteModal.value = true
  }
+
+//  console.log(bookingData.itinerary[0])
 
 </script>
 
@@ -245,16 +276,20 @@ const openInviteModal = () => {
                 <div class="event-people-desktop">
 
                     <div class="finance-info-desktop">
-                        <h2>Finance Lead</h2>
-                        <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
-                            :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
-                            jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
-                            :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
-                        <h2>Event Planner</h2>
-                        <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
-                            :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
-                            jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
-                            :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                        <div v-if="eventStore.currentEvent.financeMan?.id" >
+                            <h2>Finance Lead</h2>
+                            <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                                :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                                jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                                :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                        </div>
+                        <div>
+                            <h2>Event Planner</h2>
+                            <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                                :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                                jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                                :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                        </div>
                     </div>
                     
                 </div>
@@ -269,12 +304,6 @@ const openInviteModal = () => {
                         </button>
                     </div>
                 <div class="flight-search-form">
-                    
-                    <div class="selected-flight" v-if="flightSelected">
-                        <PFlight design="block" v-bind="flightStore.currentFlight"
-                            @click="handleFlightClick(flightStore.currentFlight)" />
-                    </div>
-                    
                     <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
                         id="flight-search">
                         <div :class="['error-container', { show: errors.date }]">
@@ -320,6 +349,13 @@ const openInviteModal = () => {
                             @click="toFlightSearch" />
                     </div>
                 </div>
+            </div>
+            <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
+                <PFlight design="block" :airline="bookingItinerary.airline" :logoURL="bookingItinerary.logoURL"
+                :price="bookingPrice" :flightClass="segment.class" :flightType="segment.flight_type" 
+                :origin="segment.origin" :destination="segment.destination" :flightDate="new Date(segment.departure_time)" 
+                :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time" :flightDuration="segment.duration"
+                    @click="handleFlightClick(flightStore.currentFlight)" />
             </div>
         </div>
 
@@ -349,7 +385,7 @@ const openInviteModal = () => {
                         :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
                         jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                         :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
-                    <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan?.id" :email="eventStore.currentEvent.financeMan?.email"
                         :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
                         jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                         :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
@@ -377,11 +413,15 @@ const openInviteModal = () => {
                 <div class="event-description">
                     <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                 </div>
+                <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
+                        <PFlight design="block" :airline="bookingItinerary.airline" :logoURL="bookingItinerary.logoURL"
+                        :price="bookingPrice" :flightClass="segment.class" :flightType="segment.flight_type" 
+                        :origin="segment.origin" :destination="segment.destination" :flightDate="new Date(segment.departure_time)" 
+                        :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time" :flightDuration="segment.duration"
+                            @click="handleFlightClick(flightStore.currentFlight)" />
+                </div>
                 <div class="flight-search-form">
                     <h1>Flight Search</h1>
-                    <div class="selected-flight" v-if="flightSelected">
-                        <PFlight design="block" v-bind="flightStore.currentFlight"
-                            @click="handleFlightClick(flightStore.currentFlight)" />
                     </div>
                     <div class="flight-type-toggle">
                         <button :class="['flight-btn', flightType === 0 ? 'active' : '']" @click="flightType = 0">
@@ -408,8 +448,7 @@ const openInviteModal = () => {
                             :enable-time-picker="false" :placeholder="'Departure Date'" exactMatch="true"
                             :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
                             @update:model-value="handleOneWayDate"></VueDatePicker>
-                        <!-- <PTextField v-if="flightType === 'roundtrip'" design="small" label="Return Date" type="date"
-                                v-model="returnDate"></PTextField> -->
+
                         <VueDatePicker v-if="flightType === 1" :range="true" :min-date="new Date()"
                             :enable-time-picker="false" v-model="roundtripRange" :format="'MM/dd/yyyy'"
                             :placeholder="'Departure & Return Dates'"
@@ -448,17 +487,21 @@ const openInviteModal = () => {
                         :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
                         jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                         :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
-                    <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan?.id" :email="eventStore.currentEvent.financeMan?.email"
                         :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
                         jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                         :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                 </div>
             </div>
-        </div>
     </template>
 
-    <template v-if="route?.query?.editView && showInviteModal">
-        <PlannerInvite></PlannerInvite>
+    <template v-if="route?.query?.editView && showInviteModal && isMobile">
+        <div class="modal-overlay" @click="showInviteModal = false"></div>
+        <div class="modal modal-container">
+            <div class="event-invite">
+                <PlannerInvite></PlannerInvite>
+            </div>
+        </div>
     </template>
 
 </template>

@@ -8,6 +8,7 @@ import FlightItinerary from '../components/FlightItinerary.vue'
 import FinanceDashboard from '../components/FinanceDashboard.vue'
 import PlannerCreate from '../components/PlannerCreate.vue'
 import PlannerInvite from '../components/PlannerInvite.vue'
+import Registration from '../components/Registration.vue'
 
 const routes = [
   {
@@ -57,6 +58,12 @@ const routes = [
     path: '/planner/invite',
     name: 'Invite',
     component: PlannerInvite,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/registration',
+    name: 'Registration',
+    component: Registration,
     meta: { requiresAuth: true }
   }
 

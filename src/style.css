@@ -107,6 +107,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 25rem;
   max-width: 24.56rem;
 }
 
@@ -117,34 +118,92 @@
   text-align: left;
 }
 
-.register-form #name {
+.register-form-name {
   display: flex;
   flex-direction: row;
   gap: 0.63rem;
+  padding-bottom: 2%;
 }
 
-.register-form #password {
+.form-name h1{
   display: flex;
   flex-direction: column;
-  gap: 0.88rem;
+  padding-left: 5%;
 }
 
-.register-form #button {
-  margin: 5%;
-}
-
-.register-form #pic {
+.register-form .form-pic {
   margin: 5%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.register-form #genderAndTitle {
+.register-form .form-gender-title {
   display: flex;
   flex-direction: row;
-  gap: 0.63rem;
-  max-width: 24.56rem;
+  align-content: center;
+  justify-content: center;
+  gap: 0.9rem;
+  width: 20rem;
+  padding-bottom: 5%;
+}
+
+.form-title h1, .form-gender h1{
+  padding-left: 10%;
+  font-size: 1.25rem;
+  font-weight: 400%;
+} 
+
+.register-form .form-phone {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-self: center;
+  text-align: left;
+  width: 90%;
+  padding-bottom: 5%;
+}
+
+.register-form .form-dob {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-self: center;
+  text-align: left;
+  width: 90%;
+  padding-bottom: 5%;
+}
+
+.register-form .form-password-container {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-self: center;
+  width: 90%;
+}
+
+.register-form .form-password-container h1 {
+  margin-top: 2.5%;
+  padding: 0;
+}
+
+.register-form .form-password {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-self: center;
+  text-align: left;
+  margin-top: 0;
+  gap: 1.4rem;
+}
+
+.register-form .form-error {
+  margin: 0;
+  color: var(--pos-yellow);
+}
+
+.register-form .form-button {
+  margin: 10%;
 }
 
 body {
@@ -345,7 +404,7 @@ body {
   background-color: var(--pos-inner-yellow);
   padding-bottom: 1.25rem;
   /* 20px */
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .flight-page h1 {
@@ -370,12 +429,20 @@ body {
   align-items: center;
   justify-content: flex-start;
   max-width: 24.56rem;
-  /* 393px */
   background-color: var(--pos-inner-yellow);
   padding-bottom: 1.25rem;
-  /* 20px */
   color: black;
-  height: 100vh;
+  min-height: 100vh;
+}
+
+.flight-itinerary h1 {
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 2rem;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .flight-itinerary-status {
@@ -410,21 +477,18 @@ body {
 
 .flight-itinerary .p-event__container {
   margin-top: 1rem;
-  /* 16px */
   padding-top: 0.5rem;
-  /* 8px */
   padding-bottom: 0.94rem;
-  /* 15px */
   width: 21.44rem;
-  /* 343px */
 }
 
 .flight-itinerary-button {
   display: flex;
   justify-content: center;
-  /* Horizontally center */
   align-items: center;
-  /* Vertically center */
+  margin: 0;
+  padding-top: 3%;
+  padding-bottom: 4%;
 }
 
 .flight-hold-button {
@@ -564,29 +628,24 @@ body {
 .modal-approve {
   color: var(--pos-green);
   border: 0.0625rem solid var(--pos-green);
-  /* 1px */
 }
 
 .modal-deny {
   color: var(--pos-red);
   border: 0.0625rem solid var(--pos-red);
-  /* 1px */
 }
 
 .modal .p-flight--finance {
   width: 18.75rem;
-  /* 300px */
 }
 
 .modal .p-flight--finance .p-flight__price {
   padding-left: 0;
   margin-right: 0.3125rem;
-  /* 5px */
 }
 
 .modal .p-flight--finance .p-flight__info {
   min-width: 9.06rem;
-  /* 145px (~9.06rem) */
 }
 
 .modal-overlay {
@@ -604,16 +663,13 @@ body {
   flex-direction: column;
   align-items: center;
   width: 20.94rem;
-  /* 335px */
   background: var(--pos-grey);
   color: black;
 }
 
 .modal-profile {
   min-height: 9.375rem;
-  /* 150px */
   padding-top: 0.9375rem;
-  /* 15px */
 }
 
 .modal-profile-title-org {
@@ -627,15 +683,12 @@ body {
   justify-content: center;
   margin: 0;
   padding-bottom: 0.3125rem;
-  /* 5px */
 }
 
 .modal-profile-img-name h4 {
   font-size: 2rem;
-  /* 32px */
   margin-bottom: 0;
   margin-top: 0.3125rem;
-  /* 5px */
   background: var(--top-gradient);
   -webkit-background-clip: text;
   background-clip: text;
@@ -644,15 +697,12 @@ body {
 
 .modal-profile-img-name h5 {
   font-size: 1.5rem;
-  /* 24px */
   padding-top: 0.625rem;
-  /* 10px */
   margin: 0;
 }
 
 .modal-profile-img-name p {
   font-size: 1.25rem;
-  /* 20px */
   margin: 0;
 }
 
@@ -671,25 +721,106 @@ body {
   /* 20px */
 }
 
-.modal#mfa {
+.modal#mfa, .modal#forgot-pass {
   width: 3.125rem;
-  /* 50px */
   height: 3.125rem;
-  /* 50px */
-  transition: width 0.3s ease, height 0.3s ease;
+  border-radius: 60%;
   overflow: hidden;
 }
 
 .modal#mfa.expanded {
   width: 20.625rem;
-  /* 330px */
-  height: 10.5rem;
-  /* 168px */
-  overflow: hidden;
+  height: 12.5rem;
+  max-height: 30rem;
+  border-radius: 4%;
+  overflow-y: hidden;
 }
 
 .modal#mfa .error-container {
-  margin: 0;
+  margin: 1%;
+}
+
+.modal#forgot-pass.expanded {
+  width: 20rem;
+  max-height: 20rem;
+  height: 15rem;
+  color: black;
+  padding-bottom: 2.5rem;
+  border-radius: 4%;
+}
+
+.modal#forgot-pass.expandSuccess {
+  width: 20%; /* Expanded size */
+  height: 15%; /* Adjust as needed */
+}
+
+.modal#forgot-pass.shrinked {
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 60%;
+  overflow: hidden;
+  padding: 1%;
+}
+
+.modal#forgot-pass h4 {
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 2rem;
+  margin-top: 2%;
+  margin-bottom: auto;
+  text-align: center;
+}
+
+.modal#forgot-pass .forgot-text {
+  margin-top: 3%;
+  margin-bottom: auto;
+  padding: 1%;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 400;
+  color: black;
+}
+
+.modal#forgot-pass .error-container {
+  margin: 2%;
+  margin-bottom: 2% auto;
+  margin-top: 5;
+  font-size: 25rem;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  justify-content: center;
+}
+
+.modal#forgot-pass .input-error {
+  margin: 0%;
+  font-size: 1rem;
+}
+
+.modal#forgot-pass .forgot-button {
+  margin-top: 2.5%;
+  margin-left: 23%;
+}
+
+/* Default modal styles */
+.modal#forgot-pass {
+  width: 20.625rem;
+  max-height: 19rem;
+  height: 15rem;
+  color: black;
+  padding-bottom: 2.5rem;
+  border-radius: 4%;
+}
+
+/* When success message is shown */
+.modal#forgot-pass.success-shown {
+  width: 20%;
+  height: 30%;
+  max-height: 30%;
+  padding-bottom: 0;
+  overflow: hidden;
 }
 
 .loading-spinner {
@@ -719,17 +850,7 @@ body {
   /* 120px */
 }
 
-.fade-in {
-  opacity: 0;
-  transform: translateY(0.625rem);
-  /* 10px */
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
 
-.fade-in.show {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 .p-event__container .loader {
   width: 7.5rem;
@@ -746,6 +867,7 @@ body {
   align-items: center;
   text-align: center;
   gap: 0.3125rem;
+  max-height: 25rem;
 }
 
 .mfa-form h5 {
@@ -777,6 +899,11 @@ body {
   opacity: 1;
 }
 
+.success-message {
+  text-align: center;
+  color: #28a745;
+}
+
 .profile-content {
   text-align: left;
   min-width: 11.875rem;
@@ -798,9 +925,7 @@ body {
   flex-direction: row;
   justify-content: center;
   gap: 0.9375rem;
-  /* 15px */
   margin-top: 1.5625rem;
-  /* 25px */
 }
 
 .planner-event {
@@ -1246,7 +1371,7 @@ input:checked+.slider:before {
   .flight-itinerary {
     max-width: 100%;
     padding-bottom: 1rem;
-    height: 120vh;
+    min-height: 100vh;
   }
 
   .finance-dashboard {
@@ -1316,7 +1441,6 @@ input:checked+.slider:before {
     gap: 1%;
   }
 
-  .home-header-desktop img {}
 
   .home-header__text-desktop {
     display: flex;
@@ -1481,33 +1605,25 @@ input:checked+.slider:before {
   .flight-search-form {
     display: flex;
     flex-direction: column;
-    /* Keep toggle above the search bar */
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    /* Add spacing between the toggle and the search bar */
     max-width: 100%;
     margin: 1rem auto;
-    /* Center the form and add spacing from other content */
   }
 
   .flight-search-bar {
     display: flex;
     flex-direction: row;
-    /* Arrange inputs and button in a row */
     align-items: center;
     justify-content: space-between;
-    /* Space out the elements */
     gap: 0.5rem;
-    /* Add spacing between inputs and button */
     width: 100%;
     max-width: 600px;
-    /* Limit the width of the search bar */
   }
 
   .flight-search-bar input {
     flex: 1;
-    /* Allow inputs to take up available space */
     padding: 0.5rem;
     font-size: 1rem;
     border: 1px solid #ccc;
@@ -1536,7 +1652,7 @@ input:checked+.slider:before {
     align-items: center;
     justify-content: flex-start;
     max-width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     background-color: var(--pos-inner-yellow);
   }
 
@@ -1546,7 +1662,7 @@ input:checked+.slider:before {
     background-clip: text;
     color: transparent;
     font-size: 2rem;
-    padding: 1%;
+    padding: 0%;
   }
 
   .flight-dropdown {
@@ -1559,4 +1675,53 @@ input:checked+.slider:before {
     background-color: var(--pos-inner-yellow);
     padding-bottom: 1.25rem;
   }
+
+  .flight-itinerary-desktop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    background-color: var(--pos-inner-yellow);
+  }
+
+  .itinerary-event-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .itinerary-event-container .p-event--desktop-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 12rem;
+  }
+
+  .itinerary-event-container .p-event--desktop-header .p-event__details h4 {
+    padding-bottom: 10%;
+  }
+
+  .itnry-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding-top: 5%;
+  }
+
+  .itinerary-title {
+    background: var(--top-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+    text-align: left;
+    padding: 1%;
+  }
+
 }

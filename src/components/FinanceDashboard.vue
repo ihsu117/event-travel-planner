@@ -90,10 +90,10 @@ const updateFlight = async (selection) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                flightID: flightSelected.value.flightID,
+                id: flightSelected.value.flightID,
                 price: flightSelected.value.price,
                 eventID: eventStore.currentEvent.id,
-                selection: selection
+                selection: Boolean(selection)
             })
         })
         if (response.ok) {
@@ -121,9 +121,9 @@ const handleModalOption = (option) => {
     console.log(`Selected option: ${option}`)
 
     if (option == "Approve") {
-        updateFlight(0)
-    } else {
         updateFlight(1)
+    } else {
+        updateFlight(0)
     }
 
     closeModal()
@@ -133,6 +133,41 @@ const handleModalOption = (option) => {
 const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
+
+// Function to handle exporting event history
+const exportEventHistory = async () => {
+    try {
+        const response = await api.apiFetch(`/events/history/${eventStore.currentEvent.id}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                // Optional: Specify accepted content type if needed
+                // 'Accept': 'text/csv' 
+            }
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            // Determine filename (you might get this from Content-Disposition header or set a default)
+            a.download = `event_history_${eventStore.currentEvent.id}.csv`; 
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            console.log('Event history exported successfully.');
+        } else {
+            console.error('Failed to export event history:', response.status, await response.text());
+            // Handle error display to the user if needed
+        }
+    } catch (error) {
+        console.error('Error exporting event history:', error);
+        // Handle error display to the user if needed
+    }
+};
 
 const budgetColor = computed(() => {
     const budgetThreshold = eventStore.currentEvent.maxBudget * 0.3;
@@ -208,7 +243,7 @@ console.log(eventStore.currentEvent.id)
 
                 <div class="flight-container">
                     <h3>Transaction History</h3>
-                    <PButton design="gradient-small" label="Get Report" @click=""></PButton>
+                    <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
                     <div class="p-event__container">
                         <PFlight v-for="(flight, index) in flightStore.flightResults"
                             :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"

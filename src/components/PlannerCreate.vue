@@ -52,10 +52,8 @@ const createEvent = async () => {
             destinationCode: destinationCode.value,
             pictureLink: pictureLink.value, // Send the base64-encoded image
             maxBudget: maxBudget.value,
-            financeMan: { id: selectedFinman.value },
+            financeMan: {},
             autoApprove: Boolean(false),
-            autoApproveThreshold: 10,
-            attendees: selectedUsers.value
         }
 
         const response = await api.apiFetch('/events', {
@@ -70,9 +68,7 @@ const createEvent = async () => {
         if (response.ok) {
             const result = await response.json()
             console.log('Event created successfully:', result)
-            lastCreatedEventId.value = result.eventId
-            console.log('Last created event ID:', lastCreatedEventId.value)
-            return lastCreatedEventId.value
+            toEventPage(result.eventId)
 
         } else {
             console.error('Failed to create event:', await response.json())
@@ -82,138 +78,138 @@ const createEvent = async () => {
     }
 }
 
-const addUser = () => {
-    if (newEmail.value.trim() === '') {
-        console.error('Email cannot be empty');
-        return;
-    }
+// const addUser = () => {
+//     if (newEmail.value.trim() === '') {
+//         console.error('Email cannot be empty');
+//         return;
+//     }
 
-    const newUser = {
-        email: newEmail.value,
-        profile_picture: ''
-    }
-    newUsers.value.push(newUser);
-    inviteEmail.value = newEmail.value;
-    newEmail.value = '';
-    closeModal();
-    console.log('User added:', newUser);
-}
+//     const newUser = {
+//         email: newEmail.value,
+//         profile_picture: ''
+//     }
+//     newUsers.value.push(newUser);
+//     inviteEmail.value = newEmail.value;
+//     newEmail.value = '';
+//     closeModal();
+//     console.log('User added:', newUser);
+// }
 
-const handleSendInvites = async () => {
-    try {
-        await createEvent();
-        console.log('EventID: ', lastCreatedEventId.value)
+// const handleSendInvites = async () => {
+//     try {
+//         await createEvent();
+//         console.log('EventID: ', lastCreatedEventId.value)
 
-        if (newUsers.value.length > 0) {
-            await createUser();
-        } else {
-            console.log('No new users to invite.');
-        }
-        router.push({ name: 'Home' })
-    } catch (error) {
-        console.error('Error sending invites:', error)
-    }
-}
+//         if (newUsers.value.length > 0) {
+//             await createUser();
+//         } else {
+//             console.log('No new users to invite.');
+//         }
+//         router.push({ name: 'Home' })
+//     } catch (error) {
+//         console.error('Error sending invites:', error)
+//     }
+// }
 
-const createUser = async () => {
-    try {
-        const schema = {
-            eventId: lastCreatedEventId.value,
-            attendee: {
-                email: inviteEmail.value
-            }
-        }
+// const createUser = async () => {
+//     try {
+//         const schema = {
+//             eventId: lastCreatedEventId.value,
+//             attendee: {
+//                 email: inviteEmail.value
+//             }
+//         }
 
-        console.log('Creating user:', schema)
-        const response = await api.apiFetch('/events/invite/new', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(schema),
-            credentials: 'include'
-        })
-        if (response.ok) {
-            const result = await response.json()
-            console.log('User created successfully:', result)
-        } else {
-            console.error('Failed to create user:', await response.json())
-        }
-    } catch (error) {
-        console.error('Error creating user:', error)
-    }
-}
+//         console.log('Creating user:', schema)
+//         const response = await api.apiFetch('/events/invite/new', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(schema),
+//             credentials: 'include'
+//         })
+//         if (response.ok) {
+//             const result = await response.json()
+//             console.log('User created successfully:', result)
+//         } else {
+//             console.error('Failed to create user:', await response.json())
+//         }
+//     } catch (error) {
+//         console.error('Error creating user:', error)
+//     }
+// }
 
 const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
 
-const toEventPage = () => {
-    isInvitePage.value = true
+const toEventPage = (eventId) => {
+    router.push({ name: 'Event', query: { editView: 'true', eventID: eventId} })
 }
 
-const loadOrgUsers = async () => {
-    try {
-        const response = await api.apiFetch('/organization/users', {
-            method: 'GET',
-            credentials: 'include'
-        })
+// const loadOrgUsers = async () => {
+//     try {
+//         const response = await api.apiFetch('/organization/users', {
+//             method: 'GET',
+//             credentials: 'include'
+//         })
 
-        if (response.ok) {
-            const result = await response.json()
-            console.log('Organization users:', result)
-            userStore.setUser(result)
-        } else {
-            console.error('Failed to load organization users:', await response.json())
-        }
-    } catch (error) {
-        console.error('Error loading organization users:', error)
-    }
-}
+//         if (response.ok) {
+//             const result = await response.json()
+//             console.log('Organization users:', result)
+//             userStore.setUser(result)
+//         } else {
+//             console.error('Failed to load organization users:', await response.json())
+//         }
+//     } catch (error) {
+//         console.error('Error loading organization users:', error)
+//     }
+// }
 
-const toggleUserSelection = (userID) => {
-    const user = {
-        id: userID
-    }
-    if (selectedUsers.value.some(selectedUser => selectedUser.id === userID)) {
-        // Remove user from selected users
-        selectedUsers.value = selectedUsers.value.filter(selectedUser => selectedUser.id !== userID);
-        console.log('User unselected:', user);
-    } else {
-        // Add user to selected users
-        selectedUsers.value.push(user);
-        console.log('User selected:', user);
-    }
-    console.log('Selected users:', selectedUsers.value);
-}
+// const toggleUserSelection = (userID) => {
+//     const user = {
+//         id: userID
+//     }
+//     if (selectedUsers.value.some(selectedUser => selectedUser.id === userID)) {
+//         // Remove user from selected users
+//         selectedUsers.value = selectedUsers.value.filter(selectedUser => selectedUser.id !== userID);
+//         console.log('User unselected:', user);
+//     } else {
+//         // Add user to selected users
+//         selectedUsers.value.push(user);
+//         console.log('User selected:', user);
+//     }
+//     console.log('Selected users:', selectedUsers.value);
+// }
 
-const isUserSelected = (userID) => {
-    return selectedUsers.value.some(selectedUser => selectedUser.id === userID);
-}
+// const isUserSelected = (userID) => {
+//     return selectedUsers.value.some(selectedUser => selectedUser.id === userID);
+// }
 
-const selectFinanceManager = (userID) => {
-    if (selectedFinman.value === userID) {
-        // Deselect the currently selected finance manager
-        selectedFinman.value = '';
-        console.log('Finance manager unselected:', userID);
-    } else {
-        // Select the new finance manager
-        selectedFinman.value = userID;
-        console.log('Finance manager selected:', userID);
-    }
-}
+// const selectFinanceManager = (userID) => {
+//     if (selectedFinman.value === userID) {
+//         // Deselect the currently selected finance manager
+//         selectedFinman.value = '';
+//         console.log('Finance manager unselected:', userID);
+//     } else {
+//         // Select the new finance manager
+//         selectedFinman.value = userID;
+//         console.log('Finance manager selected:', userID);
+//     }
+// }
 
-const isFinanceManagerSelected = (userID) => {
-    return selectedFinman.value === userID;
-}
+// const isFinanceManagerSelected = (userID) => {
+//     return selectedFinman.value === userID;
+// }
 
-const closeModal = () => {
-    isModalVisible.value = false
-}
+// const closeModal = () => {
+//     isModalVisible.value = false
+// }
 
-const openModal = () => {
-    isModalVisible.value = true
-}
+// const openModal = () => {
+//     isModalVisible.value = true
+// }
 
 const parseDate = (date) => {
     if (!date) return null;
@@ -226,9 +222,9 @@ const formatDateForBackend = (date) => {
     return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
 };
 
-onMounted(() => {
-    loadOrgUsers()
-})
+// onMounted(() => {
+//     loadOrgUsers()
+// })
 </script>
 
 <template>
@@ -317,7 +313,7 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <PButton label="Create Event" @click="toEventPage" design="gradient"></PButton>
+        <PButton label="Create Event" @click="createEvent" design="gradient"></PButton>
     </template>
 
     <template v-if="isModalVisible">

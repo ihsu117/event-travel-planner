@@ -7,6 +7,7 @@ import {
 } from '@poseidon-components'
 import '@poseidon-styles/index.css'
 import { useEventStore } from '../stores/eventStore'
+import { useFlightStore } from '../stores/flightStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
@@ -15,8 +16,10 @@ import api from '../assets/scripts/api.js'
 import { format } from 'date-fns'
 
 const eventStore = useEventStore()
+const flightStore = useFlightStore()
 const userStore = useUserStore()
 const router = useRouter()
+
 const events = ref([])
 const userInfo = ref({});
 const editView = ref(false)
@@ -32,7 +35,7 @@ const updateScreenSize = () => {
 const scrollLeft = () => {
     if (eventContainer.value) {
         eventContainer.value.scrollBy({
-            left: -300, // Adjust scroll distance as needed
+            left: -775, // Adjust scroll distance as needed
             behavior: 'smooth',
         });
     }
@@ -41,11 +44,12 @@ const scrollLeft = () => {
 const scrollRight = () => {
     if (eventContainer.value) {
         eventContainer.value.scrollBy({
-            left: 300, // Adjust scroll distance as needed
+            left: 775, // Adjust scroll distance as needed
             behavior: 'smooth',
         });
     }
 };
+
 
 
 //Fetch events from the API
@@ -168,9 +172,19 @@ const handleModalOption = async (option) => {
         } catch (error) {
             console.error('Failed to logout:', error)
         }
+    } else if (option === 'Edit') {
+        router.push({ name: 'Registration' })
     }
     closeModal()
 }
+
+// Filter past events for Previous Events section
+const previousEvents = computed(() =>
+    events.value.filter(event => new Date(event.endDate) < new Date())
+)
+const upcomingEvents = computed(() =>
+    events.value.filter(event => new Date(event.endDate) >= new Date())
+)
 
 </script>
 
@@ -216,11 +230,8 @@ const handleModalOption = async (option) => {
                     </div>
 
                     <div class="modal-profile-options">
-                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')">Edit
-                        </PButton>
-                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')">
-                            Logout
-                        </PButton>
+                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')"/>
+                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')"/>
                     </div>
                 </div>
             </div>
@@ -232,9 +243,9 @@ const handleModalOption = async (option) => {
         <div class="home-desktop">
             <div class="home-header-desktop">
                 <div class="home-header__text-desktop">
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
                     <p>Welcome, {{ userStore.first_name }}!</p>
                     <p class="role-bubble">{{ userStore.role_id }}</p>
+                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
                 </div>
             </div>
             <h1>Upcoming Events</h1>
@@ -247,7 +258,7 @@ const handleModalOption = async (option) => {
                         </div>
                     </div>
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
                         :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
                         :description="event.description" :currentBudget="event.currentBudget"
@@ -268,7 +279,7 @@ const handleModalOption = async (option) => {
                 <!-- Previous Button -->
                 <button class="scroll-button prev" @click="scrollLeft">❮</button>
                 <div class="p-event__container-desktop" ref="eventContainer">
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
                         :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
                         :description="event.description" :currentBudget="event.currentBudget"
