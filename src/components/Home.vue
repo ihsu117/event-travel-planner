@@ -19,6 +19,7 @@ const eventStore = useEventStore()
 const flightStore = useFlightStore()
 const userStore = useUserStore()
 const router = useRouter()
+
 const events = ref([])
 const userInfo = ref({});
 const editView = ref(false)
@@ -48,6 +49,7 @@ const scrollRight = () => {
         });
     }
 };
+
 
 
 //Fetch events from the API
@@ -170,10 +172,11 @@ const handleModalOption = async (option) => {
         } catch (error) {
             console.error('Failed to logout:', error)
         }
+    } else if (option === 'Edit') {
+        router.push({ name: 'Registration' })
     }
     closeModal()
 }
-
 </script>
 
 <template>
@@ -218,11 +221,8 @@ const handleModalOption = async (option) => {
                     </div>
 
                     <div class="modal-profile-options">
-                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')">Edit
-                        </PButton>
-                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')">
-                            Logout
-                        </PButton>
+                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')"/>
+                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')"/>
                     </div>
                 </div>
             </div>
