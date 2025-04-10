@@ -677,7 +677,7 @@ const createOrg = () => {
                     <span class="loader"></span>
                 </div>
                 <!--Dynamic Events-->
-                <PEvent design="org-block" v-for="org in organizations" :key="org.id" :id="org.id" :organization="org"
+                <PEvent design="org-block" v-for="org in organizations.slice(1)" :key="org.id" :id="org.id" :organization="org"
                     @click="handleOrgClick(org)" />
             </div>
         </div>
