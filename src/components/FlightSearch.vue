@@ -36,6 +36,7 @@ const handleBack = (targetRoute) => {
 const handleFlightClick = (flight) => {
   console.log(flight)
   flightStore.setCurrentFlight(flight)
+  // userStore.search_key =
   if (route?.query?.type === 'return') {
     router.push({ name: 'FlightItinerary', query: { type: 'returnItinerary' } });
   } else {

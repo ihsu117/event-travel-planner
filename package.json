@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@duffel/components": "^3.8.1",
     "@googlemaps/js-api-loader": "^1.16.8",
     "@poseidon/design-system": "file:Poseidon-Design-System/PoseidonDesignSys",
     "@vuepic/vue-datepicker": "^11.0.2",
