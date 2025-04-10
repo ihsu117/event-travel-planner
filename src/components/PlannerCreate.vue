@@ -546,7 +546,7 @@ const formatDateForBackend = (date) => {
                         <PTextField class="evTopMargin" label="Destination Airport Code" v-model="destinationCode" required />
                     </div>
                         <div class="planner-start-date">
-                            <h2>Dates</h2>
+                            <h2>Start Date</h2>
                             <VueDatePicker class="evTopMargin" v-model="startDate" :enable-time-picker="false"
                                 :placeholder="'Start Date'" exactMatch="true"
                                 :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
