@@ -328,7 +328,7 @@ onUnmounted(() => {
         <PDropDown design="flight" dropDownLabel="Airline"
           :options="['Any', ...new Set(flightStore.flightResults.map(flight => flight.airline))]"
           @option-selected="handleAirlineSelection"></PDropDown>
-        <PTimeRangeDropDown dropDownLabel="Select Time Range" design="flight" :minTime="0" :maxTime="1440"
+        <PTimeRangeDropDown dropDownLabel="Time Range" design="flight" :minTime="0" :maxTime="1440"
           @range-updated="handleTimeRangeUpdate">
         </PTimeRangeDropDown>
       </div>
