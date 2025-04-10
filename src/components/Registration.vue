@@ -179,14 +179,14 @@ const updateUser = async () => {
             const storedUser = JSON.parse(localStorage.getItem('user')) || {};
             const updatedUser = {
                 user: {
+                id: storedUser.id || userStore.user_id,
                 ...storedUser,
                 first_name: payload.firstName,
                 last_name: payload.lastName,
                 profile_picture: payload.profilePic,
                 dob: payload.dob,
                 gender: payload.gender,
-                title: payload.title,
-                user_id: userStore.user_id,
+                title: payload.title
                 }
             };
 
