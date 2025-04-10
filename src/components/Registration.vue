@@ -206,7 +206,6 @@ const updateUser = async () => {
 const handleSubmit = async () => {
     if (isEditUser) {
         await updateUser()
-        
     } else {
         if (!validatePassword()) return
         await updateUser()

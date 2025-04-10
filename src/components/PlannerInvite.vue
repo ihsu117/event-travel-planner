@@ -23,7 +23,7 @@ const isModalVisible = ref(false)
 const fileInput = ref(null)
 
 const orgId = computed(() => route.params.orgId)
-const role_id = ref('')
+const role_id = ref('Attendee')
 const isOrgListPage = computed(() => route.path.includes(`/org/list/${orgId.value}`))
 console.log('Organization ID:', orgId.value)
 
@@ -143,8 +143,6 @@ const loadOrgUsers = async () => {
             method: 'GET',
             credentials: 'include'
         })
-
-
         if (response.ok) {
             const result = await response.json()
             console.log('Organization users:', result)
@@ -167,6 +165,7 @@ const adminGetUsers = async () => {
         if (response.ok) {
             const result = await response.json()
             console.log('Admin: Organization users:', result)
+
             userStore.setUserList(result)
         } else {
             console.error('Failed to load organization users:', await response.json())
@@ -399,9 +398,9 @@ onMounted(() => {
         <div class="modal">
             <div class="new-user">
 
-                <div class="role-selection">
+                <div v-if="userStore.role_id=='Site Admin' || userStore.role_id=='Org Admin'" class="role-selection">
                     <label>
-                        <input type="radio" v-model="role_id" value="Org Admin" />
+                        <input v-if="userStore.role_id=='Site Admin'" type="radio" v-model="role_id" value="Org Admin" />
                         Org Admin
                     </label>
                     <label>
@@ -413,12 +412,13 @@ onMounted(() => {
                         Finance Manager
                     </label>
                     <label>
-                        <input type="radio" v-model="role_id" value="Attendee" />
+                        <input type="radio" v-model="role_id" value="Attendee" default/>
                         Attendee
                     </label>
                 </div>
                 <PTextField v-model="emailInput" label="Enter Attendee Email" />
-                <PButton @click="adminAddUser" design="gradient" label="Send Invite"></PButton>
+                <PButton v-if="userStore.role_id=='Site Admin' || userStore.role_id=='Org Admin'" @click="adminAddUser" design="gradient" label="Send Invite"></PButton>
+                <PButton v-if="userStore.role_id=='Event Planner'" @click="addUser(emailInput)" design="gradient" label="Add User"></PButton>
             </div>
         </div>
     </template>

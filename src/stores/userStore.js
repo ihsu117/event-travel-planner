@@ -55,7 +55,7 @@ export const useUserStore = defineStore('user', {
     },
 
     setUserList(userData) {
-      if (Array.isArray(userData) && userData.length > 1) {
+      if (Array.isArray(userData) && userData.length > 0) {
         // Handle array of users
         this.users = userData.map(user => ({
           user_id: user.id,
