@@ -399,7 +399,7 @@ onMounted(() => {
         <div class="modal">
             <div class="new-user">
 
-                <div v-if="" class="role-selection">
+                <div class="role-selection">
                     <label>
                         <input type="radio" v-model="role_id" value="Org Admin" />
                         Org Admin
