@@ -86,7 +86,7 @@ onMounted(async () => {
         }
     } else if (isAdmin.value) {
         try {
-            const response = await api.apiFetch(`/organizations/${userStore.user_id}`, {
+            const response = await api.apiFetch(`/organization/${userStore.org.id}`, {
                 credentials: 'include'
             })
             if (response.ok) {
