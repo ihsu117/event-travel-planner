@@ -1467,16 +1467,6 @@ input:checked+.slider:before {
     max-width: 8%;
   }
 
-  .p-event__container-desktop {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: 90%;
-    padding: 0 2rem;
-    gap: 1%;
-  }
-
   .p-event__wrapper {
     position: relative;
     display: flex;
@@ -1515,7 +1505,7 @@ input:checked+.slider:before {
     align-items: center;
     margin-left: 3%;
     margin-right: 3%;
-    gap: 0%;
+    gap: 1%;
     overflow: hidden;
     scroll-behavior: smooth;
     width: 90%;
@@ -1724,4 +1714,7 @@ input:checked+.slider:before {
     padding: 1%;
   }
 
+  .p-event__wrapper {
+    overflow: unset
+  }
 }
