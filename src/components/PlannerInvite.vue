@@ -61,6 +61,15 @@ const adminAddUser = async () => {
 }
 
 
+const saveEmail = (emailAddress) => {
+    if (emailAddress.trim() === '') {
+        console.error('Email cannot be empty')
+        return;
+    } else {
+        newEmail.value = emailAddress
+        console.log('Email saved:', newEmail.value)
+    }
+
 const addUser = async (emailAddress) => {
     if (emailAddress.trim() === '') {
         console.error('Email cannot be empty')
