@@ -408,7 +408,7 @@ const goToInvitePage = () => {
             </div>
             <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
                 <PFlight design="block" :airline="bookingItinerary.airline" :logoURL="bookingItinerary.logoURL"
-                :price="bookingPrice" :flightClass="segment.class" :flightType="segment.flight_type" 
+                :price="bookingPrice" :flightClass="segment.class" :flightType="segment.flight_type" :seat
                 :origin="segment.origin" :destination="segment.destination" :flightDate="new Date(segment.departure_time)" 
                 :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time" :flightDuration="segment.duration"
                     @click="handleFlightClick(flightStore.currentFlight)" />
