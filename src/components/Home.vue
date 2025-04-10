@@ -27,6 +27,7 @@ const userInfo = ref({});
 const editView = ref(false)
 const loading = ref(false)
 const eventContainer = ref(null);
+const orgModal = ref(false);
 
 //Computed properties to check the role of the user
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
@@ -166,6 +167,12 @@ const handleCreateEvent = () => {
     }
 }
 
+const handleCreateOrg = () => {
+    if (isSiteAdmin.value) {
+        openModal()
+    }
+}
+
 const handleEditEventClick = async (eventData) => {
     try {
         const response = await api.apiFetch('/events/' + eventData.id, {
@@ -200,7 +207,12 @@ const closeModal = () => {
     isModalVisible.value = false
 }
 
-
+const orgModalOpen = () => {
+    orgModal.value = true
+}
+const orgModalClose = () => {
+    orgModal.value = false
+}
 
 // Function to handle modal option selection
 const handleModalOption = async (option) => {
@@ -233,6 +245,34 @@ const upcomingEvents = computed(() =>
     events.value.filter(event => new Date(event.endDate) >= new Date())
 )
 
+const orgName = ref('')
+const createOrg = () => {
+    console.log('Creating organization:', orgName.value)
+    const orgNameString = String(orgName.value).trim();
+    console.log('Creating organization:', orgName.value)
+    if (orgName.value) {
+        api.apiFetch('/organization',
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json', // Add this header
+                },
+                body: JSON.stringify({
+                    name: orgName.value
+                })
+            }).then(response => {
+                if (response.ok) {
+                    orgModalClose()
+                } else {
+                    console.error('Failed to create organization:', response.statusText)
+                }
+            }).catch(error => {
+                console.error('Error creating organization:', error)
+            })
+    }
+}
+
 </script>
 
 <template>
@@ -262,7 +302,7 @@ const upcomingEvents = computed(() =>
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -292,7 +332,7 @@ const upcomingEvents = computed(() =>
 
         <div class="home-desktop">
             <div class="home-header-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
             </div>
             <h1>Upcoming Events</h1>
             <div class="p-event__wrapper">
@@ -369,7 +409,7 @@ const upcomingEvents = computed(() =>
 
         <div class="home-desktop">
             <div class="home-header-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
             </div>
             <h1>Upcoming Events</h1>
             <div class="p-event__wrapper">
@@ -381,7 +421,7 @@ const upcomingEvents = computed(() =>
                         </div>
                     </div>
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
                         :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
                         :description="event.description" :currentBudget="event.currentBudget"
@@ -389,7 +429,7 @@ const upcomingEvents = computed(() =>
                         :financeMan="event.financeMan" :autoApprove="event.autoApprove"
                         :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
                         @editClick="handleEditEventClick" @eventClick="handleEditEventClick" />
-                        <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
+                    <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
 
             </div>
@@ -446,7 +486,7 @@ const upcomingEvents = computed(() =>
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -473,6 +513,17 @@ const upcomingEvents = computed(() =>
         </div>
     </template>
 
+    <template v-if="orgModal">
+        <div class="modal-overlay" @click="orgModalClose"></div>
+        <div class="modal modal-container">
+            <div class="modal-profile">
+                <h4>Create Organization</h4>
+                <PTextField label="Organization Name" v-model="orgName" placeholder="Enter organization name" />
+                <PButton label="Create" design="gradient-small" @click="createOrg()" />
+            </div>
+        </div>
+    </template>
+
     <!--Home Page for Attendee-->
     <template v-if="isAttendee && isMobile">
         <div class="home">
@@ -492,14 +543,29 @@ const upcomingEvents = computed(() =>
                     </div>
                 </div>
                 <!--Dynamic Events-->
-                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                     :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                     :pictureLink="event.pictureLink" :description="event.description"
                     :currentBudget="event.currentBudget" :destinationCode="event.destinationCode"
                     :financeMan="event.financeMan" :autoApprove="event.autoApprove"
                     :autoApproveThreshold="event.autoApproveThreshold" design="block" @event-click="handleEventClick"
                     :class="{ 'fade-in': true, 'show': !loading }" />
-
+            </div>
+            <hr>
+            <h1>Previous Events</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-planner" @editClick="handleEditEventClick(event)"
+                    @event-click="handleEditEventClick(event)" />
             </div>
         </div>
     </template>
@@ -520,13 +586,29 @@ const upcomingEvents = computed(() =>
                     <span class="loader"></span>
                 </div>
                 <!--Dynamic Events-->
-                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                     :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                     :pictureLink="event.pictureLink" :description="event.description"
                     :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
                     :destinationCode="event.destinationCode" :financeMan="event.financeMan"
                     :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
                     design="block-finance" @event-click="handleEventClick" />
+            </div>
+            <hr>
+            <h1>Previous Events</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-planner" @editClick="handleEditEventClick(event)"
+                    @event-click="handleEditEventClick(event)" />
             </div>
         </div>
     </template>
@@ -548,7 +630,7 @@ const upcomingEvents = computed(() =>
                     <span class="loader"></span>
                 </div>
                 <!--Dynamic Events-->
-                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                     :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                     :pictureLink="event.pictureLink" :description="event.description"
                     :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
@@ -557,6 +639,22 @@ const upcomingEvents = computed(() =>
                     design="block-planner" @editClick="handleEditEventClick(event)"
                     @event-click="handleEditEventClick(event)" />
                 <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
+            </div>
+            <hr>
+            <h1>Previous Events</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-planner" @editClick="handleEditEventClick(event)"
+                    @event-click="handleEditEventClick(event)" />
             </div>
         </div>
     </template>
@@ -574,7 +672,7 @@ const upcomingEvents = computed(() =>
 
             <h1>Organizations</h1>
             <div class="p-event__container">
-                <PButton label="Create Org" @click="" design="planner"></PButton>
+                <PButton label="Create Org" @click="orgModalOpen()" design="planner"></PButton>
                 <div class="loading-spinner" v-show="loading">
                     <span class="loader"></span>
                 </div>
