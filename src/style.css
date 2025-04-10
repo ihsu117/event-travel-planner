@@ -531,6 +531,15 @@ body {
   /* 20px */
 }
 
+.finance-dashboard-desktop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  background-color: var(--pos-inner-yellow);
+}
+
 .finance-dashboard p {
   color: black;
 }
@@ -555,6 +564,36 @@ body {
   /* 13px */
   width: 21.13rem;
   /* 338px */
+}
+
+.finance-flight-cont {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  justify-content: left;
+  width: 60%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100vh;
+  white-space: nowrap;
+  gap: 2%;
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  margin-bottom: 3rem;
+}
+
+.finance-flight-cont h3 {
+  color: transparent;
+}
+
+.hiddenB {
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 0.375rem;
+  height: 1.6875rem;
+  width: 6.375rem;
 }
 
 .finance-dashboard .flight-container h3 {
@@ -1529,7 +1568,7 @@ input:checked+.slider:before {
     z-index: 1;
   }
 
-  .p-event__wrapper::before {
+  .p-event__wrapper::before{
     left: 0;
     background: linear-gradient(to right, var(--pos-inner-yellow), rgba(255, 255, 255, 0));
   }
@@ -1543,17 +1582,22 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-left: 3%;
-    margin-right: 3%;
     gap: 1%;
-    overflow: hidden;
-    scroll-behavior: smooth;
     width: 90%;
     max-width: none;
-    white-space: nowrap;
+
     /* Prevent wrapping of items */
     justify-content: flex-start;
     /* Align items to the start */
+  }
+
+  .scroll-wrapper {
+    width: 90%;
+    margin-left: 3%;
+    margin-right: 3%;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
   }
 
   .scroll-button {

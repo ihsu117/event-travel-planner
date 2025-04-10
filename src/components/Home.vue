@@ -28,6 +28,7 @@ const editView = ref(false)
 const loading = ref(false)
 const eventContainer = ref(null);
 const orgModal = ref(false);
+const scrWrapper = ref(null);
 
 //Computed properties to check the role of the user
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
@@ -61,7 +62,12 @@ const scrollRight = () => {
     }
 };
 
-
+const handleHScroll = (e) => {
+    if(scrWrapper.value) {
+        if (e.deltaY > 0) scrWrapper.value.scrollLeft += 100;
+        else scrWrapper.value.scrollLeft -= 100;
+    }
+}
 
 //Fetch events from the API
 onMounted(async () => {
@@ -336,7 +342,7 @@ const createOrg = () => {
             </div>
             <h1>Upcoming Events</h1>
             <div class="p-event__wrapper">
-
+                <button class="scroll-button prev" @click="scrollLeft">❮</button>
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <div v-if="loading" class="spinner">
                         <div class="loading-spinner" v-show="loading">
@@ -352,7 +358,7 @@ const createOrg = () => {
                         :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
                         design="block" @event-click="handleEventClick" />
                 </div>
-
+                <button class="scroll-button next" @click="scrollRight">❯</button>
             </div>
             <hr>
             <h1>Previous Events</h1>
@@ -387,19 +393,46 @@ const createOrg = () => {
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
             </div>
             <h1>Upcoming Events</h1>
-            <div class="p-event__container-desktop" ref="eventContainer">
-                <div class="loading-spinner" v-show="loading">
-                    <span class="loader"></span>
+            <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
+
+                <div class="p-event__container-desktop" ref="eventContainer">
+                    <div class="loading-spinner" v-show="loading">
+                        <span class="loader"></span>
+                    </div>
+                    <!--Dynamic Events-->
+                        <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                        :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                        :pictureLink="event.pictureLink" :description="event.description"
+                        :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                        :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                        design="block-finance" @event-click="handleEventClick" />
+
                 </div>
-                <!--Dynamic Events-->
-                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
-                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
-                    :pictureLink="event.pictureLink" :description="event.description"
-                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
-                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
-                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
-                    design="block-finance" @event-click="handleEventClick" />
             </div>
+
+            <hr>
+            <h1>Previous Events</h1>
+            <div class="scroll-wrapper">
+
+                <div v-if="loading" class="spinner">
+                    <div class="loading-spinner" v-show="loading">
+                        <span class="loader"></span>
+                    </div>
+                </div>
+                <div class="p-event__container-desktop" ref="eventContainer">
+                    <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
+                        :eventName="event.name" :startDate="new Date(event.startDate)"
+                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
+                        :description="event.description" :currentBudget="event.currentBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                        :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                        design="block-finance" @event-click="handleEventClick" />
+                </div>
+                
+            </div>
+            <hr>
+            
         </div>
     </template>
 

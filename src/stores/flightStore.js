@@ -132,7 +132,8 @@ export const useFlightStore = defineStore('flight', {
                     flightGate: flight.flightGate || 'TBD',
                     airline: flight.airline || '',
                     logoURL: flight.logoURL || '',
-                    offer_id: flight.offer_id
+                    offer_id: flight.offer_id,
+                    owner: flight.owner
                 }));
 
                 console.log('Processed flights:', this.flightResults);
