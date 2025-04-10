@@ -86,7 +86,7 @@ onMounted(async () => {
         }
     } else if (isAdmin.value) {
         try {
-            const response = await api.apiFetch(`/organizations/${userStore.user_id}`, {
+            const response = await api.apiFetch(`/organization/${userStore.org.id}`, {
                 credentials: 'include'
             })
             if (response.ok) {
@@ -380,6 +380,29 @@ const createOrg = () => {
         </div>
     </template>
 
+    <!-- Home Page for Financial Manager -->
+    <template v-if="isFinance && !isMobile">
+        <div class="home-desktop">
+            <div class="home-header-desktop">
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
+            </div>
+            <h1>Upcoming Events</h1>
+            <div class="p-event__container-desktop" ref="eventContainer">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-finance" @event-click="handleEventClick" />
+            </div>
+        </div>
+    </template>
+
     <!--Home Page for event planner-->
 
     <template v-if="isEventPlanner && !isMobile">
@@ -654,7 +677,31 @@ const createOrg = () => {
                     <span class="loader"></span>
                 </div>
                 <!--Dynamic Events-->
-                <PEvent design="org-block" v-for="org in organizations" :key="org.id" :id="org.id" :organization="org"
+                <PEvent design="org-block" v-for="org in organizations.slice(1)" :key="org.id" :id="org.id" :organization="org"
+                    @click="handleOrgClick(org)" />
+            </div>
+        </div>
+    </template>
+
+    <template v-if="isSiteAdmin && !isMobile">
+        <div class="home">
+            <div class="home-header">
+
+                <div class="home-header__text">
+                    <p>Welcome, {{ userStore.first_name }}</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
+                </div>
+                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+            </div>
+
+            <h1>Organizations</h1>
+            <div class="p-event__container">
+                <PButton label="Create Org" @click="orgModalOpen()" design="planner"></PButton>
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent design="org-block" v-for="org in organizations.slice(1)" :key="org.id" :id="org.id" :organization="org"
                     @click="handleOrgClick(org)" />
             </div>
         </div>
