@@ -429,7 +429,7 @@ const upcomingEvents = computed(() =>
                         :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
                         :financeMan="event.financeMan" :autoApprove="event.autoApprove"
                         :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
-                        @editClick="handleEditEventClick(event)" @event-click="handleEventClick(event)" />
+                        @editClick="handleEditEventClick(event)" @event-click="handleEditEventClick(event)" />
                     <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
             </div>
