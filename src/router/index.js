@@ -71,6 +71,12 @@ const routes = [
     name: 'Registration',
     component: Registration,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/edit/',
+    name: 'EditUser',
+    component: Registration,
+    meta: { requiresAuth: true }
   }
 
 ]

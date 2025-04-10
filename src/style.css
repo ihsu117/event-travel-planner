@@ -48,6 +48,7 @@
   width: 100%;
 }
 
+
 .email-container {
   position: relative;
 }
@@ -102,6 +103,21 @@
   color: var(--pos-yellow);
 }
 
+.register-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.register-container .exit-icon {
+  position: absolute;
+  right: 1.5rem;
+  top: 1.5rem;
+  cursor: pointer;
+}
+
 .register-form {
   display: flex;
   flex-direction: column;
@@ -109,6 +125,7 @@
   justify-content: center;
   min-width: 25rem;
   max-width: 24.56rem;
+  margin-top: 10%;
 }
 
 .register-form h1 {
@@ -605,24 +622,19 @@ body {
 .modal-options {
   cursor: pointer;
   margin: 0.625rem 0;
-  /* 10px 0 */
   display: flex;
   flex-direction: row;
   justify-content: center;
   gap: 1.25rem;
-  /* 20px */
 }
 
 .modal-approve,
 .modal-deny {
   cursor: pointer;
   padding: 0.625rem 1.25rem;
-  /* 10px 20px */
   border-radius: 0.3125rem;
-  /* 5px */
   margin-bottom: 0;
   margin-top: 0.3125rem;
-  /* 5px */
 }
 
 .modal-approve {
@@ -832,33 +844,23 @@ body {
 
 .loader {
   width: 3rem;
-  /* 48px */
   height: 3rem;
-  /* 48px */
   border-radius: 50%;
   display: inline-block;
   border-top: 0.1875rem solid var(--pos-yellow);
-  /* 3px */
   border-right: 0.1875rem solid transparent;
-  /* 3px */
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
 }
 
 .p-event__container .loading-spinner {
   margin-top: 7.5rem;
-  /* 120px */
 }
-
-
 
 .p-event__container .loader {
   width: 7.5rem;
-  /* 120px */
   height: 7.5rem;
-  /* 120px */
   border-top: 0.25rem solid var(--pos-yellow);
-  /* 4px */
 }
 
 .mfa-form {
@@ -1264,6 +1266,10 @@ input:checked+.slider:before {
   /* Include padding and border in the width */
 }
 
+.p-event--small-header .p-event__dates {
+  display: none;
+}
+
 .flight-type {
   color: black;
   margin-bottom: 0.625rem;
@@ -1315,6 +1321,10 @@ input:checked+.slider:before {
 
   .login-container {
     padding-top: 20%;
+  }
+
+  .register-container {
+
   }
 
   /* Make home container fluid */
@@ -1386,6 +1396,30 @@ input:checked+.slider:before {
 
   .planner-event input {
     width: 100%;
+  }
+
+  .modal#forgot-pass.expandSuccess {
+    width: 55%; /* Expanded size */
+    height: 16%; /* Adjust as needed */
+  }
+
+  .modal#forgot-pass.shrinked {
+    margin: 0%;
+    width: 5.125rem;
+    height: 5.125rem;
+    border-radius: 60%;
+    overflow: hidden;
+    padding: 0%;
+  }
+
+  .modal#forgot-pass .loading-spinner{
+    padding-top: .75rem;
+  }
+
+  .modal#forgot-pass .loader {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-top: 0.25rem solid var(--pos-yellow);
   }
 }
 

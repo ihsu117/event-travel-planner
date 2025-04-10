@@ -199,6 +199,8 @@ const closeModal = () => {
     isModalVisible.value = false
 }
 
+
+
 // Function to handle modal option selection
 const handleModalOption = async (option) => {
     console.log(`Selected option: ${option}`)
@@ -217,7 +219,7 @@ const handleModalOption = async (option) => {
             console.error('Failed to logout:', error)
         }
     } else if (option === 'Edit') {
-        router.push({ name: 'Registration' })
+        router.push({ name: 'EditUser' })
     }
     closeModal()
 }
@@ -258,7 +260,8 @@ const upcomingEvents = computed(() =>
                             </div>
                             <div class="profile-content">
                                 <h5>Phone</h5>
-                                <p v-if="phoneNum">{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+                                    }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -361,8 +364,8 @@ const upcomingEvents = computed(() =>
                             <span class="loader"></span>
                         </div>
                     </div>
-                   <!--Dynamic Events-->
-                   <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    <!--Dynamic Events-->
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
                         :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
                         :description="event.description" :currentBudget="event.currentBudget"
@@ -370,7 +373,7 @@ const upcomingEvents = computed(() =>
                         :financeMan="event.financeMan" :autoApprove="event.autoApprove"
                         :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
                         @editClick="handleEditEventClick(event)" @event-click="handleEditEventClick(event)" />
-                        <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
+                    <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
 
             </div>
@@ -426,7 +429,8 @@ const upcomingEvents = computed(() =>
                             </div>
                             <div class="profile-content">
                                 <h5>Phone</h5>
-                                <p v-if="phoneNum">{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+                                    }}</p>
                             </div>
 
                             <div class="profile-content">
