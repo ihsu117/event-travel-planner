@@ -167,16 +167,6 @@ onMounted(() => {
 
 <template>
 
-<<<<<<< HEAD
-        <h2>Finance Manager</h2>
-        <div class="p-event__container">
-            <PFinanceBlock design="invite"
-                v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')" :key="user.user_id"
-                :name="user.first_name + ' ' + user.last_name" :email="user.email" :profileImage="user.profile_picture"
-                :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                @click="selectFinanceManager(user.user_id)" required />
-        </div>
-=======
     <template v-if="true">
 
     <div class="planner-event">
@@ -236,7 +226,6 @@ onMounted(() => {
         :class="{ selected: isFinanceManagerSelected(user.user_id) }"
         @click="selectFinanceManager(user.user_id)" required />
 </div>
->>>>>>> 16dad73a5dae20402eea802a92b5bf7ad60aca84
 
         <h2>Attendees</h2>
         <div class="p-event__container">
@@ -247,25 +236,6 @@ onMounted(() => {
                 :class="{ selected: isUserSelected(user.user_id) }" @click="toggleUserSelection(user.user_id)" />
 
 
-<<<<<<< HEAD
-            <!-- <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
-        :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
-        @click="toggleUserSelection(user.user_id)" /> -->
-
-            <!-- Optionally, add user functionality can also be part of the modal content -->
-        </div>
-
-        <PButton label="Send Invites" @click="handleSendInvites" design="gradient" />
-
-
-        <div>
-            <PTextField v-model="emailInput">
-            </PTextField>
-            <PButton label="Send Invite to New User" design="gradient" @click="addUser(emailInput)" />
-        </div>
-
-</template>
-=======
         <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
         :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
         @click="toggleUserSelection(user.user_id)" /> -->
@@ -281,4 +251,3 @@ onMounted(() => {
     </PTextField>
     <PButton label="Send Invite to New User" design="gradient" @click="addUser(emailInput)" />
 </div> --> 
->>>>>>> 16dad73a5dae20402eea802a92b5bf7ad60aca84
