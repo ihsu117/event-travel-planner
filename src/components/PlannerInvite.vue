@@ -15,6 +15,7 @@ const route = useRoute()
 const eventStore = useEventStore()
 const userStore = useUserStore()
 const selectedUsers = ref([])
+const newUsers = ref([])
 const selectedFinman = ref('')
 const emailInput = ref('')
 const inviteEmail = ref('')
@@ -69,7 +70,7 @@ const addUser = async (emailAddress) => {
 const handleSendInvites = async () => {
     try {
         if (newUsers.value.length > 0) {
-            await createUser()
+            await createAttendeeAndInvite()
         } else {
             console.log('No new users to invite.')
         }
@@ -79,7 +80,7 @@ const handleSendInvites = async () => {
     }
 }
 
-const createUser = async () => {
+const createAttendeeAndInvite = async () => {
     try {
         const schema = {
             eventId: eventStore.currentEvent.id,
@@ -182,8 +183,13 @@ const openModal = () => {
     isModalVisible.value = true
 }
 
+//Function to handle the back button
+const handleBack = (targetRoute) => {
+    router.push({ name: targetRoute })
+}
+
 onMounted(() => {
-    if (!isOrgListPage) {
+    if (!isOrgListPage.value) {
         loadOrgUsers()
     } else {
         adminGetUsers()
@@ -197,7 +203,7 @@ onMounted(() => {
 
     <template v-if="isOrgListPage">
         <div class="planner-event">
-            <PEvent design="small-header" eventName="Invitations" @back-click="isInvitePage = false" />
+            <PEvent design="small-header" eventName="Invitations" @back-click="() => handleBack('Home')"/>
             <div class="event-invite">
 
                 <h2>Org Admins</h2>
@@ -253,7 +259,7 @@ onMounted(() => {
     <template v-else>
 
         <div class="planner-event">
-            <PEvent design="small-header" eventName="Invitations" @back-click="isInvitePage = false" />
+            <PEvent design="small-header" eventName="Invitations" @back-click="() => handleBack('Home')"/>
             <div class="event-invite">
 
                 <h2>Finance Manager</h2>

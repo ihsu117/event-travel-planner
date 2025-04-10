@@ -178,7 +178,7 @@ const handleEditEventClick = async (eventData) => {
     }
     if (isEventPlanner.value) {
         eventStore.setCurrentEvent(eventData);
-        router.push({ name: 'Event', param: { editView: 'true', eventID: eventData.id } });
+        router.push({ name: 'Event', query: { editView: 'true', eventID: eventData.id } });
     }
 };
 
@@ -372,8 +372,8 @@ const upcomingEvents = computed(() =>
                         :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
                         :financeMan="event.financeMan" :autoApprove="event.autoApprove"
                         :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
-                        @editClick="handleEditEventClick(event)" @event-click="handleEditEventClick(event)" />
-                    <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
+                        @editClick="handleEditEventClick" @eventClick="handleEditEventClick" />
+                        <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
 
             </div>
