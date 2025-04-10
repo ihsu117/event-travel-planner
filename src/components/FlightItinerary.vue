@@ -63,7 +63,7 @@ const confirmPurchase = async () => {
       offerID: flightStore.currentFlight.offer_id,
       passID: flightStore.currentFlight.passID,
       flight: flightData,
-      eventID: eventID
+      eventID: eventID,
     })
   }).then(
     response => console.log(response)
