@@ -149,12 +149,13 @@ const saveEmail = (emailAddress) => {
 
     const SendInvites = async () => {
         try {
+            console.log('Selected users:', selectedUsers.value)
             const response = await api.apiFetch('/events/invite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     eventId: eventStore.currentEvent.id,
-                    attendees: selectedUsers.value.map(user => ({ id: user.user_id }))
+                    attendees: selectedUsers.value
                 }),
                 credentials: 'include'
             })
