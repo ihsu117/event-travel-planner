@@ -238,6 +238,8 @@ const upcomingEvents = computed(() =>
         </div>
     </template>
 
+    <!--Home Page for Attendee-->
+
     <template v-if="isAttendee && !isMobile">
 
         <div class="home-desktop">
@@ -265,6 +267,66 @@ const upcomingEvents = computed(() =>
                         :destinationCode="event.destinationCode" :financeMan="event.financeMan"
                         :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
                         design="block" @event-click="handleEventClick" />
+                </div>
+
+            </div>
+            <hr>
+            <h1>Previous Events</h1>
+            <div class="p-event__wrapper">
+                <div v-if="loading" class="spinner">
+                    <div class="loading-spinner" v-show="loading">
+                        <span class="loader"></span>
+                    </div>
+                </div>
+                <!-- Previous Button -->
+                <button class="scroll-button prev" @click="scrollLeft">❮</button>
+                <div class="p-event__container-desktop" ref="eventContainer">
+                    <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
+                        :eventName="event.name" :startDate="new Date(event.startDate)"
+                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
+                        :description="event.description" :currentBudget="event.currentBudget"
+                        :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                        :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                        design="block" @event-click="handleEventClick" />
+                </div>
+                <!-- Next Button -->
+                <button class="scroll-button next" @click="scrollRight">❯</button>
+            </div>
+            <hr>
+        </div>
+    </template>
+
+    <!--Home Page for event planner-->
+
+    <template v-if="isEventPlanner && !isMobile">
+
+        <div class="home-desktop">
+            <div class="home-header-desktop">
+                <div class="home-header__text-desktop">
+                    <p>Welcome, {{ userStore.first_name }}!</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
+                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+                </div>
+            </div>
+            <h1>Upcoming Events</h1>
+            <div class="p-event__wrapper">
+
+                <div class="p-event__container-desktop" ref="eventContainer">
+                    <div v-if="loading" class="spinner">
+                        <div class="loading-spinner" v-show="loading">
+                            <span class="loader"></span>
+                        </div>
+                    </div>
+                   <!--Dynamic Events-->
+                   <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                        :eventName="event.name" :startDate="new Date(event.startDate)"
+                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
+                        :description="event.description" :currentBudget="event.currentBudget"
+                        :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
+                        :financeMan="event.financeMan" :autoApprove="event.autoApprove"
+                        :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
+                        @editClick="handleEditEventClick(event)" @event-click="handleEditEventClick(event)" />
+                        <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
 
             </div>
