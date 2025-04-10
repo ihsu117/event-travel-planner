@@ -112,7 +112,8 @@ const checkMFA = async () => {
       const user = await apiResponse.json()
       userStore.setUser(user)
       if( userStore.first_name.value == undefined || userStore.last_name.value == undefined) {
-        router.push({ name: 'Register' })
+
+        router.push({ name: 'Registration' })
       } else {
         await router.push({ name: 'Home' })
       }
