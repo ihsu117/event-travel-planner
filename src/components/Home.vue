@@ -27,6 +27,14 @@ const editView = ref(false)
 const loading = ref(false)
 const eventContainer = ref(null);
 
+//Computed properties to check the role of the user
+const isAttendee = computed(() => userStore.role_id === 'Attendee')
+const isFinance = computed(() => userStore.role_id === 'Finance Manager')
+const isEventPlanner = computed(() => userStore.role_id === 'Event Planner')
+const isAdmin = computed(() => userStore.role_id === 'Org Admin')
+const isSiteAdmin = computed(() => userStore.role_id === 'Site Admin')
+console.log('Role:', userStore.role_id)
+
 const isMobile = ref(window.innerWidth <= 768);
 
 const updateScreenSize = () => {
@@ -57,8 +65,9 @@ const scrollRight = () => {
 onMounted(async () => {
     window.addEventListener('resize', updateScreenSize);
     checkAuth()
+    console.log('User ID:', userStore.user_id)
     loading.value = true
-    if (isSiteAdmin) {
+    if (isSiteAdmin==true) {
         try {
             const response = await api.apiFetch('/organizations', {
                 credentials: 'include'
@@ -73,7 +82,7 @@ onMounted(async () => {
         } finally {
             loading.value = false // Set loading to false after API call
         }
-    } else if (isAdmin) {
+    } else if (isAdmin==true) {
         try {
             const response = await api.apiFetch(`/organizations/${userStore.user_id}`, {
                 credentials: 'include'
@@ -127,13 +136,7 @@ const fetchUserData = async () => {
     }
 };
 
-//Computed properties to check the role of the user
-const isAttendee = computed(() => userStore.role_id === 'Attendee')
-const isFinance = computed(() => userStore.role_id === 'Finance Manager')
-const isEventPlanner = computed(() => userStore.role_id === 'Event Planner')
-const isAdmin = computed(() => userStore.role_id === 'Org Admin')
-const isSiteAdmin = computed(() => userStore.role_id === 'Site Admin')
-console.log('Role:', userStore.role_id)
+
 
 const handleEventClick = async (eventData) => {
     try {
@@ -255,7 +258,7 @@ const upcomingEvents = computed(() =>
                             </div>
                             <div class="profile-content">
                                 <h5>Phone</h5>
-                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
+                                <p v-if="phoneNum">{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -423,7 +426,7 @@ const upcomingEvents = computed(() =>
                             </div>
                             <div class="profile-content">
                                 <h5>Phone</h5>
-                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
+                                <p v-if="phoneNum">{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
                             </div>
 
                             <div class="profile-content">
