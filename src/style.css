@@ -1922,4 +1922,8 @@ input:checked+.slider:before {
   .evTopMargin {
     margin-top: 1rem;
   }
+
+  .p-event--block-planner {
+    overflow: hidden;
+  }
 }
