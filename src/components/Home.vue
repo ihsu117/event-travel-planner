@@ -67,7 +67,7 @@ onMounted(async () => {
     checkAuth()
     console.log('User ID:', userStore.user_id)
     loading.value = true
-    if (isSiteAdmin==true) {
+    if (isSiteAdmin.value) {
         try {
             const response = await api.apiFetch('/organizations', {
                 credentials: 'include'
@@ -82,7 +82,7 @@ onMounted(async () => {
         } finally {
             loading.value = false // Set loading to false after API call
         }
-    } else if (isAdmin==true) {
+    } else if (isAdmin.value) {
         try {
             const response = await api.apiFetch(`/organizations/${userStore.user_id}`, {
                 credentials: 'include'
@@ -178,12 +178,12 @@ const handleEditEventClick = async (eventData) => {
     }
     if (isEventPlanner.value) {
         eventStore.setCurrentEvent(eventData);
-        router.push({ name: 'Event', query: { editView: 'true', eventID: eventData.id } });
+        router.push({ name: 'Event', param: { editView: 'true', eventID: eventData.id } });
     }
 };
 
 const handleOrgClick = (org) => {
-    router.push({ name: 'OrgList', query: { orgID: org.id } });
+    router.push({ name: 'OrgList', params: { orgId: org.id } });
 }
 
 const isModalVisible = ref(false)
