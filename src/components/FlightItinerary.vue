@@ -8,6 +8,7 @@ import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useEventStore } from '../stores/eventStore'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import { onDuffelAncillariesPayloadReady, renderDuffelAncillariesCustomElement } from "@duffel/components/custom-elements";
+import HeaderBar from './Headerbar.vue'
 
 const router = useRouter()
 const flightStore = useFlightStore()
@@ -214,11 +215,7 @@ console.log("ITINERARIES: ", itineraries.value)
   <template v-if="!isMobile">
     <div class="home-desktop">
       <div class="home-header-desktop">
-        <div class="home-header__text-desktop">
-          <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
-          <p>Welcome, {{ userStore.first_name }}!</p>
-          <p class="role-bubble">{{ userStore.role_id }}</p>
-        </div>
+        <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
       </div>
 
       <div v-if="$route?.query?.type !== 'bookingSummary'">

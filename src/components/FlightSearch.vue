@@ -7,6 +7,7 @@ import { PEvent, PButton, PDropDown, PFlight, PTimeRangeDropDown, PProfilePic } 
 import { onMounted, ref, computed, onUnmounted } from 'vue'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import { formatISODurationShort } from '../assets/scripts/durationParse.js'
+import HeaderBar from './Headerbar.vue'
 
 const route = useRoute()
 const eventStore = useEventStore()
@@ -268,11 +269,7 @@ onUnmounted(() => {
   <template v-if="!isMobile">
     <div class="home-header-desktop">
       <div class="home-header__text-desktop">
-        <div class="home-header__text-desktop">
-          <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
-          <p>Welcome, {{ userStore.first_name }}!</p>
-          <p class="role-bubble">{{ userStore.role_id }}</p>
-        </div>
+        <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
       </div>
     </div>
     <div class="flight-desktop-search">

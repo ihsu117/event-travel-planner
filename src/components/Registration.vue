@@ -35,8 +35,7 @@ const regDateMinFormatted = regDateMin.toISOString().split('T')[0]
 const titleOptions = [{ value: 'mr', label: 'Mr.' }, { value: 'mrs', label: 'Mrs.' }, { value: 'ms', label: 'Ms.' }, { value: 'miss', label: 'Miss' }, { value: 'dr', label: 'Doctor' }]
 const genderOptions = [
     { value: 'm', label: 'Male' },
-    { value: 'f', label: 'Female' },
-    { value: 'o', label: 'Other' }
+    { value: 'f', label: 'Female' }
 ]
 const loading = ref(false)
 const isEditUser = computed(() => route.path.includes('/edit/'))

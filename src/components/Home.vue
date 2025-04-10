@@ -14,6 +14,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
 import { format } from 'date-fns'
+import HeaderBar from './Headerbar.vue'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
@@ -291,11 +292,7 @@ const upcomingEvents = computed(() =>
 
         <div class="home-desktop">
             <div class="home-header-desktop">
-                <div class="home-header__text-desktop">
-                    <p>Welcome, {{ userStore.first_name }}!</p>
-                    <p class="role-bubble">{{ userStore.role_id }}</p>
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
-                </div>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
             </div>
             <h1>Upcoming Events</h1>
             <div class="p-event__wrapper">
@@ -349,11 +346,7 @@ const upcomingEvents = computed(() =>
 
         <div class="home-desktop">
             <div class="home-header-desktop">
-                <div class="home-header__text-desktop">
-                    <p>Welcome, {{ userStore.first_name }}!</p>
-                    <p class="role-bubble">{{ userStore.role_id }}</p>
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
-                </div>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
             </div>
             <h1>Upcoming Events</h1>
             <div class="p-event__wrapper">
