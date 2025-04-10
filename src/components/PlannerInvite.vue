@@ -182,6 +182,11 @@ const openModal = () => {
     isModalVisible.value = true
 }
 
+//Function to handle the back button
+const handleBack = (targetRoute) => {
+    router.push({ name: targetRoute })
+}
+
 onMounted(() => {
     if (!isOrgListPage) {
         loadOrgUsers()
@@ -197,7 +202,7 @@ onMounted(() => {
 
     <template v-if="isOrgListPage">
         <div class="planner-event">
-            <PEvent design="small-header" eventName="Invitations" @back-click="isInvitePage = false" />
+            <PEvent design="small-header" eventName="Invitations" @back-click="() => handleBack('Home')"/>
             <div class="event-invite">
 
                 <h2>Org Admins</h2>
@@ -253,7 +258,7 @@ onMounted(() => {
     <template v-else>
 
         <div class="planner-event">
-            <PEvent design="small-header" eventName="Invitations" @back-click="isInvitePage = false" />
+            <PEvent design="header" eventName="Invitations" @back-click="() => handleBack('Home')"/>
             <div class="event-invite">
 
                 <h2>Finance Manager</h2>
