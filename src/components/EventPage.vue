@@ -14,6 +14,7 @@ import VueGoogleAutocomplete from "vue-google-autocomplete"
 import VueDatePicker from '@vuepic/vue-datepicker';
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import '@vuepic/vue-datepicker/dist/main.css'
+import HeaderBar from './Headerbar.vue'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
@@ -314,11 +315,7 @@ const goToInvitePage = () => {
     <template v-if="!isMobile">
         <div class="event-page-desktop">
             <div class="home-header-desktop">
-                <div class="home-header__text-desktop">
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
-                    <p>Welcome, {{ userStore.first_name }}!</p>
-                    <p class="role-bubble">{{ userStore.role_id }}</p>
-                </div>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
             </div>
             <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                 :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"

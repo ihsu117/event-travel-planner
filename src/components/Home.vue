@@ -14,6 +14,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
 import { format } from 'date-fns'
+import HeaderBar from './Headerbar.vue'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
@@ -178,7 +179,7 @@ const handleEditEventClick = async (eventData) => {
     }
     if (isEventPlanner.value) {
         eventStore.setCurrentEvent(eventData);
-        router.push({ name: 'Event', param: { editView: 'true', eventID: eventData.id } });
+        router.push({ name: 'Event', query: { editView: 'true', eventID: eventData.id } });
     }
 };
 
@@ -199,6 +200,8 @@ const closeModal = () => {
     isModalVisible.value = false
 }
 
+
+
 // Function to handle modal option selection
 const handleModalOption = async (option) => {
     console.log(`Selected option: ${option}`)
@@ -217,7 +220,7 @@ const handleModalOption = async (option) => {
             console.error('Failed to logout:', error)
         }
     } else if (option === 'Edit') {
-        router.push({ name: 'Registration' })
+        router.push({ name: 'EditUser' })
     }
     closeModal()
 }
@@ -258,7 +261,8 @@ const upcomingEvents = computed(() =>
                             </div>
                             <div class="profile-content">
                                 <h5>Phone</h5>
-                                <p v-if="phoneNum">{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+                                    }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -288,11 +292,7 @@ const upcomingEvents = computed(() =>
 
         <div class="home-desktop">
             <div class="home-header-desktop">
-                <div class="home-header__text-desktop">
-                    <p>Welcome, {{ userStore.first_name }}!</p>
-                    <p class="role-bubble">{{ userStore.role_id }}</p>
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
-                </div>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
             </div>
             <h1>Upcoming Events</h1>
             <div class="p-event__wrapper">
@@ -346,11 +346,7 @@ const upcomingEvents = computed(() =>
 
         <div class="home-desktop">
             <div class="home-header-desktop">
-                <div class="home-header__text-desktop">
-                    <p>Welcome, {{ userStore.first_name }}!</p>
-                    <p class="role-bubble">{{ userStore.role_id }}</p>
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
-                </div>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
             </div>
             <h1>Upcoming Events</h1>
             <div class="p-event__wrapper">
@@ -361,15 +357,15 @@ const upcomingEvents = computed(() =>
                             <span class="loader"></span>
                         </div>
                     </div>
-                   <!--Dynamic Events-->
-                   <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    <!--Dynamic Events-->
+                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
                         :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
                         :description="event.description" :currentBudget="event.currentBudget"
                         :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
                         :financeMan="event.financeMan" :autoApprove="event.autoApprove"
                         :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
-                        @editClick="handleEditEventClick(event)" @event-click="handleEditEventClick(event)" />
+                        @editClick="handleEditEventClick" @eventClick="handleEditEventClick" />
                         <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
 
@@ -426,7 +422,8 @@ const upcomingEvents = computed(() =>
                             </div>
                             <div class="profile-content">
                                 <h5>Phone</h5>
-                                <p v-if="phoneNum">{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') }}</p>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+                                    }}</p>
                             </div>
 
                             <div class="profile-content">

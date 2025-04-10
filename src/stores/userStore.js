@@ -134,7 +134,6 @@ export const useUserStore = defineStore('user', {
 
     clearUserList() {
       this.users = []
-      localStorage.removeItem('user')
       console.log('User list cleared')
     }
   }
