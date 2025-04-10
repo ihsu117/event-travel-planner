@@ -69,6 +69,7 @@ const saveEmail = (emailAddress) => {
         newEmail.value = emailAddress
         console.log('Email saved:', newEmail.value)
     }
+}
 
     const addUser = async (emailAddress) => {
         if (emailAddress.trim() === '') {
