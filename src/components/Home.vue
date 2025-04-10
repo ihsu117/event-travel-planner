@@ -683,6 +683,29 @@ const createOrg = () => {
         </div>
     </template>
 
+    <template v-if="isAdmin && isMobile">
+        <div class="home">
+            <div class="home-header">
+
+                <div class="home-header__text">
+                    <p>Welcome, {{ userStore.first_name }}</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
+                </div>
+                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+            </div>
+
+            <h1>Organizations</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent design="org-block" :organization="userStore.org"
+                    @click="handleOrgClick(org)" />
+            </div>
+        </div>
+    </template>
+
     <template v-if="isSiteAdmin && !isMobile">
         <div class="home">
             <div class="home-header">
