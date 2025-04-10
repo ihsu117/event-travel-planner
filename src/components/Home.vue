@@ -398,7 +398,7 @@ const createOrg = () => {
                         </div>
                     </div>
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
                         :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
                         :description="event.description" :currentBudget="event.currentBudget"
@@ -520,14 +520,29 @@ const createOrg = () => {
                     </div>
                 </div>
                 <!--Dynamic Events-->
-                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                     :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                     :pictureLink="event.pictureLink" :description="event.description"
                     :currentBudget="event.currentBudget" :destinationCode="event.destinationCode"
                     :financeMan="event.financeMan" :autoApprove="event.autoApprove"
                     :autoApproveThreshold="event.autoApproveThreshold" design="block" @event-click="handleEventClick"
                     :class="{ 'fade-in': true, 'show': !loading }" />
-
+            </div>
+            <hr>
+            <h1>Previous Events</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-planner" @editClick="handleEditEventClick(event)"
+                    @event-click="handleEditEventClick(event)" />
             </div>
         </div>
     </template>
@@ -548,13 +563,29 @@ const createOrg = () => {
                     <span class="loader"></span>
                 </div>
                 <!--Dynamic Events-->
-                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                     :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                     :pictureLink="event.pictureLink" :description="event.description"
                     :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
                     :destinationCode="event.destinationCode" :financeMan="event.financeMan"
                     :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
                     design="block-finance" @event-click="handleEventClick" />
+            </div>
+            <hr>
+            <h1>Previous Events</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-planner" @editClick="handleEditEventClick(event)"
+                    @event-click="handleEditEventClick(event)" />
             </div>
         </div>
     </template>
@@ -576,7 +607,7 @@ const createOrg = () => {
                     <span class="loader"></span>
                 </div>
                 <!--Dynamic Events-->
-                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                     :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
                     :pictureLink="event.pictureLink" :description="event.description"
                     :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
@@ -585,6 +616,22 @@ const createOrg = () => {
                     design="block-planner" @editClick="handleEditEventClick(event)"
                     @event-click="handleEditEventClick(event)" />
                 <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
+            </div>
+            <hr>
+            <h1>Previous Events</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-planner" @editClick="handleEditEventClick(event)"
+                    @event-click="handleEditEventClick(event)" />
             </div>
         </div>
     </template>
