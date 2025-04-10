@@ -28,6 +28,7 @@ const handleBack = (targetRoute) => {
 
 const handleReturnFlightClick = () => {
   flightStore.setReturningFlightResults(matchingReturnOptions.value);
+  console.log(matchingReturnOptions.value)
   flightStore.clearItinerary()
   flightStore.setItinerary([itineraries.value])
   router.push({ name: 'Flight', query: { type: "return" } });
@@ -117,6 +118,7 @@ onMounted(async () => {
   })
 
   window.addEventListener('resize', updateScreenSize);
+  console.log("!!!!",flightStore.currentFlight)
   if (flightStore.currentFlight.itinerary.length > 1 && flightStore.currentFlight.itinerary[0].itinerary) {
     const flights = flightStore.flightResults;
     console.log("FLIGHT RESULTS: ", flights)
@@ -159,6 +161,7 @@ onMounted(async () => {
         flightDepTime: flight.itinerary[1].itinerary[0].departure_time,
         flightDate: flight.itinerary[1].itinerary[0].departure_date,
         flightClass: flight.flightClass,
+        search_key: flight.search_key
 
       });
 
@@ -197,7 +200,7 @@ const itineraries = computed(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', updateScreenSize);
-  flightStore.setCurrentFlight(null)
+  // flightStore.setCurrentFlight([])
 });
 
 console.log("ITINERARIES: ", itineraries.value)
@@ -232,7 +235,11 @@ console.log("ITINERARIES: ", itineraries.value)
             <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
-
+          <div>
+            <duffel-ancillaries>
+              
+            </duffel-ancillaries>
+          </div>
 
           <div class="flight-itinerary-button">
             <PButton
@@ -252,9 +259,9 @@ console.log("ITINERARIES: ", itineraries.value)
 
           <h1>Departing Itinerary</h1>
           <div v-for="(itinerary, index) in flightStore.itineraries[0]" :key="index">
-            <PFlight design="desktop-itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+            <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="itinerary.carrier" :originCity="itinerary.origin_city" :destinationCity="itinerary.destination_city" :flightDepTime="itinerary.departure_time"
               :logoURL="flightStore.currentFlight.logoURL" :flightArrTime="itinerary.arrival_time"
-              :flightNumber="itinerary.flight_num" :flightClass="flightStore.currentFlight.flightClass"
+              :flightNumber="itinerary.flight_num" :flightClass="itinerary.class"
               :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="itineraries.length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
@@ -264,9 +271,9 @@ console.log("ITINERARIES: ", itineraries.value)
 
           <h1>Returning Itinerary</h1>
           <div v-for="(itinerary, index) in flightStore.itineraries[1]" :key="index">
-            <PFlight design="desktop-itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+            <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="itinerary.carrier" :originCity="itinerary.origin_city" :destinationCity="itinerary.destination_city" :flightDepTime="itinerary.departure_time"
               :logoURL="flightStore.currentFlight.logoURL" :flightArrTime="itinerary.arrival_time"
-              :flightNumber="itinerary.flight_num" :flightClass="flightStore.currentFlight.flightClass"
+              :flightNumber="itinerary.flight_num" :flightClass="itinerary.class"
               :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="itineraries.length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>

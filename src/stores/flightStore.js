@@ -179,7 +179,8 @@ export const useFlightStore = defineStore('flight', {
                         airline: flight.airline,
                         logoURL: flight.logoURL,
                         offer_id: flight.offer_id,
-                        itinerary: flight.itinerary
+                        itinerary: flight.itinerary,
+                        search_key: flight.search_key
                     };
                 });
                 
