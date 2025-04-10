@@ -395,6 +395,10 @@ body {
   /* 15px */
 }
 
+.event-page .event-content {
+  text-align: center;
+}
+
 .selected-flight {
   display: flex;
   flex-direction: column;
