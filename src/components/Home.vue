@@ -701,7 +701,7 @@ const createOrg = () => {
                 </div>
                 <!--Dynamic Events-->
                 <PEvent design="org-block" :organization="userStore.org"
-                    @click="handleOrgClick(org)" />
+                    @click="handleOrgClick(userStore.org)" />
             </div>
         </div>
     </template>
