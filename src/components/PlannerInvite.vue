@@ -113,29 +113,33 @@ const saveEmail = (emailAddress) => {
             } else {
                 console.log('No new users to invite.')
             }
-            try {
-                const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`,
-                    {
-                        method: 'PUT',
-                        credentials: 'include',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            financeMan: {id: selectedFinman.value},
+            if (selectedFinman.value !== '') {
+                try {
+                    const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`,
+                        {
+                            method: 'PUT',
+                            credentials: 'include',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                financeMan: {id: selectedFinman.value},
 
-                        }),
-                        credentials: 'include'
-                    })
-                if (response.ok) {
-                    const result = await response.json()
-                    console.log('Invites sent successfully:', result)
-                    router.push({ name: 'Home' })
-                    SendInvites()
-                } else {
-                    console.error('Failed to send invites:', await response.json())
+                            }),
+                            credentials: 'include'
+                        })
+                    if (response.ok) {
+                        const result = await response.json()
+                        console.log('Invites sent successfully:', result)
+                        router.push({ name: 'Home' })
+                        SendInvites()
+                    } else {
+                        console.error('Failed to send invites:', await response.json())
+                    }
+
+                } catch (error) {
+                    console.error('Error sending invites:', error)
                 }
-
-            } catch (error) {
-                console.error('Error sending invites:', error)
+            } else {
+                SendInvites();
             }
         } catch (error) {
             console.error('Error sending invites:', error)
@@ -157,7 +161,9 @@ const saveEmail = (emailAddress) => {
             if (response.ok) {
                 const result = await response.json()
                 console.log('Invites sent successfully:', result)
-                createAttendeeAndInvite()
+                if (newUsers.value.length > 0) {
+                    createAttendeeAndInvite()
+                }
             } else {
                 console.error('Failed to send invites:', await response.json())
             }
