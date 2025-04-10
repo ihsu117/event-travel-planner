@@ -92,7 +92,7 @@ onMounted(async () => {
         }
     } else if (isAdmin.value) {
         try {
-            const response = await api.apiFetch(`/organizations/${userStore.user_id}`, {
+            const response = await api.apiFetch(`/organization/${userStore.org.id}`, {
                 credentials: 'include'
             })
             if (response.ok) {
@@ -710,7 +710,54 @@ const createOrg = () => {
                     <span class="loader"></span>
                 </div>
                 <!--Dynamic Events-->
-                <PEvent design="org-block" v-for="org in organizations" :key="org.id" :id="org.id" :organization="org"
+                <PEvent design="org-block" v-for="org in organizations.slice(1)" :key="org.id" :id="org.id" :organization="org"
+                    @click="handleOrgClick(org)" />
+            </div>
+        </div>
+    </template>
+
+    <template v-if="isAdmin && isMobile">
+        <div class="home">
+            <div class="home-header">
+
+                <div class="home-header__text">
+                    <p>Welcome, {{ userStore.first_name }}</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
+                </div>
+                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+            </div>
+
+            <h1>Organizations</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent design="org-block" :organization="userStore.org"
+                    @click="handleOrgClick(userStore.org)" />
+            </div>
+        </div>
+    </template>
+
+    <template v-if="isSiteAdmin && !isMobile">
+        <div class="home">
+            <div class="home-header">
+
+                <div class="home-header__text">
+                    <p>Welcome, {{ userStore.first_name }}</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
+                </div>
+                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+            </div>
+
+            <h1>Organizations</h1>
+            <div class="p-event__container">
+                <PButton label="Create Org" @click="orgModalOpen()" design="planner"></PButton>
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent design="org-block" v-for="org in organizations.slice(1)" :key="org.id" :id="org.id" :organization="org"
                     @click="handleOrgClick(org)" />
             </div>
         </div>
