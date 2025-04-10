@@ -5,7 +5,7 @@ export { default as PlannerInvite } from './PlannerInvite.vue'
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { PButton, PTextField, PFinanceBlock } from '@poseidon-components'
+import { PButton, PTextField, PFinanceBlock, PEvent } from '@poseidon-components'
 import { useEventStore } from '../stores/eventStore.js'
 import { useUserStore } from '../stores/userStore.js'
 import api from '../assets/scripts/api.js'
@@ -17,6 +17,7 @@ const selectedUsers = ref([])
 const selectedFinman = ref('')
 const emailInput = ref('')
 const inviteEmail = ref('')
+const isModalVisible = ref(false)
 
 // Modal-specific reactive: do not include modal display logic here.
 // The parent is responsible for showing/hiding this component.
@@ -149,14 +150,73 @@ const isFinanceManagerSelected = (userID) => {
     return selectedFinman.value === userID
 }
 
+const closeModal = () => {
+    isModalVisible.value = false
+}
+
+const openModal = () => {
+    isModalVisible.value = true
+}
+
 onMounted(() => {
     loadOrgUsers()
 })
 
 </script>
 
+
 <template>
 
+    <template v-if="true">
+
+    <div class="planner-event">
+        <PEvent design="small-header" eventName="Invitations" @back-click="isInvitePage = false" />
+        <div class="event-invite">
+
+            <h2>Finance Manager</h2>
+            <div class="p-event__container">
+                <PFinanceBlock design="invite"
+                    v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
+                    :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                    :profileImage="user.profile_picture"
+                    :class="{ selected: isFinanceManagerSelected(user.user_id) }"
+                    @click="selectFinanceManager(user.user_id)" required />
+            </div>
+
+            <h2>Attendees</h2>
+            <div class="p-event__container">
+                <PFinanceBlock design="invite"
+                    v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
+                    :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
+                    :email="user.email" :profileImage="user.profile_picture"
+                    :class="{ selected: isUserSelected(user.user_id) }"
+                    @click="toggleUserSelection(user.user_id)" />
+
+                <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.user_id" :email="user.email"
+                    :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
+                    @click="toggleUserSelection(user.user_id)" />
+
+                <PButton design="planner" @click="openModal" label="Add User"></PButton>
+            </div>
+            <PButton label="Send Invites" @click="handleSendInvites" design="gradient"></PButton>
+        </div>
+    </div>
+
+    </template>
+
+    <template v-if="isModalVisible">
+        <div class="modal-overlay" @click="closeModal"></div>
+        <div class="modal">
+            <div class="new-user">
+                <PTextField v-model="emailInput" label="Enter Attendee Email" />
+                <PButton @click="addUser(emailInput)" design="gradient" label="Send Invite"></PButton>
+            </div>
+        </div>
+    </template>
+
+</template>
+
+<!-- <PEvent design="small-header" eventName="Create an Event" @back-click="handleBack('Home')" />
 <h2>Finance Manager</h2>
 <div class="p-event__container">
     <PFinanceBlock design="invite"
@@ -177,20 +237,18 @@ onMounted(() => {
         @click="toggleUserSelection(user.user_id)" />
 
 
-    <!-- <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
+        <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
         :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
         @click="toggleUserSelection(user.user_id)" /> -->
 
-    <!-- Optionally, add user functionality can also be part of the modal content -->
-</div>
+    <!-- Optionally, add user functionality can also be part of the modal content
+</div> -->
 
-<PButton label="Send Invites" @click="handleSendInvites" design="gradient" />
+<!-- <PButton label="Send Invites" @click="handleSendInvites" design="gradient" /> -->
 
 
-<div>
+<!-- <div>
     <PTextField v-model="emailInput">
     </PTextField>
     <PButton label="Send Invite to New User" design="gradient" @click="addUser(emailInput)" />
-</div>
-
-</template>
+</div> --> 

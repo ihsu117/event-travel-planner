@@ -297,9 +297,13 @@ const handleOneWayDate = (date) => {
 
 }
 
-const openInviteModal = () => {
-    showInviteModal.value = true
- }
+const goToInvitePage = () => {
+    router.push({ name: "Invite" });
+}
+
+// const openInviteModal = () => {
+//     showInviteModal.value = true
+//  }
 
 //  console.log(bookingData.itinerary[0])
 
@@ -447,7 +451,7 @@ const openInviteModal = () => {
                 </div>
             </div>
                 <div class="event-edit-button">
-                    <PButton design="gradient" label="Add/Edit Users" @click="openInviteModal()"></PButton>
+                    <PButton design="gradient" label="Add/Edit Users" @click="goToInvitePage"></PButton>
                 </div>
             <div class="event-edit-button">
                 <PButton design="gradient" label="Save Changes" @click="saveChanges" />
