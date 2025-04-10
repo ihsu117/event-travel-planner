@@ -144,7 +144,18 @@ const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
 
-const toEventPage = (eventId) => {
+const toEventPage = async (eventId) => {
+    try {
+        const response = await api.apiFetch('/events/' + eventId, {
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const eventData = await response.json()
+            eventStore.setCurrentEvent(eventData)
+        }
+    } catch (error) {
+        console.error('Failed to fetch the selected event:', error)
+    }
     router.push({ name: 'Event', query: { editView: 'true', eventID: eventId} })
 }
 

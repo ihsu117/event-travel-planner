@@ -8,7 +8,7 @@ import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight, PProfil
 import { PlannerInvite } from './PlannerInvite.vue'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import api from '../assets/scripts/api.js'
-import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
+// import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
 import { format, parseISO } from 'date-fns';
 import VueGoogleAutocomplete from "vue-google-autocomplete"
 import VueDatePicker from '@vuepic/vue-datepicker';
@@ -36,6 +36,58 @@ const errors = ref({ date: '', location: '' })
 const roundtripRange = ref(null)
 const showInviteModal = ref(false)
 const isMobile = ref(window.innerWidth <= 768);
+
+// const editableName = ref(eventStore.currentEvent.eventName)
+// const editableStartDate = ref(eventStore.currentEvent.startDate)
+// const editableEndDate = ref(eventStore.currentEvent.endDate)
+// const description = ref(eventStore.currentEvent.description)
+
+const editableName = computed({
+  get() {
+    return eventStore.currentEvent?.eventName || '';
+  },
+  set(newValue) {
+    eventStore.currentEvent.eventName = newValue
+  }
+});
+
+const editableStartDate = computed({
+  get() {
+    return eventStore.currentEvent?.startDate || '';
+  },
+  set(newDate) {
+   eventStore.currentEvent.startDate = newDate
+  }
+});
+
+const editableEndDate = computed({
+  get() {
+    return eventStore.currentEvent?.endDate || '';
+  },
+  set(newDate) {
+   eventStore.currentEvent.endDate = newDate
+  }
+});
+
+const description = computed({
+  get() {
+    return eventStore.currentEvent?.description || '';
+  },
+  set(newValue) {
+   eventStore.currentEvent.description = newValue
+  }
+});
+
+// Call the function when the component is mounted
+onMounted(async () => {
+    checkAuth()
+    window.addEventListener('resize', updateScreenSize);
+    checkAndLoadEvent()
+    checkAndLoadFlightBooking()
+    console.log('Organization:', eventStore.currentEvent.org)
+    console.log(eventStore.currentEvent)
+
+})
 
 const updateScreenSize = () => {
     isMobile.value = window.innerWidth <= 768;
@@ -96,10 +148,6 @@ const toFlightSearch = () => {
         router.push({ name: 'Flight', query: { type: flightType.value } })
     )
 }
-const editableName = ref(eventStore.currentEvent.eventName)
-const editableStartDate = ref(eventStore.currentEvent.startDate)
-const editableEndDate = ref(eventStore.currentEvent.endDate)
-const description = ref(eventStore.currentEvent.description)
 
 const parseDate = (date) => {
     if (!date) return null;
@@ -156,11 +204,27 @@ const saveChanges = async () => {
 }
 
 // Function to check and load event data from localStorage
-const checkAndLoadEvent = () => {
-    const eventData = localStorage.getItem('currentEvent');
-    if (eventData) {
+const checkAndLoadEvent = async () => {
+    if (route?.query?.eventID) {
+        const eventId = route?.query?.eventID
+        try {
+        const response = await api.apiFetch('/events/' + eventId, {
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const eventData = await response.json()
+            eventStore.setCurrentEvent(eventData)
+        }
+    } catch (error) {
+        console.error('Failed to fetch the selected event:', error)
+    }
+    } else {
+        const eventData = localStorage.getItem('currentEvent');
+        if (eventData) {
         eventStore.loadCurrentEvent();
     }
+    }
+
 }
 
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
@@ -211,16 +275,7 @@ const handleBlur = () => {
     }, 100);
 };
 
-// Call the function when the component is mounted
-onMounted(async () => {
-    checkAuth()
-    window.addEventListener('resize', updateScreenSize);
-    checkAndLoadEvent()
-    checkAndLoadFlightBooking()
-    console.log('Organization:', eventStore.currentEvent.org)
-    console.log(eventStore.currentEvent)
 
-})
 
 onUnmounted(() => {
     window.removeEventListener('resize', updateScreenSize);
