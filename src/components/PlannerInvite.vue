@@ -61,42 +61,42 @@ const adminAddUser = async () => {
 }
 
 
-// const addUser = async (emailAddress) => {
-//     if (emailAddress.trim() === '') {
-//         console.error('Email cannot be empty')
-//         return;
-//     } else {
-//         try {
-//             const schema = {
-//                 eventId: eventStore.currentEvent.id,
-//                 attendee: { email: emailAddress }
-//             }
+const addUser = async (emailAddress) => {
+    if (emailAddress.trim() === '') {
+        console.error('Email cannot be empty')
+        return;
+    } else {
+        try {
+            const schema = {
+                eventId: eventStore.currentEvent.id,
+                attendee: { email: emailAddress }
+            }
 
-//             console.log('Creating user:', schema)
+            console.log('Creating user:', schema)
 
-//             const response = await api.apiFetch('/events/invite/new', {
-//                 method: 'POST',
-//                 headers: { 'Content-Type': 'application/json' },
-//                 body: JSON.stringify(schema),
-//                 credentials: 'include'
-//             })
+            const response = await api.apiFetch('/events/invite/new', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(schema),
+                credentials: 'include'
+            })
 
-//             if (response.ok) {
-//                 const result = await response.json()
-//                 emailInput.value = ''
-//                 console.log('User created successfully:', result)
-//                 loadOrgUsers()
-//             } else {
-//                 console.error('FAILED to create user:', await response.json())
-//             }
+            if (response.ok) {
+                const result = await response.json()
+                emailInput.value = ''
+                console.log('User created successfully:', result)
+                loadOrgUsers()
+            } else {
+                console.error('FAILED to create user:', await response.json())
+            }
 
-//         } catch (error) {
-//             console.error('Error creating user:', error)
-//         }
-//     }
+        } catch (error) {
+            console.error('Error creating user:', error)
+        }
+    }
 
 
-// }
+}
 
 const handleSendInvites = async () => {
     try {
@@ -136,26 +136,26 @@ const createAttendeeAndInvite = async () => {
     }
 }
 
-// const loadOrgUsers = async () => {
-//     userStore.clearUserList()
-//     try {
-//         const response = await api.apiFetch(`/organization/${userStore.org.id}/users`, {
-//             method: 'GET',
-//             credentials: 'include'
-//         })
+const loadOrgUsers = async () => {
+    userStore.clearUserList()
+    try {
+        const response = await api.apiFetch(`/organization/${userStore.org.id}/users`, {
+            method: 'GET',
+            credentials: 'include'
+        })
 
 
-//         if (response.ok) {
-//             const result = await response.json()
-//             console.log('Organization users:', result)
-//             userStore.setUserList(result)
-//         } else {
-//             console.error('Failed to load organization users:', await response.json())
-//         }
-//     } catch (error) {
-//         console.error('Error loading organization users:', error)
-//     }
-// }
+        if (response.ok) {
+            const result = await response.json()
+            console.log('Organization users:', result)
+            userStore.setUserList(result)
+        } else {
+            console.error('Failed to load organization users:', await response.json())
+        }
+    } catch (error) {
+        console.error('Error loading organization users:', error)
+    }
+}
 
 const adminGetUsers = async () => {
     userStore.clearUserList()
