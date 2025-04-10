@@ -823,6 +823,12 @@ body {
   overflow: hidden;
 }
 
+.modal .new-user {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .loading-spinner {
   display: flex;
   justify-content: center;
