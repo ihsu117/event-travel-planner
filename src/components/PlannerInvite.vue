@@ -114,14 +114,13 @@ const saveEmail = (emailAddress) => {
                 console.log('No new users to invite.')
             }
             try {
-                const response = await api.apiFetch(`/organization/${eventStore.currentEvent.id}`,
+                const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`,
                     {
-                        method: 'POST',
+                        method: 'PUT',
                         credentials: 'include',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            financeManagerId: selectedFinman.value,
-                            eventId: eventStore.currentEvent.id
+                            financeMan: {id: selectedFinman.value},
 
                         }),
                         credentials: 'include'
