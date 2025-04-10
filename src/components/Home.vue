@@ -21,6 +21,7 @@ const userStore = useUserStore()
 const router = useRouter()
 
 const events = ref([])
+const organizations = ref([])
 const userInfo = ref({});
 const editView = ref(false)
 const loading = ref(false)
@@ -57,21 +58,55 @@ onMounted(async () => {
     window.addEventListener('resize', updateScreenSize);
     checkAuth()
     loading.value = true
-    try {
-        const response = await api.apiFetch('/events', {
-            credentials: 'include'
-        })
-        if (response.ok) {
-            const eventsData = await response.json()
-            console.log('Events:', eventsData)
-            events.value = eventsData
+    if (isSiteAdmin) {
+        try {
+            const response = await api.apiFetch('/organizations', {
+                credentials: 'include'
+            })
+            if (response.ok) {
+                const orgData = await response.json()
+                console.log('Organizations:', orgData)
+                organizations.value = orgData
+            }
+        } catch (error) {
+            console.error('Failed to fetch organizations:', response.statusText)
+        } finally {
+            loading.value = false // Set loading to false after API call
         }
-    } catch (error) {
-        console.error('Failed to fetch events:', error)
-    } finally {
-        loading.value = false // Set loading to false after API call
+    } else if (isAdmin) {
+        try {
+            const response = await api.apiFetch(`/organizations/${userStore.user_id}`, {
+                credentials: 'include'
+            })
+            if (response.ok) {
+                const orgData = await response.json()
+                console.log('Organizations:', orgData)
+                events.value = orgData
+            }
+        } catch (error) {
+            console.error('Failed to fetch organizations:', response.statusText)
+        } finally {
+            loading.value = false // Set loading to false after API call
+        }
+    } else {
+        try {
+            const response = await api.apiFetch('/events', {
+                credentials: 'include'
+            })
+            if (response.ok) {
+                const eventsData = await response.json()
+                console.log('Events:', eventsData)
+                events.value = eventsData
+            }
+        } catch (error) {
+            console.error('Failed to fetch events:', error)
+        } finally {
+            loading.value = false // Set loading to false after API call
+        }
     }
-})
+}
+)
+
 
 onUnmounted(() => {
     window.removeEventListener('resize', updateScreenSize);
@@ -96,6 +131,8 @@ const fetchUserData = async () => {
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
 const isFinance = computed(() => userStore.role_id === 'Finance Manager')
 const isEventPlanner = computed(() => userStore.role_id === 'Event Planner')
+const isAdmin = computed(() => userStore.role_id === 'Org Admin')
+const isSiteAdmin = computed(() => userStore.role_id === 'Site Admin')
 console.log('Role:', userStore.role_id)
 
 const handleEventClick = async (eventData) => {
@@ -141,6 +178,10 @@ const handleEditEventClick = async (eventData) => {
         router.push({ name: 'Event', query: { editView: 'true', eventID: eventData.id } });
     }
 };
+
+const handleOrgClick = (org) => {
+    router.push({ name: 'OrgList', query: { orgID: org.id } });
+}
 
 const isModalVisible = ref(false)
 
@@ -230,8 +271,8 @@ const upcomingEvents = computed(() =>
                     </div>
 
                     <div class="modal-profile-options">
-                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')"/>
-                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')"/>
+                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')" />
+                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')" />
                     </div>
                 </div>
             </div>
@@ -410,29 +451,53 @@ const upcomingEvents = computed(() =>
         <div class="home">
             <div class="home-header">
 
-                    <div class="home-header__text">
-                        <p>Welcome, {{ userStore.first_name }}</p>
-                        <p class="role-bubble">{{ userStore.role_id }}</p>
-                    </div>
-                    <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+                <div class="home-header__text">
+                    <p>Welcome, {{ userStore.first_name }}</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
                 </div>
-                <h1>Upcoming Events</h1>
-                <div class="p-event__container">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
-                    <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
-                        :eventName="event.name" :startDate="new Date(event.startDate)"
-                        :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
-                        :description="event.description" :currentBudget="event.currentBudget"
-                        :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
-                        :financeMan="event.financeMan" :autoApprove="event.autoApprove"
-                        :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
-                        @editClick="handleEditEventClick(event)" @event-click="handleEditEventClick(event)" />
-                    <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
-                </div>
+                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
             </div>
+            <h1>Upcoming Events</h1>
+            <div class="p-event__container">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
+                    :pictureLink="event.pictureLink" :description="event.description"
+                    :currentBudget="event.currentBudget" :maxBudget="event.maxBudget"
+                    :destinationCode="event.destinationCode" :financeMan="event.financeMan"
+                    :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
+                    design="block-planner" @editClick="handleEditEventClick(event)"
+                    @event-click="handleEditEventClick(event)" />
+                <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
+            </div>
+        </div>
+    </template>
+
+    <template v-if="isSiteAdmin && isMobile">
+        <div class="home">
+            <div class="home-header">
+
+                <div class="home-header__text">
+                    <p>Welcome, {{ userStore.first_name }}</p>
+                    <p class="role-bubble">{{ userStore.role_id }}</p>
+                </div>
+                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
+            </div>
+
+            <h1>Organizations</h1>
+            <div class="p-event__container">
+                <PButton label="Create Org" @click="" design="planner"></PButton>
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+                <!--Dynamic Events-->
+                <PEvent design="org-block" v-for="org in organizations" :key="org.id" :id="org.id" :organization="org"
+                    @click="handleOrgClick(org)" />
+            </div>
+        </div>
     </template>
 
 </template>

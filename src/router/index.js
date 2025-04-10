@@ -61,6 +61,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/org/list',
+    name: 'OrgList',
+    component: PlannerInvite,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/registration',
     name: 'Registration',
     component: Registration,
