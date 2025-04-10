@@ -111,12 +111,11 @@ const checkMFA = async () => {
       console.log('MFA successful')
       const user = await apiResponse.json()
       userStore.setUser(user)
-      if(userStore.first_name == null || userStore.last_name == null) {
+      if( userStore.first_name.value == undefined || userStore.last_name.value == undefined) {
         router.push({ name: 'Register' })
       } else {
-        router.push({ name: 'Home' })
+        await router.push({ name: 'Home' })
       }
-      await router.push({ name: 'Home' })
     } else {
       throw new Error('Invalid MFA code')
     }
