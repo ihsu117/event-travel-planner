@@ -425,7 +425,6 @@ const handlePlaceChanged = (place) => {
                             types="airport" country="us" classname="form-control" placeholder="Destination Airport"
                             v-on:placechanged="handlePlaceChanged" required>
                         </vue-google-autocomplete>
-                        <!-- <PTextField label="Destination Airport Code" v-model="destinationCode" required /> -->
                     </div>
                     <div class="planner-description">
                         <h2>Description</h2>
@@ -557,7 +556,10 @@ const handlePlaceChanged = (place) => {
                 <div class="event-form__desktop--topbar">
                     <div class="planner-event-destination">
                         <h2>Destination</h2>
-                        <PTextField class="evTopMargin" label="Destination Airport Code" v-model="destinationCode" required />
+                        <vue-google-autocomplete class="p-textfield" id="map"
+                            types="airport" country="us" classname="form-control" placeholder="Destination Airport"
+                            v-on:placechanged="handlePlaceChanged" required>
+                        </vue-google-autocomplete>
                     </div>
                         <div class="planner-start-date">
                             <h2>Start Date</h2>
