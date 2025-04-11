@@ -16,6 +16,7 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import HeaderBar from './Headerbar.vue'
+import VueGoogleAutocomplete from "vue-google-autocomplete"
 
 
 const router = useRouter()
@@ -38,6 +39,8 @@ const newEmail = ref('')
 const inviteEmail = ref('')
 const lastCreatedEventId = ref(null)
 const userInfo = ref({});
+const latitude = ref('');
+const longitude = ref('');
 
 const organizations = ref([])
 
@@ -172,7 +175,8 @@ const createEvent = async () => {
             description: description.value,
             startDate: formatDateForBackend(startDate.value),
             endDate: formatDateForBackend(endDate.value),
-            destinationCode: destinationCode.value,
+            lat: latitude.value,
+            long: longitude.value,
             pictureLink: pictureLink.value, // Send the base64-encoded image
             maxBudget: maxBudget.value,
             financeMan: {},
@@ -356,6 +360,12 @@ const formatDateForBackend = (date) => {
     return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
 };
 
+const handlePlaceChanged = (place) => {
+    latitude.value = place.latitude;
+    longitude.value = place.longitude;
+    console.log('Selected Location:', place);
+}
+
 // onMounted(() => {
 //     loadOrgUsers()
 // })
@@ -411,7 +421,11 @@ const formatDateForBackend = (date) => {
                     </div>
                     <div class="planner-event-destination">
                         <h2>Destination</h2>
-                        <PTextField label="Destination Airport Code" v-model="destinationCode" required />
+                        <vue-google-autocomplete class="p-textfield" id="map"
+                            types="airport" country="us" classname="form-control" placeholder="Destination Airport"
+                            v-on:placechanged="handlePlaceChanged" required>
+                        </vue-google-autocomplete>
+                        <!-- <PTextField label="Destination Airport Code" v-model="destinationCode" required /> -->
                     </div>
                     <div class="planner-description">
                         <h2>Description</h2>
