@@ -16,11 +16,14 @@ const eventStore = useEventStore()
 const userStore = useUserStore()
 const selectedUsers = ref([])
 const newUsers = ref([])
-const selectedFinman = ref('')
+const selectedFinman = ref(eventStore.currentEvent.financeMan?.id || '')
 const emailInput = ref('')
 const inviteEmail = ref('')
 const isModalVisible = ref(false)
 const fileInput = ref(null)
+
+const invitedUsers = ref([])
+const newUsersInvited = ref([])
 
 const orgId = computed(() => route.params.orgId)
 const role_id = ref('Attendee')
@@ -60,216 +63,232 @@ const adminAddUser = async () => {
     }
 }
 
+// ------------------------------------------
 
-const saveEmail = (emailAddress) => {
-    if (emailAddress.trim() === '') {
+const addNewAttendee = async (email) => {
+    if (email.trim() === '') {
         console.error('Email cannot be empty')
         return;
     } else {
-        newEmail.value = emailAddress
-        console.log('Email saved:', newEmail.value)
+        try {
+            const schema = {
+                eventId: eventStore.currentEvent.id,
+                attendee: { email: email }
+            }
+
+            console.log('Creating user:', schema)
+
+            const response = await api.apiFetch('/events/invite/new', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(schema),
+
+            })
+
+            if (response.ok) {
+                const result = await response.json()
+                emailInput.value = ''
+                console.log('User created successfully:', result)
+            } else {
+                console.error('FAILED to create user:', await response.json())
+            }
+
+        } catch (error) {
+            console.error('Error creating user:', error)
+        }
     }
 }
 
-    const addUser = async (emailAddress) => {
-        if (emailAddress.trim() === '') {
-            console.error('Email cannot be empty')
-            return;
-        } else {
-            try {
-                const schema = {
-                    eventId: eventStore.currentEvent.id,
-                    attendee: { email: emailAddress }
-                }
+const addFinanceManager = async () => {
 
-                console.log('Creating user:', schema)
-
-                const response = await api.apiFetch('/events/invite/new', {
-                    method: 'POST',
+    if (selectedFinman.value !== '') {
+        try {
+            const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`,
+                {
+                    method: 'PUT',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(schema),
-                    credentials: 'include'
+                    body: JSON.stringify({
+                        financeMan: { id: selectedFinman.value },
+                    }),
                 })
-
-                if (response.ok) {
-                    const result = await response.json()
-                    emailInput.value = ''
-                    console.log('User created successfully:', result)
-                    loadOrgUsers()
-                } else {
-                    console.error('FAILED to create user:', await response.json())
-                }
-
-            } catch (error) {
-                console.error('Error creating user:', error)
-            }
-        }
-    }
-
-    const handleSendInvites = async () => {
-        try {
-            if (newUsers.value.length > 0) {
-                await createAttendeeAndInvite()
-            } else {
-                console.log('No new users to invite.')
-            }
-            if (selectedFinman.value !== '') {
-                try {
-                    const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`,
-                        {
-                            method: 'PUT',
-                            credentials: 'include',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                financeMan: {id: selectedFinman.value},
-
-                            }),
-                            credentials: 'include'
-                        })
-                    if (response.ok) {
-                        const result = await response.json()
-                        console.log('Invites sent successfully:', result)
-                        router.push({ name: 'Home' })
-                        SendInvites()
-                    } else {
-                        console.error('Failed to send invites:', await response.json())
-                    }
-
-                } catch (error) {
-                    console.error('Error sending invites:', error)
-                }
-            } else {
-                SendInvites();
-            }
-        } catch (error) {
-            console.error('Error sending invites:', error)
-        }
-        console.log('Selected users:', selectedUsers.value)
-    }
-
-    const SendInvites = async () => {
-        try {
-            console.log('Selected users:', selectedUsers.value)
-            const response = await api.apiFetch('/events/invite', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    eventId: eventStore.currentEvent.id,
-                    attendees: selectedUsers.value
-                }),
-                credentials: 'include'
-            })
             if (response.ok) {
                 const result = await response.json()
                 console.log('Invites sent successfully:', result)
-                if (newUsers.value.length > 0) {
-                    createAttendeeAndInvite()
-                }
             } else {
                 console.error('Failed to send invites:', await response.json())
             }
         } catch (error) {
             console.error('Error sending invites:', error)
         }
-    }
-
-    const createAttendeeAndInvite = async () => {
-        try {
-            const schema = {
-                eventId: eventStore.currentEvent.id,
-                attendee: { email: inviteEmail.value }
-            }
-
-            console.log('Creating user:', schema)
-            const response = await api.apiFetch('/events/invite/new', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(schema),
-                credentials: 'include'
-            })
-            if (response.ok) {
-                const result = await response.json()
-                console.log('User created successfully:', result)
-            } else {
-                console.error('Failed to create user:', await response.json())
-            }
-        } catch (error) {
-            console.error('Error creating user:', error)
-        }
-    }
-
-    const loadOrgUsers = async () => {
-        userStore.clearUserList()
-        try {
-            const response = await api.apiFetch(`/organization/${userStore.org.id}/users`, {
-                method: 'GET',
-                credentials: 'include'
-            })
-            if (response.ok) {
-                const result = await response.json()
-                console.log('Organization users:', result)
-                userStore.setUserList(result)
-            } else {
-                console.error('Failed to load organization users:', await response.json())
-            }
-        } catch (error) {
-            console.error('Error loading organization users:', error)
-        }
-    }
-
-    const adminGetUsers = async () => {
-        userStore.clearUserList()
-        try {
-            const response = await api.apiFetch(`/organization/${orgId.value}/users`, {
-                method: 'GET',
-                credentials: 'include'
-            })
-            if (response.ok) {
-                const result = await response.json()
-                console.log('Admin: Organization users:', result)
-
-                userStore.setUserList(result)
-            } else {
-                console.error('Failed to load organization users:', await response.json())
-            }
-        } catch (error) {
-            console.error('Error loading organization users:', error)
-        }
-    }
-
-    const toggleUserSelection = (userID) => {
-        const user = { id: userID }
-        if (selectedUsers.value.some(selectedUser => selectedUser.id === userID)) {
-            selectedUsers.value = selectedUsers.value.filter(selectedUser => selectedUser.id !== userID)
-            console.log('User unselected:', user)
-        } else {
-            selectedUsers.value.push(user)
-            console.log('User selected:', user)
-        }
         console.log('Selected users:', selectedUsers.value)
     }
+}
 
-    const isUserSelected = (userID) => {
-        return selectedUsers.value.some(selectedUser => selectedUser.id === userID)
-    }
-
-    const selectFinanceManager = (userID) => {
-        if (selectedFinman.value === userID) {
-            selectedFinman.value = ''
-            console.log('Finance manager unselected:', userID)
+const addAttendee = async () => {
+    try {
+        console.log('Selected users:', selectedUsers.value)
+        const response = await api.apiFetch('/events/invite', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                eventId: eventStore.currentEvent.id,
+                attendees: selectedUsers.value
+            }),
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const result = await response.json()
+            console.log('Invites sent successfully:', result)
         } else {
-            selectedFinman.value = userID
-            console.log('Finance manager selected:', userID)
+            console.error('Failed to send invites:', await response.json())
+        }
+    } catch (error) {
+        console.error('Error sending invites:', error)
+    }
+}
+
+
+const submitChange = async () => {
+    if (selectedFinman.value == '') {
+        console.error('No finance manager selected') 
+    } else {
+        await addFinanceManager()
+        if (selectedUsers.value.length <= 0) {
+            console.error('No selected users to invite')
+        } else {
+            await addAttendee()
+            if (newUsers.value.length > 0) {
+                for (const user of newUsers.value) {
+                    const email = user.id
+                    await addNewAttendee(email)
+                }
+                newUsers.value = []
+                console.log('New users:', newUsers.value)
+            } else {
+                console.error('No new users to invite')
+                closeModal()
+            }
         }
     }
+}
+
+// User Loading --------------------------------
+const loadOrgUsers = async () => {
+    userStore.clearUserList()
+    try {
+        const response = await api.apiFetch(`/organization/${userStore.org.id}/users`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const result = await response.json()
+            console.log('Organization users:', result)
+            userStore.setUserList(result)
+        } else {
+            console.error('Failed to load organization users:', await response.json())
+        }
+    } catch (error) {
+        console.error('Error loading organization users:', error)
+    }
+}
+
+const adminGetUsers = async () => {
+    userStore.clearUserList()
+    try {
+        const response = await api.apiFetch(`/organization/${orgId.value}/users`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const result = await response.json()
+            console.log('Admin: Organization users:', result)
+
+            userStore.setUserList(result)
+        } else {
+            console.error('Failed to load organization users:', await response.json())
+        }
+    } catch (error) {
+        console.error('Error loading organization users:', error)
+    }
+}
+//----------------------------------------
 
 
-    const addByCSV = () => {
-        // Access the file input via its ref.
-        const file = fileInput.value?.files[0];
+// User Selection Logic -------------------
+const selectUser = (userID) => {
+    const user = { id: userID }
+    if (selectedUsers.value.some(selectedUser => selectedUser.id === userID)) {
+        selectedUsers.value = selectedUsers.value.filter(selectedUser => selectedUser.id !== userID)
+        console.log('User unselected:', user)
+    } else {
+        selectedUsers.value.push(user)
+        console.log('User selected:', user)
+    }
+    console.log('Selected users:', selectedUsers.value)
+}
 
-        if (!file) {
-            console.error("No file selected");
+const isUserSelected = (userID) => {
+    return selectedUsers.value.some(selectedUser => selectedUser.id === userID)
+}
+
+const makeNewUserEntry = (emailInput) => {
+    if (emailInput.trim() === '') {
+        console.error('Email cannot be empty')
+        return;
+    } else {
+        const user = { id: emailInput, email: emailInput }
+        if (newUsers.value.some(newUser => newUser.id === emailInput)) {
+            newUsers.value = newUsers.value.filter(newUser => newUser.id !== emailInput)
+            console.log('New user unselected:', user)
+        } else {
+            newUsers.value.push(user)
+            console.log('New user selected:', user)
+        }
+        console.log('New users:', newUsers.value)
+    }
+    closeModal()
+}
+
+const selectNewUser = (email) => {
+    const user = { id: email }
+    if (newUsers.value.some(newUser => newUser.id === email)) {
+        newUsers.value = newUsers.value.filter(newUser => newUser.id !== email)
+        console.log('New user unselected:', user)
+    } else {
+        newUsers.value.push(user)
+        console.log('New user selected:', user)
+    }
+    console.log('New users:', newUsers.value)
+}
+
+const isNewUserSelected = (userID) => {
+    return newUsers.value.some(newUser => newUser.id === userID)
+}
+
+const selectFinanceManager = (userID) => {
+    if (selectedFinman.value === userID) {
+        selectedFinman.value = ''
+        console.log('Finance manager unselected:', userID)
+    } else {
+        selectedFinman.value = userID
+        console.log('Finance manager selected:', userID)
+    }
+}
+
+const isFinanceManagerSelected = (userID) => {
+    return selectedFinman.value === userID
+}
+//----------------------------------------
+
+//CSV---------------------------------------------------------
+const addByCSV = () => {
+    // Access the file input via its ref.
+    const file = fileInput.value?.files[0];
+
+    if (!file) {
+        console.error("No file selected");
         return;
     }
 
@@ -324,11 +343,7 @@ const saveEmail = (emailAddress) => {
     };
 };
 
-
-const isFinanceManagerSelected = (userID) => {
-    return selectedFinman.value === userID
-}
-
+// Misc -----------------------------------
 const closeModal = () => {
     isModalVisible.value = false
 }
@@ -403,12 +418,11 @@ onMounted(() => {
                         v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
                         :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
                         :email="user.email" :profileImage="user.profile_picture"
-                        :class="{ selected: isUserSelected(user.user_id) }"
-                        @click="toggleUserSelection(user.user_id)" />
+                        :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
 
-                    <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.user_id" :email="user.email"
-                        :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
-                        @click="toggleUserSelection(user.user_id)" />
+                    <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
+                        :profileImage="user.profile_picture" :class="{ selected: isNewUserSelected(user.email) }"
+                        @click="selectNewUser(user.email)" />
 
                 </div>
 
@@ -440,15 +454,14 @@ onMounted(() => {
                         v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
                         :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
                         :email="user.email" :profileImage="user.profile_picture"
-                        :class="{ selected: isUserSelected(user.user_id) }"
-                        @click="toggleUserSelection(user.user_id)" />
+                        :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
 
-                    <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.user_id" :email="user.email"
-                        :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
-                        @click="toggleUserSelection(user.user_id)" />
+                    <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
+                        :profileImage="user.profile_picture" :class="{ selected: isNewUserSelected(user.email) }"
+                        @click="selectNewUser(user.email)" />
                 </div>
                 <div>
-                    <PButton label="Send Invites" @click="handleSendInvites" design="gradient"></PButton>
+                    <PButton label="Send Invites" @click="submitChange" design="gradient"></PButton>
                 </div>
             </div>
         </div>
@@ -460,7 +473,8 @@ onMounted(() => {
         <div class="modal">
             <div class="new-user">
 
-                <div v-if="userStore.role_id == 'Site Admin' || userStore.role_id == 'Org Admin'" class="role-selection">
+                <div v-if="userStore.role_id == 'Site Admin' || userStore.role_id == 'Org Admin'"
+                    class="role-selection">
                     <label>
                         <input v-if="userStore.role_id == 'Site Admin'" type="radio" v-model="role_id"
                             value="Org Admin" />
@@ -480,48 +494,12 @@ onMounted(() => {
                     </label>
                 </div>
                 <PTextField v-model="emailInput" label="Enter Attendee Email" />
-                <PButton v-if="userStore.role_id == 'Site Admin' || userStore.role_id == 'Org Admin'" @click="adminAddUser"
-                    design="gradient" label="Send Invite"></PButton>
-                <PButton v-if="userStore.role_id == 'Event Planner'" @click="addUser(emailInput)" design="gradient"
-                    label="Add User"></PButton>
+                <PButton v-if="userStore.role_id == 'Site Admin' || userStore.role_id == 'Org Admin'"
+                    @click="adminAddUser" design="gradient" label="Send Invite"></PButton>
+                <PButton v-if="userStore.role_id == 'Event Planner'" @click="makeNewUserEntry(emailInput)"
+                    design="gradient" label="Add User"></PButton>
             </div>
         </div>
     </template>
 
 </template>
-
-<!-- <PEvent design="small-header" eventName="Create an Event" @back-click="handleBack('Home')" />
-<h2>Finance Manager</h2>
-<div class="p-event__container">
-    <PFinanceBlock design="invite"
-        v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
-        :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-        :profileImage="user.profile_picture"
-        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-        @click="selectFinanceManager(user.user_id)" required />
-</div>
-
-        <h2>Attendees</h2>
-        <div class="p-event__container">
-            <PFinanceBlock design="invite" v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')"
-                :key="user.user_id"
-                :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
-                :email="user.email" :profileImage="user.profile_picture"
-                :class="{ selected: isUserSelected(user.user_id) }" @click="toggleUserSelection(user.user_id)" />
-
-
-        <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
-        :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
-        @click="toggleUserSelection(user.user_id)" /> -->
-
-<!-- Optionally, add user functionality can also be part of the modal content
-</div> -->
-
-<!-- <PButton label="Send Invites" @click="handleSendInvites" design="gradient" /> -->
-
-
-<!-- <div>
-    <PTextField v-model="emailInput">
-    </PTextField>
-    <PButton label="Send Invite to New User" design="gradient" @click="addUser(emailInput)" />
-</div> -->
