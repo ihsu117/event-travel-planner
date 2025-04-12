@@ -341,14 +341,14 @@ const createOrg = () => {
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
             </div>
             <h1>Upcoming Events</h1>
-            <div class="p-event__wrapper">
-                <button class="scroll-button prev" @click="scrollLeft">❮</button>
-                <div class="p-event__container-desktop" ref="eventContainer">
-                    <div v-if="loading" class="spinner">
+            <div v-if="loading" class="spinner">
                         <div class="loading-spinner" v-show="loading">
                             <span class="loader"></span>
                         </div>
                     </div>
+            <div v-if="upcomingEvents.length > 0" class="p-event__wrapper">
+                <button class="scroll-button prev" @click="scrollLeft">❮</button>
+                <div class="p-event__container-desktop" ref="eventContainer">
                     <!--Dynamic Events-->
                     <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
@@ -360,14 +360,17 @@ const createOrg = () => {
                 </div>
                 <button class="scroll-button next" @click="scrollRight">❯</button>
             </div>
+            <div v-if="!loading && upcomingEvents.length === 0" style="color: black;">
+                <p>You have not been invited to any upcoming events...</p>
+            </div>
             <hr>
             <h1>Previous Events</h1>
-            <div class="p-event__wrapper">
-                <div v-if="loading" class="spinner">
+            <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
                         <span class="loader"></span>
                     </div>
                 </div>
+            <div v-if="previousEvents.length > 0" class="p-event__wrapper">
                 <!-- Previous Button -->
                 <button class="scroll-button prev" @click="scrollLeft">❮</button>
                 <div class="p-event__container-desktop" ref="eventContainer">
@@ -382,6 +385,9 @@ const createOrg = () => {
                 <!-- Next Button -->
                 <button class="scroll-button next" @click="scrollRight">❯</button>
             </div>
+            <div v-if="!loading && previousEvents.length == 0" style="color: black;">
+                <p>You have no previous events to show...</p>
+            </div>
             <hr>
         </div>
     </template>
@@ -394,11 +400,12 @@ const createOrg = () => {
             </div>
             <h1>Upcoming Events</h1>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
-
-                <div class="p-event__container-desktop" ref="eventContainer">
+                <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
                         <span class="loader"></span>
                     </div>
+                </div>
+                <div class="p-event__container-desktop" ref="eventContainer">
                     <!--Dynamic Events-->
                         <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)" :endDate="new Date(event.endDate)"
@@ -408,6 +415,9 @@ const createOrg = () => {
                         :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
                         design="block-finance" @event-click="handleEventClick" />
 
+                </div>
+                <div v-if="!loading && upcomingEvents.length == 0" style="color: black;">
+                <p>You have not been invited to any upcoming events...</p>
                 </div>
             </div>
 
@@ -420,6 +430,7 @@ const createOrg = () => {
                         <span class="loader"></span>
                     </div>
                 </div>
+
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
@@ -428,6 +439,9 @@ const createOrg = () => {
                         :destinationCode="event.destinationCode" :financeMan="event.financeMan"
                         :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
                         design="block-finance" @event-click="handleEventClick" />
+                </div>
+                <div v-if="!loading && previousEvents.length == 0" style="color: black;">
+                <p>You have no previous events to show...</p>
                 </div>
                 
             </div>
@@ -445,14 +459,15 @@ const createOrg = () => {
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
             </div>
             <h1>Upcoming Events</h1>
-            <div class="p-event__wrapper">
+            <div v-if="loading" class="spinner">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+            </div>
+            <div v-if="!loading" class="p-event__wrapper">
 
                 <div class="p-event__container-desktop" ref="eventContainer">
-                    <div v-if="loading" class="spinner">
-                        <div class="loading-spinner" v-show="loading">
-                            <span class="loader"></span>
-                        </div>
-                    </div>
+                    
                     <!--Dynamic Events-->
                     <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
@@ -464,16 +479,15 @@ const createOrg = () => {
                         @editClick="handleEditEventClick" @eventClick="handleEditEventClick" />
                     <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
                 </div>
-
             </div>
             <hr>
             <h1>Previous Events</h1>
-            <div class="p-event__wrapper">
-                <div v-if="loading" class="spinner">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
+            <div v-if="loading" class="spinner">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
                 </div>
+            </div>
+            <div v-if="!loading && previousEvents.length > 0" class="p-event__wrapper">
                 <!-- Previous Button -->
                 <button class="scroll-button prev" @click="scrollLeft">❮</button>
                 <div class="p-event__container-desktop" ref="eventContainer">
@@ -487,6 +501,9 @@ const createOrg = () => {
                 </div>
                 <!-- Next Button -->
                 <button class="scroll-button next" @click="scrollRight">❯</button>
+            </div>
+            <div v-if="!loading && previousEvents.length == 0" style="color: black;">
+                <p>You have no previous events to show...</p>
             </div>
             <hr>
         </div>
