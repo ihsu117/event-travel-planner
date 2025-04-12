@@ -4,7 +4,8 @@ import { useFlightStore } from '../stores/flightStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
 import { PEvent, PTextField, PFlight, PButton } from '@poseidon-components'
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
 import HeaderBar from './Headerbar.vue'
 
@@ -28,6 +29,14 @@ const openEditModal = () => {
 const closeEditModal = () => {
     isEditModalVisible.value = false
 }
+
+//Computed properties to check the role of the user
+const isAttendee = computed(() => userStore.role_id === 'Attendee')
+const isFinance = computed(() => userStore.role_id === 'Finance Manager')
+const isEventPlanner = computed(() => userStore.role_id === 'Event Planner')
+const isAdmin = computed(() => userStore.role_id === 'Org Admin')
+const isSiteAdmin = computed(() => userStore.role_id === 'Site Admin')
+console.log('Role:', userStore.role_id)
 
 // Function to save the updated value
 const saveUpdatedValue = async () => {
@@ -183,11 +192,28 @@ const budgetColor = computed(() => {
     }
 });
 
+const isMobile = ref(window.innerWidth <= 768);
+
+const updateScreenSize = () => {
+    isMobile.value = window.innerWidth <= 768;
+};
+
+//Fetch from the API
+onMounted(async () => {
+    window.addEventListener('resize', updateScreenSize);
+}
+)
+
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateScreenSize);
+});
+
 console.log(eventStore.currentEvent.id)
 </script>
 <template>
     <!-- -----------------------------------------------------------DESKTOP------------------------------------------------------->
-    <template v-if="!isMobile">
+    <template v-if="!isMobile && (isFinance || isEventPlanner || isAdmin || isSiteAdmin)">
         <div class="finance-dashboard-desktop">
             <div class="home-header-desktop">
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
@@ -317,7 +343,7 @@ console.log(eventStore.currentEvent.id)
     </template>
 
     <!-- ----------------------------------------------------------MOBILE------------------------------------------------------->
-    <template v-if="isMobile">
+    <template v-if="isMobile && (isFinance || isEventPlanner || isAdmin || isSiteAdmin)">
         <div class="finance-dashboard">
                 <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                     :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
