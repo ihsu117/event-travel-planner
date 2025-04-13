@@ -90,7 +90,7 @@ onMounted(async () => {
         } catch (error) {
             console.error('Failed to fetch organizations:', response.statusText)
         }
-    } 
+    }
 }
 )
 
@@ -223,7 +223,7 @@ const toEventPage = async (eventId) => {
     } catch (error) {
         console.error('Failed to fetch the selected event:', error)
     }
-    router.push({ name: 'Event', query: { editView: 'true', eventID: eventId} })
+    router.push({ name: 'Event', query: { editView: 'true', eventID: eventId } })
 }
 
 const parseDate = (date) => {
@@ -247,111 +247,72 @@ const handlePlaceChanged = (place) => {
 
 <template>
     <template v-if="isMobile">
-        <template v-if="isInvitePage">
-            <div class="planner-event">
+        <div class="planner-event">
 
-                <PEvent design="small-header" eventName="Invitations" @back-click="isInvitePage = false" />
-                <div class="event-invite">
+            <PEvent design="small-header" eventName="Create an Event" @back-click="handleBack('Home')" />
+            <div class="event-form">
+                <div class="planner-event-name">
+                    <h2>Name</h2>
+                    <PTextField label="Event Name" v-model="eventName" required />
+                </div>
+                <div class="planner-event-destination">
+                    <h2>Destination</h2>
+                    <PTextField label="Event Name" v-model="destinationCode" />
+                    <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
+                        classname="form-control" placeholder="Destination Airport"
+                        v-on:placechanged="handlePlaceChanged">
+                    </vue-google-autocomplete>
+                </div>
+                <div class="planner-description">
+                    <h2>Description</h2>
+                    <PTextField design="textarea" :maxlength=400 label="Description" v-model="description" />
+                </div>
 
-                    <h2>Finance Manager</h2>
-                    <div class="p-event__container">
-                        <PFinanceBlock design="invite"
-                            v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
-                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                            :profileImage="user.profile_picture"
-                            :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                            @click="selectFinanceManager(user.user_id)" required />
+                <div class="planner-dates">
+                    <div class="planner-start-date">
+                        <h2>Start Date</h2>
+                        <VueDatePicker v-model="startDate" :enable-time-picker="false" :placeholder="'Start Date'"
+                            exactMatch="true" :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
+                            hide-input-icon>
+                        </VueDatePicker>
+                    </div>
+                    <div class="planner-end-date">
+                        <h2>End Date</h2>
+                        <VueDatePicker v-model="endDate" :enable-time-picker="false" :placeholder="'End Date'"
+                            exactMatch="true" :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
+                            hide-input-icon>
+                        </VueDatePicker>
                     </div>
 
-                    <h2>Attendees</h2>
-                    <div class="p-event__container">
-                        <PFinanceBlock design="invite"
-                            v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
-                            :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                            :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
-                            @click="toggleUserSelection(user.user_id)" />
+                </div>
 
-                        <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.user_id" :email="user.email"
-                            :profileImage="user.profile_picture" :class="{ selected: isUserSelected(user.user_id) }"
-                            @click="toggleUserSelection(user.user_id)" />
-
-                        <PButton design="planner" @click="openModal" label="Add User"></PButton>
-                    </div>
-                    <PButton label="Send Invites" @click="handleSendInvites" design="gradient"></PButton>
+                <div class="planner-event-picture">
+                    <h2>Picture</h2>
+                    <!-- File input for image upload -->
+                    <input type="file" accept="image/*" @change="handleImageUpload" />
+                    <p v-if="pictureLink">Image uploaded successfully!</p>
+                </div>
+                <div class="planner-event-budget">
+                    <h2>Max Budget</h2>
+                    <PTextField label="Max Budget" v-model="maxBudget" required />
                 </div>
             </div>
+        </div>
+        <PButton label="Create Event" @click="createEvent" design="gradient"></PButton>
+    </template>
 
-        </template>
-
-        <template v-else>
-
-            <div class="planner-event">
-
-                <PEvent design="small-header" eventName="Create an Event" @back-click="handleBack('Home')" />
-                <div class="event-form">
-                    <div class="planner-event-name">
-                        <h2>Name</h2>
-                        <PTextField label="Event Name" v-model="eventName" required />
-                    </div>
-                    <div class="planner-event-destination">
-                        <h2>Destination</h2>
-                        <PTextField label="Event Name" v-model="destinationCode"  />
-                        <vue-google-autocomplete class="p-textfield" id="map"
-                            types="airport" country="us" classname="form-control" placeholder="Destination Airport"
-                            v-on:placechanged="handlePlaceChanged" >
-                        </vue-google-autocomplete>
-                    </div>
-                    <div class="planner-description">
-                        <h2>Description</h2>
-                        <PTextField design="textarea" :maxlength=400 label="Description" v-model="description"  />
-                    </div>
-
-                    <div class="planner-dates">
-                        <div class="planner-start-date">
-                            <h2>Start Date</h2>
-                            <VueDatePicker v-model="startDate" :enable-time-picker="false"
-                                :placeholder="'Start Date'" exactMatch="true"
-                                :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
-                            </VueDatePicker>
-                        </div>
-                        <div class="planner-end-date">
-                            <h2>End Date</h2>
-                            <VueDatePicker v-model="endDate" :enable-time-picker="false"
-                                :placeholder="'End Date'" exactMatch="true"
-                                :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
-                            </VueDatePicker>
-                        </div>
-
-                    </div>
-
-                    <div class="planner-event-picture">
-                        <h2>Picture</h2>
-                        <!-- File input for image upload -->
-                        <input type="file" accept="image/*" @change="handleImageUpload" />
-                        <p v-if="pictureLink">Image uploaded successfully!</p>
-                    </div>
-                    <div class="planner-event-budget">
-                        <h2>Max Budget</h2>
-                        <PTextField label="Max Budget" v-model="maxBudget" required />
-                    </div>
-                </div>
+    <template v-if="isModalVisible">
+        <div class="modal-overlay" @click="closeModal"></div>
+        <div class="modal">
+            <div class="new-user">
+                <PTextField v-model="newEmail" label="Enter Attendee Email" />
+                <PButton @click="addUser" design="login" label="Send Invite"></PButton>
             </div>
-            <PButton label="Create Event" @click="createEvent" design="gradient"></PButton>
-        </template>
-
-        <template v-if="isModalVisible">
-            <div class="modal-overlay" @click="closeModal"></div>
-            <div class="modal">
-                <div class="new-user">
-                    <PTextField v-model="newEmail" label="Enter Attendee Email" />
-                    <PButton @click="addUser" design="login" label="Send Invite"></PButton>
-                </div>
-            </div>
-        </template>
+        </div>
     </template>
 
 
-<!--------------------------------------------------------------- DESKTOP --------------------------------------------------------------->
+    <!--------------------------------------------------------------- DESKTOP --------------------------------------------------------------->
     <template v-if="isModalVisible && !isMobile">
         <div>
             <div class="modal-overlay" @click="closeModal"></div>
@@ -375,7 +336,7 @@ const handlePlaceChanged = (place) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -404,26 +365,35 @@ const handlePlaceChanged = (place) => {
     <template v-if="isEventPlanner && !isMobile">
         <div class="home-header-desktop">
             <div class="home-header__text-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
             </div>
         </div>
         <div class="event-desktop-container">
-            <div class="event-desktop-contentBox">
+            <div class="event-desktop-contentBox" :style="{
+                backgroundImage: `var(--gradient), url(${pictureLink})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center'
+            }">
+
                 <div class="event-desktop-contentBox__info">
                     <div class="event-desktop-contentBox__textField">
-                        <input type="text" v-model="eventName" placeholder="Event Name" required/>
+                        <input type="text" v-model="eventName" placeholder="Event Name" required />
                     </div>
                     <h2>Hosted By {{ userStore.org.name }}</h2> <!-- Organization name -->
                 </div>
                 <!-- <label for="imageUpload">this is atest</label>
                 <input id="imageUpload" type="file" accept="image/*" @change="handleImageUpload" />
                 <p v-if="pictureLink">Image uploaded successfully!</p> -->
-
                 <div class="file-input-wrapper">
                     <label for="file-upload" class="custom-file-label">
                         <span>Add Image</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4z" />
+                        </svg>
                     </label>
+
                     <input type="file" id="file-upload" accept="image/*" @change="handleImageUpload" />
                 </div>
             </div>
@@ -431,25 +401,25 @@ const handlePlaceChanged = (place) => {
                 <div class="event-form__desktop--topbar">
                     <div class="planner-event-destination">
                         <h2>Destination</h2>
-                        <vue-google-autocomplete class="p-textfield" id="map"
-                            types="airport" country="us" classname="form-control" placeholder="Destination Airport"
+                        <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
+                            classname="form-control" placeholder="Destination Airport"
                             v-on:placechanged="handlePlaceChanged" required>
                         </vue-google-autocomplete>
                     </div>
-                        <div class="planner-start-date">
-                            <h2>Start Date</h2>
-                            <VueDatePicker class="evTopMargin" v-model="startDate" :enable-time-picker="false"
-                                :placeholder="'Start Date'" exactMatch="true"
-                                :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
-                            </VueDatePicker>
-                        </div>
-                        <div class="planner-end-date">
-                            <h2>End Date</h2>
-                            <VueDatePicker class="evTopMargin" v-model="endDate" :enable-time-picker="false"
-                                :placeholder="'End Date'" exactMatch="true"
-                                :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
-                            </VueDatePicker>
-                        </div>
+                    <div class="planner-start-date">
+                        <h2>Start Date</h2>
+                        <VueDatePicker class="evTopMargin" v-model="startDate" :enable-time-picker="false"
+                            :placeholder="'Start Date'" exactMatch="true"
+                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply>
+                        </VueDatePicker>
+                    </div>
+                    <div class="planner-end-date">
+                        <h2>End Date</h2>
+                        <VueDatePicker class="evTopMargin" v-model="endDate" :enable-time-picker="false"
+                            :placeholder="'End Date'" exactMatch="true"
+                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
+                        </VueDatePicker>
+                    </div>
                     <div class="planner-event-budget">
                         <h2>Max Budget</h2>
                         <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" required />
@@ -458,7 +428,8 @@ const handlePlaceChanged = (place) => {
 
                 <div class="planner-description">
                     <h2>Description</h2>
-                    <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description" v-model="description" required />
+                    <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description"
+                        v-model="description" required />
                 </div>
                 <br>
                 <br>
@@ -467,7 +438,7 @@ const handlePlaceChanged = (place) => {
                     <PButton label="Create Event" @click="createEvent" design="gradient"></PButton>
                 </div>
             </div>
-        </div> 
+        </div>
     </template>
 
 </template>

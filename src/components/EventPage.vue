@@ -25,7 +25,6 @@ const searchDate = ref(null)
 const departDate = ref(null)
 const returnDate = ref(null)
 const arrivalDate = ref(null)
-const zipcode = ref('')
 const bookingData = ref(null)
 const bookingItinerary = ref(null)
 const bookingPrice = ref(null)
@@ -88,7 +87,6 @@ onMounted(async () => {
     checkAndLoadFlightBooking()
     console.log('Organization:', eventStore.currentEvent.org)
     console.log(eventStore.currentEvent)
-
 })
 
 const updateScreenSize = () => {
@@ -118,92 +116,94 @@ const handleFlightClick = (flight) => {
 
 //Function to search for flights with Duffel API
 const toFlightSearch = () => {
-    if (!searchDate.value && !returnDate.value) {
-        errors.value.date = 'Date is required.'
-    }
-    if (!latitude.value || !longitude.value) {
+    errors.value.date = ''
+    errors.value.location = ''
+    if (latitude.value == '' || longitude.value == '') {
         errors.value.location = 'Departure airport is required.'
     }
+    if (!departDate.value || !roundtripRange.value) {
+        errors.value.date = 'Date is required.'
+    } else {
 
-    flightStore.clearFlights()
-    console.log(eventStore.currentEvent);
-    console.log('date being sent to api:', searchDate.value);
-    // console.log(searchDate.value.toISOString())
-    return api.apiFetch('/flights/search', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            departure_date: searchDate.value || eventStore.currentEvent.startDate,
-            lat: latitude.value,
-            long: longitude.value,
-            destination: eventStore.currentEvent.destinationCode,
-            type: flightType.value,
-            ...(returnDate.value ? { return_date: returnDate.value } : {})
-        })
-    }).then(
-        response => flightStore.setFlightResults(response.json())
-    ).then(
-        router.push({ name: 'Flight', query: { type: flightType.value } })
-    )
-}
-
-const parseDate = (date) => {
-    if (!date) return null;
-    return typeof date === 'string' ? parseISO(date) : date;
-};
-
-const formatDateForBackend = (date) => {
-    const parsedDate = parseDate(date);
-    if (!parsedDate) return '';
-    return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
-};
-
-// Function to handle the update of the fields for the event
-const handleUpdate = ({ field, value }) => {
-    if (field === 'name') editableName.value = value
-    if (field === 'startDate') editableStartDate.value = value
-    if (field === 'endDate') editableEndDate.value = value
-    if (field === 'description') description.value = value
-    console.log("HANDLE", field, value)
-}
-
-const saveChanges = async () => {
-    console.log('Event ID:', eventStore.currentEvent.id)
-    console.log('Editable Name:', editableName.value)
-    console.log('Description:', description.value)
-    console.log('DATE SET TO:', editableStartDate.value)
-    const updatedEvent = {
-        name: editableName.value || eventStore.currentEvent.eventName,
-        startDate: formatDateForBackend(editableStartDate.value),
-        endDate: formatDateForBackend(editableEndDate.value),
-        description: description.value,
-    }
-    try {
-        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
-            method: 'PUT',
+        flightStore.clearFlights()
+        console.log(eventStore.currentEvent);
+        console.log('date being sent to api:', searchDate.value);
+        // console.log(searchDate.value.toISOString())
+        return api.apiFetch('/flights/search', {
+            method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updatedEvent),
-            credentials: 'include'
-        })
+            body: JSON.stringify({
+                departure_date: searchDate.value || eventStore.currentEvent.startDate,
+                lat: latitude.value,
+                long: longitude.value,
+                destination: eventStore.currentEvent.destinationCode,
+                type: flightType.value,
+                ...(returnDate.value ? { return_date: returnDate.value } : {})
+            })
+        }).then(
+            response => flightStore.setFlightResults(response.json())
+        ).then(
+            router.push({ name: 'Flight', query: { type: flightType.value } })
+        )
+    }
 
-        if (response.ok) {
-            const result = await response.json()
-            console.log('Event created successfully:', result)
-            eventStore.setCurrentEvent(result)
-            router.push({ name: 'Home' }) // Redirect to home or another page
-        } else {
-            console.error('Failed to update event:', await response.json())
+    const parseDate = (date) => {
+        if (!date) return null;
+        return typeof date === 'string' ? parseISO(date) : date;
+    };
+
+    const formatDateForBackend = (date) => {
+        const parsedDate = parseDate(date);
+        if (!parsedDate) return '';
+        return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
+    };
+
+    // Function to handle the update of the fields for the event
+    const handleUpdate = ({ field, value }) => {
+        if (field === 'name') editableName.value = value
+        if (field === 'startDate') editableStartDate.value = value
+        if (field === 'endDate') editableEndDate.value = value
+        if (field === 'description') description.value = value
+        console.log("HANDLE", field, value)
+    }
+
+    const saveChanges = async () => {
+        console.log('Event ID:', eventStore.currentEvent.id)
+        console.log('Editable Name:', editableName.value)
+        console.log('Description:', description.value)
+        console.log('DATE SET TO:', editableStartDate.value)
+        const updatedEvent = {
+            name: editableName.value || eventStore.currentEvent.eventName,
+            startDate: formatDateForBackend(editableStartDate.value),
+            endDate: formatDateForBackend(editableEndDate.value),
+            description: description.value,
         }
-    } catch (error) {
-        console.error('Error updating event:', error)
+        try {
+            const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedEvent),
+                credentials: 'include'
+            })
+
+            if (response.ok) {
+                const result = await response.json()
+                console.log('Event created successfully:', result)
+                eventStore.setCurrentEvent(result)
+                router.push({ name: 'Home' }) // Redirect to home or another page
+            } else {
+                console.error('Failed to update event:', await response.json())
+            }
+        } catch (error) {
+            console.error('Error updating event:', error)
+        }
     }
 }
-
 // Function to check and load event data from localStorage
 const checkAndLoadEvent = async () => {
     if (route?.query?.eventID) {
@@ -517,6 +517,12 @@ const fetchUserData = async () => {
                                 :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                         </div>
                     </div>
+                    <div class="event-edit-button">
+                        <PButton design="gradient" label="Add/Edit Users" @click="goToInvitePage"></PButton>
+                    </div>
+                    <div class="event-edit-button">
+                        <PButton design="gradient" label="Save Changes" @click="saveChanges" />
+                    </div>
                 </div>
             </div>
 
@@ -541,21 +547,7 @@ const fetchUserData = async () => {
                 :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
                 :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" />
 
-
-
-            <div v-if="bookingData" class="holding-flights">
-                <h2>Your Flight: {{ bookingData.status.name }}</h2>
-                <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
-                    <PFlight design="desktop-block" :airline="bookingItinerary.airline"
-                        :logoURL="bookingItinerary.logoURL" :price="bookingPrice" :flightClass="segment.class"
-                        :flightType="segment.flight_type" :seat :origin="segment.origin"
-                        :destination="segment.destination" :flightDate="new Date(segment.departure_time)"
-                        :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time"
-                        :flightDuration="segment.duration" @click="handleFlightClick(flightStore.currentFlight)" />
-                </div>
-            </div>
-
-            <div v-else class="event-desktop-search">
+            <div v-if="!bookingData" class="event-desktop-search">
                 <!--Search Bar-->
                 <div class="flight-search-header">
                     <h2>Flight Search</h2>
@@ -569,8 +561,73 @@ const fetchUserData = async () => {
                     </div>
                 </div>
 
-                
+                <div class="search-inputs">
+                    <div class="autocomplete-wrapper">
+
+                        <div :class="['error-container', { show: errors.location }]">
+                            <svg v-if="errors.location" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 16 16">
+                                <path fill="#FEB96E" fill-rule="evenodd"
+                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p v-if="errors.location" class="input-error">{{ errors.location }}</p>
+                        </div>
+
+                        <!-- Your SVG icon -->
+                        <svg class="map-icon" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
+                            viewBox="0 0 24 24">
+                            <path fill="#a9a9a9"
+                                d="m12 20.9l4.95-4.95a7 7 0 1 0-9.9 0zm0 2.828l-6.364-6.364a9 9 0 1 1 12.728 0zM12 13a2 2 0 1 0 0-4a2 2 0 0 0 0 4m0 2a4 4 0 1 1 0-8a4 4 0 0 1 0 8" />
+                        </svg>
+                        <!-- VueGoogleAutocomplete component -->
+                        <VueGoogleAutocomplete class="p-textfield" id="map" types="airport" country="us"
+                            classname="form-control" placeholder="Departure Airport"
+                            v-on:placechanged="handlePlaceChanged" required />
+                    </div>
+
+                    <div class="date-picker-wrapper">
+
+                        <div :class="['error-container', { show: errors.date }]">
+                            <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 16 16">
+                                <path fill="#FEB96E" fill-rule="evenodd"
+                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p v-if="errors.date" class="input-error">{{ errors.date }}</p>
+                        </div>
+
+                        <VueDatePicker v-if="flightType === 0" v-model="departDate" :min-date="new Date()"
+                            :enable-time-picker="false" :placeholder="'Departure Date'" exactMatch="true"
+                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
+                            @update:model-value="handleOneWayDate"></VueDatePicker>
+
+                        <VueDatePicker v-if="flightType === 1" :range="true" :min-date="new Date()"
+                            :enable-time-picker="false" v-model="roundtripRange" format='MM/dd/yyyy'
+                            :placeholder="'Departure & Return Dates'"
+                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
+                            @update:model-value="handleRoundtripDate">
+                        </VueDatePicker>
+                    </div>
+
+                    <PButton design="gradient" label="Search" @click="toFlightSearch" />
+
+
+                </div>
             </div>
+            <div v-if="bookingData" class="holding-flights">
+                <h2>Your Flight: {{ bookingData.status.name }}</h2>
+                <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
+                    <PFlight design="desktop-block" :airline="bookingItinerary.airline"
+                        :logoURL="bookingItinerary.logoURL" :price="bookingPrice" :flightClass="segment.class"
+                        :flightType="segment.flight_type" :seat :origin="segment.origin"
+                        :destination="segment.destination" :flightDate="new Date(segment.departure_time)"
+                        :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time"
+                        :flightDuration="segment.duration" @click="handleFlightClick(flightStore.currentFlight)" />
+                </div>
+            </div>
+
             <hr>
             <div class="event-desktop-content">
                 <div class="event-date-desktop">
@@ -600,7 +657,6 @@ const fetchUserData = async () => {
                     </div>
                 </div>
             </div>
-
         </div>
 
     </template>
