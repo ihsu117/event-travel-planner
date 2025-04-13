@@ -394,6 +394,7 @@ const handleBack = (targetRoute) => {
 }
 
 onMounted(() => {
+    window.addEventListener('resize', updateScreenSize);
     if (!isOrgListPage.value) {
         getInvitedUsers()
         loadOrgUsers()
@@ -401,6 +402,16 @@ onMounted(() => {
         adminGetUsers()
     }
 })
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateScreenSize);
+});
+
+const isMobile = ref(window.innerWidth <= 768);
+
+const updateScreenSize = () => {
+    isMobile.value = window.innerWidth <= 768;
+};
 
 </script>
 

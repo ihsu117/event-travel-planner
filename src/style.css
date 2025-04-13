@@ -1955,6 +1955,8 @@ input:checked+.slider:before {
     padding: 1%;
   }
 
+  /*DESKTOP VIEW FOR PLANNERCREATE PLANNER*/
+
   .p-event__wrapper {
     overflow: unset
   }
@@ -1998,10 +2000,11 @@ input:checked+.slider:before {
     flex-direction: column;
     justify-content: end;
     align-items: left;
-    width: 20%;
-    max-width: 20%;
+    width: 80%;
     height: 100%;
-    margin: 0 2rem 0 2rem;
+    background: var(--gradient-3);
+    padding-left: 2rem;
+    border-radius: 1.25rem;
   }
 
   .event-desktop-contentBox__info h2 {
@@ -2035,6 +2038,10 @@ input:checked+.slider:before {
   .file-input-wrapper {
     display: flex;
     align-items: center;
+    width:20%;
+    max-width: 20%;
+    background: var(--gradient-4);
+    border-radius: 1.25rem;
   }
 
   /* Hide the default file input */
@@ -2076,7 +2083,6 @@ input:checked+.slider:before {
     opacity: 0.8;
     /* Further dim the gradient on click */
   }
-
   .file-input-wrapper span {
     margin-right: 0.5rem;
   }
@@ -2110,9 +2116,25 @@ input:checked+.slider:before {
   }
 
   .event-form__desktop--topbar .p-textfield {
-    width: 100%;
-    height: 1rem;
+    height: 4rem;
     border-radius: 0.375rem;
+    margin: unset;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .event-form__desktop--topbar .p-textfield:hover {
+    border: 0.125rem solid rgb(167, 177, 177);
+  }
+
+  .event-form__desktop--topbar .planner-date .dp__input_wrap{
+    display: flex;
+  }
+
+  .event-form__desktop--topbar .planner-date .dp__input_wrap input{
+    border-radius: 0.375rem;
+    height: 4rem;
+    width:22rem;
   }
 
   .planner-description {
@@ -2130,7 +2152,6 @@ input:checked+.slider:before {
   .p-event--block-planner {
     overflow: hidden;
   }
-}
 /*SITE ADMIN HOME PAGE CSS =====================================================================================*/
 
 .home-desktop__admin-search {
@@ -2240,12 +2261,23 @@ input:checked+.slider:before {
     align-self: flex-start;
     margin-left: 5rem;
   }
-  
 }
 
 /*SITE ADMIN HOME PAGE CSS =====================================================================================*/
 
+.register-form input {
+  box-shadow: var(--drop-shadow);
+}
+
+.login-container input {
+  box-shadow: var(--drop-shadow);
+}
+
+/*------------------DESKTOP STYLES OVER 1080p ---------------------*/
+
 @media screen and (min-width: 1920px) {
+
+  /* HOMEPAGES */
   .scroll-wrapper{
     width: 60%;
     max-width: 60%;
@@ -2264,4 +2296,58 @@ input:checked+.slider:before {
     margin-right:auto
   }
 
+  /* REGISTRATION */
+  .register-form {
+    align-self: flex-start;
+    margin-left: 10rem;
+    /* background: var(--top-gradient); */
+    margin: 1.5rem 3rem 0.5rem 3rem;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+    height: 95vh;
+    border-radius: 0.9375rem;
+    /* box-shadow: var(--drop-shadow); */
+  }
+  .exit-icon {
+    position: absolute;
+    left: 29rem;
+    /* 11px */
+    top: 0.75rem;
+    /* 11px */
+    cursor: pointer;
+  }
+
+
+  /* LOGIN */
+  .login-container {
+    width:25rem;
+    align-self: flex-start;
+    margin-left: 10rem;
+    /* background: var(--top-gradient); */
+    margin: 1.5rem 3rem 0.5rem 3rem;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+    height: 95vh;
+    border-radius: 0.9375rem;
+    /* box-shadow: var(--drop-shadow); */
+  }
+
+
+  /* PLANNERCREATE */
+  .event-desktop-contentBox {
+    width: 60%;
+    max-width: 70rem;
+    align-self: flex-start;
+    margin-left: 10rem;
+  }
+  .event-form__desktop {
+    width: 60%;
+    max-width: 70rem;
+    align-self: flex-start;
+    margin-left: 10rem;
+    align-items: unset;
+  }
+  .event-form__desktop--topbar {
+    width: 70rem;
+    margin-left: -1rem;
+  }
+  
 }
