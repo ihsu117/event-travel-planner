@@ -2216,7 +2216,11 @@ input:checked+.slider:before {
     overflow-x: auto;
   }
   hr {
-    width: 63%;
-    max-width: 63%;
+    width: 60%;
+    max-width: 60%;
+    align-self: flex-start;
+    margin-left: 10rem;
+    margin-right:auto
   }
+
 }
