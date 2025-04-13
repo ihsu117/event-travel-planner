@@ -770,6 +770,7 @@ const fetchUserData = async () => {
                         </svg>
                         <p v-if="errors.location" class="input-error">{{ errors.location }}</p>
                     </div>
+                    
                     <vue-google-autocomplete v-if="flightType != null" class="p-textfield--small" id="map"
                         types="airport" country="us" classname="form-control" placeholder="Departure Airport"
                         v-on:placechanged="handlePlaceChanged">
