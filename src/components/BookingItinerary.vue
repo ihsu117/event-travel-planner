@@ -36,6 +36,10 @@ onUnmounted(() => {
     window.removeEventListener('resize', updateScreenSize);
 })
 
+const handleBack = (targetRoute) => {
+  router.push({ name: targetRoute });
+}
+
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
 const checkAndLoadFlightBooking = async () => {
     if (isAttendee.value) {
