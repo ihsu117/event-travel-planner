@@ -3,24 +3,28 @@ import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
-import { PEvent, PTextField, PFlight, PButton } from '@poseidon-components'
+import { PEvent, PTextField, PFlight, PButton, PProfilePic } from '@poseidon-components'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
 import HeaderBar from './Headerbar.vue'
+import { format, parseISO } from 'date-fns';
+
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
 const userStore = useUserStore()
 const router = useRouter()
+const userInfo = ref({});
 
-const isModalVisible = ref(false)
+
+const isApproveModalVisible = ref(false)
 const flightSelected = ref(null)
 
 const isEditModalVisible = ref(false)
-const modalBudget = ref('')
-const modalAuto = ref()
-const modalThreshold = ref('')
+const editModalBudget = ref('')
+const editModalAuto = ref()
+const editModalThreshold = ref('')
 
 const openEditModal = () => {
     isEditModalVisible.value = true
@@ -48,9 +52,9 @@ const saveUpdatedValue = async () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                maxBudget: modalBudget.value,
-                autoApprove: Boolean(modalAuto.value),
-                autoApproveThreshold: Number(modalThreshold.value) || 0
+                maxBudget: editModalBudget.value,
+                autoApprove: Boolean(editModalAuto.value),
+                autoApproveThreshold: Number(editModalThreshold.value) || 0
             })
         })
         if (response.ok) {
@@ -117,19 +121,20 @@ const updateFlight = async (selection) => {
 }
 
 // Function to open the modal
-const openModal = (flight) => {
+const openApproveModal = (flight) => {
+    console.log(flight);
     flightSelected.value = flight
-    isModalVisible.value = true
+    isApproveModalVisible.value = true
 }
 
 // Function to close the modal
-const closeModal = () => {
-    isModalVisible.value = false
+const closeApproveModal = () => {
+    isApproveModalVisible.value = false
     flightSelected.value = null
 }
 
 // Function to handle modal option selection
-const handleModalOption = (option) => {
+const handleApproveModalOption = (option) => {
     console.log(`Selected option: ${option}`)
 
     if (option == "Approve") {
@@ -138,7 +143,7 @@ const handleModalOption = (option) => {
         updateFlight(0)
     }
 
-    closeModal()
+    closeApproveModal()
 }
 
 //Function to handle the back button
@@ -209,9 +214,118 @@ onUnmounted(() => {
     window.removeEventListener('resize', updateScreenSize);
 });
 
+//THE USER PROFILE MODAL
+const fetchUserData = async () => {
+    try {
+        const response = await api.apiFetch(`/user/${userStore.user_id}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            userInfo.value = await response.json();
+        } else {
+            console.error('Failed to fetch user data');
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+};
+
+
+const handleOrgClick = (org) => {
+    router.push({ name: 'OrgList', params: { orgId: org.id } });
+}
+
+const isModalVisible = ref(false)
+
+// Function to open the modal
+const openModal = async () => {
+    await fetchUserData();
+    isModalVisible.value = true
+}
+
+// Function to close the modal
+const closeModal = () => {
+    isModalVisible.value = false
+}
+
+
+
+// Function to handle modal option selection
+const handleModalOption = async (option) => {
+    console.log(`Selected option: ${option}`)
+    if (option === 'Logout') {
+        try {
+            const response = await api.apiFetch('/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                userStore.$reset() // Reset the user store
+                localStorage.clear() // Clear local storage
+                router.push({ name: 'Login' }) // Redirect to login page
+            }
+        } catch (error) {
+            console.error('Failed to logout:', error)
+        }
+    } else if (option === 'Edit') {
+        router.push({ name: 'EditUser' })
+    }
+    closeModal()
+}
+
+
+
 console.log(eventStore.currentEvent.id)
 </script>
 <template>
+    <!-- -----------------------------------------------------------MODAL------------------------------------------------------->
+    <template v-if="isModalVisible && !isMobile">
+        <div>
+            <div class="modal-overlay" @click="closeModal"></div>
+            <div class="modal modal-container">
+                <div class="modal-profile">
+                    <div class="modal-profile-img-name">
+                        <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
+                        <PProfilePic design="big" :profileImage='userStore.profile_picture' />
+                        <div class="modal-profile-title-org">
+                            <h5>{{ userStore.role_id }}</h5>
+                            <p>{{ userStore.org.name }}</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-profile-info-container">
+                        <div class="modal-profile-info">
+                            <div class="profile-content">
+                                <h5>Email</h5>
+                                <p>{{ userStore.email }}</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Phone</h5>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+                                    }}</p>
+                            </div>
+
+                            <div class="profile-content">
+                                <h5>Gender</h5>
+                                <p v-if="userInfo.gender == 'm'">Male</p>
+                                <p v-else>Female</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Date of Birth</h5>
+                                <p>{{ format(userInfo.dob, 'MMMM do, yyyy') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-profile-options">
+                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')" />
+                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <!-- -----------------------------------------------------------DESKTOP------------------------------------------------------->
     <template v-if="!isMobile && (isFinance || isEventPlanner || isAdmin || isSiteAdmin)">
         <div class="finance-dashboard-desktop">
@@ -268,18 +382,18 @@ console.log(eventStore.currentEvent.id)
                         <h2 class="modal-title">Set Budget</h2>
 
                         <label class="modal-label" for="budget-amount">Amount</label>
-                        <PTextField v-model="modalBudget" id="budget-amount" class="modal-input" type="number"
+                        <PTextField v-model="editModalBudget" id="budget-amount" class="modal-input" type="number"
                             placeholder="Enter amount" />
 
                         <label class="modal-label">Auto Approve</label>
                         <label class="switch">
-                            <input type="checkbox" v-model="modalAuto" />
+                            <input type="checkbox" v-model="editModalAuto" />
                             <span class="slider round"></span>
                         </label>
 
-                        <div v-if="modalAuto" class="threshold-container">
+                        <div v-if="editModalAuto" class="threshold-container">
                             <label class="modal-label" for="threshold">Threshold</label>
-                            <PTextField v-model="modalThreshold" id="threshold" class="modal-input" type="number"
+                            <PTextField v-model="editModalThreshold" id="threshold" class="modal-input" type="number"
                                 placeholder="Enter threshold" />
                         </div>
 
@@ -289,18 +403,20 @@ console.log(eventStore.currentEvent.id)
                     </div>
                 </div>
 
-                <div v-if="isModalVisible">
-                    <div class="modal-overlay" @click="closeModal"></div>
+                <div v-if="isApproveModalVisible">
+                    <div class="modal-overlay" @click="closeApproveModal"></div>
                     <div class="modal">
+
+                        <!-- <div>{{flightSelected}}</div> -->
                         <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
-                            :price="flightSelected.price" :airline="flightSelected.airline"
+                            :price="flightSelected.price" :airline="flightSelected.airline" :flightDate="flightSelected.flightDate"
                             :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime"
-                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID"
+                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" :passangerName="flightSelected.owner"
                             design="finance" style=""></PFlight>
 
                         <div class="modal-options">
-                            <h2 class="modal-approve" @click="handleModalOption('Approve')">Approve</h2>
-                            <h2 class="modal-deny" @click="handleModalOption('Deny')">Deny</h2>
+                            <h2 class="modal-approve" @click="handleApproveModalOption('Approve')">Approve</h2>
+                            <h2 class="modal-deny" @click="handleApproveModalOption('Deny')">Deny</h2>
                         </div>
                     </div>
                 </div>
@@ -319,7 +435,7 @@ console.log(eventStore.currentEvent.id)
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
                             :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
-                            :flightID="flight.flightID" @click="openModal(flight)" />
+                            :flightID="String(flight.flightID)" @click="openApproveModal(flight)" />
                     </div>
                 </div>
 
@@ -327,14 +443,15 @@ console.log(eventStore.currentEvent.id)
                     <h3>Transaction History</h3>
                     <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
                     <div class="p-event__container">
-                        <PFlight v-for="(flight, index) in flightStore.flightResults"
+                        <div>{{eventStore.currentEvent.history}}</div>
+                        <!-- <PFlight v-for="(flight, index) in eventStore.currentEvent.history"
                             :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
                             :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
                             :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
-                            :flightID="flight.flightID" @click="openModal(flight)" />
+                            :flightID="flight.flightID" /> -->
                     </div>
                 </div>
             </div>
@@ -397,7 +514,7 @@ console.log(eventStore.currentEvent.id)
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass"
                             :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
-                            :flightID="flight.flightID" @click="openModal(flight)" />
+                            :flightID="flight.flightID" @click="openApproveModal(flight)" />
                     </div>
                 </div>
 
@@ -412,7 +529,7 @@ console.log(eventStore.currentEvent.id)
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass"
                             :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
-                            :flightID="flight.flightID" @click="openModal(flight)" />
+                            :flightID="flight.flightID" @click="openApproveModal(flight)" />
                     </div>
                 </div>
 
@@ -422,18 +539,18 @@ console.log(eventStore.currentEvent.id)
                         <h2 class="modal-title">Set Budget</h2>
 
                         <label class="modal-label" for="budget-amount">Amount</label>
-                        <PTextField v-model="modalBudget" id="budget-amount" class="modal-input" type="number"
+                        <PTextField v-model="editModalBudget" id="budget-amount" class="modal-input" type="number"
                             placeholder="Enter amount" />
 
                         <label class="modal-label">Auto Approve</label>
                         <label class="switch">
-                            <input type="checkbox" v-model="modalAuto" />
+                            <input type="checkbox" v-model="editModalAuto" />
                             <span class="slider round"></span>
                         </label>
 
-                        <div v-if="modalAuto" class="threshold-container">
+                        <div v-if="editModalAuto" class="threshold-container">
                             <label class="modal-label" for="threshold">Threshold</label>
-                            <PTextField v-model="modalThreshold" id="threshold" class="modal-input" type="number"
+                            <PTextField v-model="editModalThreshold" id="threshold" class="modal-input" type="number"
                                 placeholder="Enter threshold" />
                         </div>
 
@@ -443,8 +560,8 @@ console.log(eventStore.currentEvent.id)
                     </div>
                 </div>
 
-                <div v-if="isModalVisible">
-                    <div class="modal-overlay" @click="closeModal"></div>
+                <div v-if="isApproveModalVisible">
+                    <div class="modal-overlay" @click="closeApproveModal"></div>
                     <div class="modal">
                         <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
                             :price="flightSelected.price" :airline="flightSelected.airline"
@@ -453,8 +570,8 @@ console.log(eventStore.currentEvent.id)
                             design="finance" style=""></PFlight>
 
                         <div class="modal-options">
-                            <h2 class="modal-approve" @click="handleModalOption('Approve')">Approve</h2>
-                            <h2 class="modal-deny" @click="handleModalOption('Deny')">Deny</h2>
+                            <h2 class="modal-approve" @click="handleApproveModalOption('Approve')">Approve</h2>
+                            <h2 class="modal-deny" @click="handleApproveModalOption('Deny')">Deny</h2>
                         </div>
                     </div>
                 </div>
