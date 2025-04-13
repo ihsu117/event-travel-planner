@@ -16,6 +16,8 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import HeaderBar from './Headerbar.vue'
+import VueGoogleAutocomplete from "vue-google-autocomplete"
+import { de } from 'date-fns/locale'
 
 
 const router = useRouter()
@@ -38,6 +40,8 @@ const newEmail = ref('')
 const inviteEmail = ref('')
 const lastCreatedEventId = ref(null)
 const userInfo = ref({});
+const latitude = ref('');
+const longitude = ref('');
 
 const organizations = ref([])
 
@@ -173,6 +177,8 @@ const createEvent = async () => {
             startDate: formatDateForBackend(startDate.value),
             endDate: formatDateForBackend(endDate.value),
             destinationCode: destinationCode.value,
+            // lat: latitude.value,
+            // long: longitude.value,
             pictureLink: pictureLink.value, // Send the base64-encoded image
             maxBudget: maxBudget.value,
             financeMan: {},
@@ -201,68 +207,6 @@ const createEvent = async () => {
     }
 }
 
-// const addUser = () => {
-//     if (newEmail.value.trim() === '') {
-//         console.error('Email cannot be empty');
-//         return;
-//     }
-
-//     const newUser = {
-//         email: newEmail.value,
-//         profile_picture: ''
-//     }
-//     newUsers.value.push(newUser);
-//     inviteEmail.value = newEmail.value;
-//     newEmail.value = '';
-//     closeModal();
-//     console.log('User added:', newUser);
-// }
-
-// const handleSendInvites = async () => {
-//     try {
-//         await createEvent();
-//         console.log('EventID: ', lastCreatedEventId.value)
-
-//         if (newUsers.value.length > 0) {
-//             await createUser();
-//         } else {
-//             console.log('No new users to invite.');
-//         }
-//         router.push({ name: 'Home' })
-//     } catch (error) {
-//         console.error('Error sending invites:', error)
-//     }
-// }
-
-// const createUser = async () => {
-//     try {
-//         const schema = {
-//             eventId: lastCreatedEventId.value,
-//             attendee: {
-//                 email: inviteEmail.value
-//             }
-//         }
-
-//         console.log('Creating user:', schema)
-//         const response = await api.apiFetch('/events/invite/new', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(schema),
-//             credentials: 'include'
-//         })
-//         if (response.ok) {
-//             const result = await response.json()
-//             console.log('User created successfully:', result)
-//         } else {
-//             console.error('Failed to create user:', await response.json())
-//         }
-//     } catch (error) {
-//         console.error('Error creating user:', error)
-//     }
-// }
-
 const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
@@ -282,69 +226,6 @@ const toEventPage = async (eventId) => {
     router.push({ name: 'Event', query: { editView: 'true', eventID: eventId} })
 }
 
-// const loadOrgUsers = async () => {
-//     try {
-//         const response = await api.apiFetch('/organization/users', {
-//             method: 'GET',
-//             credentials: 'include'
-//         })
-
-//         if (response.ok) {
-//             const result = await response.json()
-//             console.log('Organization users:', result)
-//             userStore.setUser(result)
-//         } else {
-//             console.error('Failed to load organization users:', await response.json())
-//         }
-//     } catch (error) {
-//         console.error('Error loading organization users:', error)
-//     }
-// }
-
-// const toggleUserSelection = (userID) => {
-//     const user = {
-//         id: userID
-//     }
-//     if (selectedUsers.value.some(selectedUser => selectedUser.id === userID)) {
-//         // Remove user from selected users
-//         selectedUsers.value = selectedUsers.value.filter(selectedUser => selectedUser.id !== userID);
-//         console.log('User unselected:', user);
-//     } else {
-//         // Add user to selected users
-//         selectedUsers.value.push(user);
-//         console.log('User selected:', user);
-//     }
-//     console.log('Selected users:', selectedUsers.value);
-// }
-
-// const isUserSelected = (userID) => {
-//     return selectedUsers.value.some(selectedUser => selectedUser.id === userID);
-// }
-
-// const selectFinanceManager = (userID) => {
-//     if (selectedFinman.value === userID) {
-//         // Deselect the currently selected finance manager
-//         selectedFinman.value = '';
-//         console.log('Finance manager unselected:', userID);
-//     } else {
-//         // Select the new finance manager
-//         selectedFinman.value = userID;
-//         console.log('Finance manager selected:', userID);
-//     }
-// }
-
-// const isFinanceManagerSelected = (userID) => {
-//     return selectedFinman.value === userID;
-// }
-
-// const closeModal = () => {
-//     isModalVisible.value = false
-// }
-
-// const openModal = () => {
-//     isModalVisible.value = true
-// }
-
 const parseDate = (date) => {
     if (!date) return null;
     return typeof date === 'string' ? parseISO(date) : date;
@@ -356,9 +237,12 @@ const formatDateForBackend = (date) => {
     return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
 };
 
-// onMounted(() => {
-//     loadOrgUsers()
-// })
+const handlePlaceChanged = (place) => {
+    latitude.value = place.latitude;
+    longitude.value = place.longitude;
+    console.log('Selected Location:', place);
+}
+
 </script>
 
 <template>
@@ -411,11 +295,15 @@ const formatDateForBackend = (date) => {
                     </div>
                     <div class="planner-event-destination">
                         <h2>Destination</h2>
-                        <PTextField label="Destination Airport Code" v-model="destinationCode" required />
+                        <PTextField label="Event Name" v-model="destinationCode"  />
+                        <vue-google-autocomplete class="p-textfield" id="map"
+                            types="airport" country="us" classname="form-control" placeholder="Destination Airport"
+                            v-on:placechanged="handlePlaceChanged" >
+                        </vue-google-autocomplete>
                     </div>
                     <div class="planner-description">
                         <h2>Description</h2>
-                        <PTextField design="textarea" :maxlength=400 label="Description" v-model="description" required />
+                        <PTextField design="textarea" :maxlength=400 label="Description" v-model="description"  />
                     </div>
 
                     <div class="planner-dates">
@@ -543,10 +431,13 @@ const formatDateForBackend = (date) => {
                 <div class="event-form__desktop--topbar">
                     <div class="planner-event-destination">
                         <h2>Destination</h2>
-                        <PTextField class="evTopMargin" label="Destination Airport Code" v-model="destinationCode" required />
+                        <vue-google-autocomplete class="p-textfield" id="map"
+                            types="airport" country="us" classname="form-control" placeholder="Destination Airport"
+                            v-on:placechanged="handlePlaceChanged" required>
+                        </vue-google-autocomplete>
                     </div>
                         <div class="planner-start-date">
-                            <h2>Dates</h2>
+                            <h2>Start Date</h2>
                             <VueDatePicker class="evTopMargin" v-model="startDate" :enable-time-picker="false"
                                 :placeholder="'Start Date'" exactMatch="true"
                                 :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
