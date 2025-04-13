@@ -69,6 +69,7 @@ const departItineraries = computed(() => {
     const firstItem = flightItinerary[0];
     // If there's a nested itinerary array, use it; otherwise, assume flightItinerary is already the segments array.
     if (firstItem.itinerary && Array.isArray(firstItem.itinerary) && firstItem.itinerary.length > 0) {
+        console.log(firstItem.itinerary)
         return firstItem.itinerary;
     }
 
@@ -87,6 +88,34 @@ const returnItineraries = computed(() => {
 
     return flightItinerary;
 });
+
+const timeStringToMinutes = (timeStr) => {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 60 + minutes;
+};
+
+const minutesToHHMM = (minutes) => {
+    const hrs = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  if (hrs === 0) {
+    return `${mins} m`;
+  } else {
+    return `${hrs} hr ${mins} m`;
+  }
+};
+
+const layoverDurationCalc = (arrival_time, departure_time) => {
+  let arrivalMinutes = timeStringToMinutes(arrival_time);
+  let departureMinutes = timeStringToMinutes(departure_time);
+
+  // Handle cases where the departure is on the next day
+  if (departureMinutes < arrivalMinutes) {
+    departureMinutes += 1440; // 24 hours * 60 minutes
+  }
+
+  const durationMinutes = departureMinutes - arrivalMinutes;
+  return minutesToHHMM(durationMinutes);
+};
 
 </script>
 
@@ -108,7 +137,7 @@ const returnItineraries = computed(() => {
                         :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
                     </PFlight>
                     <PFlight v-if="index !== departItineraries.length - 1" design="layover" v-bind="itinerary"
-                        :layoverDuration="itinerary.layover"></PFlight>
+                        :layoverDuration="layoverDurationCalc(itinerary.arrival_time, departItineraries[index + 1].departure_time)"></PFlight>
                 </div>
 
                 <h1>Returning Itinerary</h1>
@@ -122,7 +151,7 @@ const returnItineraries = computed(() => {
                         :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
                     </PFlight>
                     <PFlight v-if="index !== returnItineraries.length - 1" design="layover" v-bind="itinerary"
-                        :layoverDuration="itinerary.layover"></PFlight>
+                        :layoverDuration="layoverDurationCalc(itinerary.arrival_time, returnItineraries[index + 1].departure_time)"></PFlight>
                 </div>
             </div>
         </div>

@@ -48,30 +48,37 @@ const confirmPurchase = async () => {
     arrive_time: flightStore.currentFlight.flightArrTime,
     price: flightStore.currentFlight.price,
     date: flightStore.currentFlight.flightDate,
-    seatNumber: flightStore.currentFlight.seatNumber
-  }
+    seatNumber: flightStore.currentFlight.seatNumber,
+  };
 
   const localStorageData = JSON.parse(localStorage.getItem('currentEvent'));
   const eventID = localStorageData?.id; // Extract the eventID
 
-  return api.apiFetch('/flights/hold', {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      offerID: flightStore.currentFlight.offer_id,
-      passID: flightStore.currentFlight.passID,
-      flight: flightData,
-      eventID: eventID,
-    })
-  }).then(
-    response => console.log(response)
-  ).then(
-    router.push({ name: 'Event' })
-  )
-}
+  try {
+    const response = await api.apiFetch('/flights/hold', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        offerID: flightStore.currentFlight.offer_id,
+        passID: flightStore.currentFlight.passID,
+        flight: flightData,
+        eventID: eventID,
+      }),
+    });
+
+    console.log(response); // Log the response for debugging or further processing
+
+    // Now that the response is received, navigate to the event page
+    router.push({ name: 'Event' });
+  } catch (error) {
+    console.error('Error during purchase confirmation:', error);
+    // Optionally, handle errors (show an error message, etc.)
+  }
+};
+
 console.log("CURRENTFLIGHT! ", flightStore.currentFlight)
 
 onMounted(async () => {
@@ -347,7 +354,7 @@ console.log("ITINERARIES: ", itineraries.value)
               :currentIndex="index + 1" :totalFlights="itineraries.length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
-            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+            <PFlight v-if="index !== flightStore.itineraries[0].length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 
@@ -361,7 +368,7 @@ console.log("ITINERARIES: ", itineraries.value)
               :currentIndex="index + 1" :totalFlights="itineraries.length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
-            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+            <PFlight v-if="index !== flightStore.itineraries[1].length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 
