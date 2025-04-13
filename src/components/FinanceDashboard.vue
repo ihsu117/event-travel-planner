@@ -186,6 +186,51 @@ const exportEventHistory = async () => {
     }
 };
 
+// var eventHistory = ref([])
+const eventHistory = ref([]); // Reactive variable to store the event history
+
+const loadEventHistory = async () => {
+    try {
+        const response = await getEventHistory(); // Call the API function
+        if (response && response.history) {
+            eventHistory.value = response.history; // Update the reactive variable
+            console.log('Event history loaded:', eventHistory.value);
+        } else {
+            console.warn('No history found in the response.');
+            eventHistory.value = []; // Set to an empty array if no history is found
+        }
+    } catch (error) {
+        console.error('Failed to load event history:', error);
+        eventHistory.value = []; // Handle errors by resetting the variable
+    }
+};
+
+const getEventHistory = async () => {
+    try {
+        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            return await response.json(); // Return the parsed JSON response
+        } else {
+            console.error('Failed to fetch event history:', await response.text());
+            return null; // Return null if the response is not OK
+        }
+    } catch (error) {
+        console.error('Failed to fetch event history:', error);
+        return null; // Return null in case of an error
+    }
+};
+
+
+onMounted(() => {
+    loadEventHistory();
+});
+
 const budgetColor = computed(() => {
     const budgetThreshold = eventStore.currentEvent.maxBudget * 0.3;
     if (eventStore.currentEvent.maxBudget > budgetThreshold) {
@@ -273,10 +318,38 @@ const handleModalOption = async (option) => {
     closeModal()
 }
 
+const formatTimestamp = (timestamp) => {
+  if (!timestamp) return 'Invalid Date'; // Handle null or undefined timestamps
+  return new Date(timestamp).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  });
+};
 
+const eventHistoryOpen = (event) => {
+    console.log('clickedme')
+    // Get the clicked <li> element
+    const parentLi = event.target.closest('li');
 
+    if (parentLi) {
+        // Find the child <ul> element within the clicked <li>
+        const childUl = parentLi.querySelector('ul');
+        console.log(childUl)
+
+        if (childUl) {
+            // Toggle the 'open' class on the child <ul>
+            childUl.classList.toggle('open');
+        }
+    }
+};
 
 </script>
+
 <template>
     <!-- -----------------------------------------------------------MODAL------------------------------------------------------->
     <template v-if="isModalVisible && !isMobile">
@@ -442,16 +515,22 @@ const handleModalOption = async (option) => {
                 <div class="flight-container">
                     <h3>Transaction History</h3>
                     <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
-                    <div class="p-event__container">
-                        <div>{{eventStore.currentEvent.history}}</div>
-                        <!-- <PFlight v-for="(flight, index) in eventStore.currentEvent.history"
-                            :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
-                            :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
-                            :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
-                            :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
-                            :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
-                            :flightID="flight.flightID" /> -->
+                    <div class="p-event__container--history">
+                        <div v-if="eventHistory.length > 0">
+                            <ul class="event-history">
+                                <li v-for="(event, index) in eventHistory" :key="index" @click="eventHistoryOpen">
+                                    {{ formatTimestamp(event.lastEdited)}} - {{ event.updater.firstName[0] }}, {{ event.updater.lastName }}
+                                    <ul>
+                                       <li>Budget: {{event.originalBudget || 'N/A'}} → {{event.updatedBudget || 'N/A'}}</li>
+                                       <li>Auto-Approve: {{event.updatedAutoApprove}}</li>
+                                       <li>Threshold: {{event.updatedAutoApprovethreshold  || 'Disabled'}}</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-else>
+                            <p>No event history available.</p>
+                        </div>
                     </div>
                 </div>
             </div>
