@@ -358,14 +358,14 @@ const fetchUserData = async () => {
 };
 
 const statusClass = computed(() => {
-  const statusName = bookingData.value?.status?.name?.toLowerCase();
-  if (statusName === 'pending') {
-    return 'pending';
-  } else if (statusName === 'denied') {
-    return 'denied';
-  } else {
-    return ''; // For approved or any other status, no extra style
-  }
+    const statusName = bookingData.value?.status?.name?.toLowerCase();
+    if (statusName === 'pending') {
+        return 'pending';
+    } else if (statusName === 'denied') {
+        return 'denied';
+    } else {
+        return ''; // For approved or any other status, no extra style
+    }
 });
 
 </script>
@@ -395,7 +395,7 @@ const statusClass = computed(() => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                }}</p>
+                                    }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -629,8 +629,9 @@ const statusClass = computed(() => {
             </div>
             <div v-if="bookingData" class="holding-flights">
                 <h2>Your Flight: <p class="role-bubble" :class="statusClass" style="display: inline; font-size: 1rem;">
-                    {{ bookingData?.status?.name}}</p></h2>
-                
+                        {{ bookingData?.status?.name }}</p>
+                </h2>
+
                 <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
                     <PFlight design="desktop-block" :airline="bookingItinerary.airline"
                         :logoURL="bookingItinerary.logoURL" :price="bookingPrice" :flightClass="segment.class"
@@ -773,28 +774,28 @@ const statusClass = computed(() => {
                         </VueDatePicker>
 
                     </div>
-                </div>
-                <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
-                    id="flight-search">
-                    <div :class="['error-container', { show: errors.location }]">
-                        <svg v-if="errors.location" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
-                            height="16" viewBox="0 0 16 16">
-                            <path fill="#FEB96E" fill-rule="evenodd"
-                                d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <p v-if="errors.location" class="input-error">{{ errors.location }}</p>
+                    <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
+                        id="flight-search">
+                        <div :class="['error-container', { show: errors.location }]">
+                            <svg v-if="errors.location" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 16 16">
+                                <path fill="#FEB96E" fill-rule="evenodd"
+                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p v-if="errors.location" class="input-error">{{ errors.location }}</p>
+                        </div>
+
+                        <vue-google-autocomplete v-if="flightType != null" class="p-textfield--small" id="map"
+                            types="airport" country="us" classname="form-control" placeholder="Departure Airport"
+                            v-on:placechanged="handlePlaceChanged">
+                        </vue-google-autocomplete>
                     </div>
-                    
-                    <vue-google-autocomplete v-if="flightType != null" class="p-textfield--small" id="map"
-                        types="airport" country="us" classname="form-control" placeholder="Departure Airport"
-                        v-on:placechanged="handlePlaceChanged">
-                    </vue-google-autocomplete>
-                </div>
-                <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
-                    style="display: block;" id="flight-search">
-                    <PButton v-if="flightType != null" design="gradient" label="Search for Flights"
-                        @click="toFlightSearch" />
+                    <div :class="['p-dropdown__container', { show: flightType === 0 || flightType === 1 }]"
+                        style="display: block;" id="flight-search">
+                        <PButton v-if="flightType != null" design="gradient" label="Search for Flights"
+                            @click="toFlightSearch" />
+                    </div>
                 </div>
             </div>
 
@@ -829,11 +830,12 @@ const statusClass = computed(() => {
 .role-bubble.pending {
     background-color: blue;
     border: var(--pos-blue) 1px solid;
-    color:#ffffff;
+    color: #ffffff;
 }
+
 .role-bubble.denied {
     background-color: red;
     border: var(--pos-red) 1px solid;
-    color:#ffffff;
+    color: #ffffff;
 }
 </style>
