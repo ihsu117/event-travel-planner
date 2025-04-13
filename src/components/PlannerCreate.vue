@@ -445,24 +445,10 @@ const backgroundImageStyle = computed(() => {
             </div>
             <div class="event-form__desktop">
                 <div class="event-form__desktop--topbar">
-                    <div class="planner-event-destination">
-                        <h2>Destination</h2>
-                        <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
-                            classname="form-control" placeholder="Destination Airport"
-                            v-on:placechanged="handlePlaceChanged" required>
-                        </vue-google-autocomplete>
-                    </div>
-                    <div class="planner-start-date">
-                        <h2>Start Date</h2>
-                        <VueDatePicker class="evTopMargin" v-model="startDate" :enable-time-picker="false"
-                            :placeholder="'Start Date'" exactMatch="true"
-                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply>
-                        </VueDatePicker>
-                    </div>
-                    <div class="planner-end-date">
-                        <h2>End Date</h2>
-                        <VueDatePicker class="evTopMargin" v-model="endDate" :enable-time-picker="false"
-                            :placeholder="'End Date'" exactMatch="true"
+                    <div class="planner-date">
+                        <h2>Date</h2>
+                        <VueDatePicker class="evTopMargin" v-model="dateRange" :range="true" :enable-time-picker="false"
+                            :placeholder="'mm/dd/yyyy - mm/dd/yyyy'" exactMatch="true"
                             :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
                         </VueDatePicker>
                     </div>
@@ -471,9 +457,9 @@ const backgroundImageStyle = computed(() => {
                         <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" placeholder="$00000" required />
                     </div>
                     <div class="planner-event-destination">
-                        <h2>Locale</h2>
-                        <vue-google-autocomplete class="p-textfield" id="map"
-                            types="airport" country="us" classname="form-control" placeholder="Enter Address"
+                        <h2>Destination</h2>
+                        <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
+                            classname="form-control" placeholder="Destination Airport"
                             v-on:placechanged="handlePlaceChanged" required>
                         </vue-google-autocomplete>
                     </div>
