@@ -115,6 +115,7 @@ const updateFlight = async (selection) => {
         })
         if (response.ok) {
             console.log("booked flight")
+            loadEventHistory();
         }
     } catch (error) {
         console.log(error);
@@ -468,7 +469,7 @@ const formatTimestamp = (timestamp) => {
                             <!-- <div>{{flightSelected}}</div> -->
                             <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
                                 :price="flightSelected.price" :airline="flightSelected.airline" :flightDate="flightSelected.flightDate"
-                                :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime"
+                                :logoURL="flightSelected.itinerary.logoURL" :flightDepTime="flightSelected.flightDepTime"
                                 :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" :passangerName="flightSelected.owner"
                                 design="finance" style=""></PFlight>
 
@@ -499,29 +500,29 @@ const formatTimestamp = (timestamp) => {
                         </div>
                     </div>
 
-                <div class="flight-container">
+                <div class="finance-items-cont">
                     <div class="finance-item">
                         <div class="finance-flight-title">
                             <h3>Transaction History</h3>
                             <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
                         </div>
                     </div>
-                    <div class="p-event__container--history">
                         <div v-if="eventHistory.length > 0">
-                            <div v-for="(event, index) in eventHistory" :key="index">
-                                {{ formatTimestamp(event.lastEdited)}} 
-                                {{ event.updater.firstName }}
-                                {{ event.updater.lastName }}
-                                {{event.originalBudget || 'N/A'}} 
-                                {{event.updatedBudget || 'N/A'}}
-                                {{event.updatedAutoApprove}}
-                                {{event.updatedAutoApprovethreshold  || 'Disabled'}}
+                            <div class="finance-approval-cont">
+                                <div v-for="(event, index) in eventHistory" :key="index">
+                                    {{ formatTimestamp(event.lastEdited)}} 
+                                    {{ event.updater.firstName }}
+                                    {{ event.updater.lastName }}
+                                    {{event.originalBudget || 'N/A'}} 
+                                    {{event.updatedBudget || 'N/A'}}
+                                    {{event.updatedAutoApprove}}
+                                    {{event.updatedAutoApprovethreshold  || 'Disabled'}}
+                                </div>
                             </div>
                         </div>
                         <div v-else>
-                            <p>No event history available.</p>
+                            <p style="color: black; justify-self: center;">No event history available.</p>
                         </div>
-                    </div>
                 </div>
 
                 </div>
