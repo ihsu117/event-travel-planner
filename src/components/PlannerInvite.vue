@@ -3,7 +3,7 @@ export { default as PlannerInvite } from './PlannerInvite.vue'
 </script>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { PButton, PTextField, PFinanceBlock, PEvent } from '@poseidon-components'
 import { useEventStore } from '../stores/eventStore.js'
@@ -394,6 +394,7 @@ const handleBack = (targetRoute) => {
 }
 
 onMounted(() => {
+    window.addEventListener('resize', updateScreenSize);
     if (!isOrgListPage.value) {
         getInvitedUsers()
         loadOrgUsers()
@@ -401,6 +402,16 @@ onMounted(() => {
         adminGetUsers()
     }
 })
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateScreenSize);
+});
+
+const isMobile = ref(window.innerWidth <= 768);
+
+const updateScreenSize = () => {
+    isMobile.value = window.innerWidth <= 768;
+};
 
 </script>
 
@@ -512,7 +523,7 @@ onMounted(() => {
 
                     <PFinanceBlock design="invite" v-for="user in invitedUsers" :key="user.id"
                         :name="(user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : user.email"
-                        :email="user.email" :profileImage="user.profile_picture"/>
+                        :email="user.email" :profileImage="user.profilePic"/>
                 </div>
 
                 <div>

@@ -9,6 +9,7 @@ import FinanceDashboard from '../components/FinanceDashboard.vue'
 import PlannerCreate from '../components/PlannerCreate.vue'
 import PlannerInvite from '../components/PlannerInvite.vue'
 import Registration from '../components/Registration.vue'
+import BookingItinerary from '../components/BookingItinerary.vue'
 
 const routes = [
   {
@@ -76,6 +77,12 @@ const routes = [
     path: '/edit/',
     name: 'EditUser',
     component: Registration,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/booking/',
+    name: 'BookingItinerary',
+    component: BookingItinerary,
     meta: { requiresAuth: true }
   }
 

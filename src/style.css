@@ -63,6 +63,7 @@
   color: var(--pos-yellow);
   text-decoration: none;
   font-size: 0.75rem;
+  cursor: pointer;
 }
 
 .error-container {
@@ -142,7 +143,7 @@
   padding-bottom: 2%;
 }
 
-.form-name h1{
+.form-name h1 {
   display: flex;
   flex-direction: column;
   padding-left: 5%;
@@ -165,11 +166,12 @@
   padding-bottom: 5%;
 }
 
-.form-title h1, .form-gender h1{
+.form-title h1,
+.form-gender h1 {
   padding-left: 10%;
   font-size: 1.25rem;
   font-weight: 400%;
-} 
+}
 
 .register-form .form-phone {
   display: flex;
@@ -230,8 +232,8 @@ body {
 
 .home .p-event__container {
   max-height: none;
-  min-height: 31.25rem;
-  gap: 0.44rem;
+  min-height: 20rem;
+  gap: 0.3rem;
   width: 87%;
 }
 
@@ -318,18 +320,26 @@ body {
   font-size: 2rem;
 }
 
+.event-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  width: 100%;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
 .event-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   height: 100vh;
-  /* Set height to 100% of the viewport height */
-  max-width: 24.56rem;
-  /* 393px */
+  width: 100%;
   background-color: var(--pos-inner-yellow);
   padding-bottom: 1.25rem;
-  /* 20px */
 }
 
 .event-page h1 {
@@ -404,11 +414,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 24.56rem;
-  /* 393px */
+  max-width: 100%;
   background-color: var(--pos-inner-yellow);
-  padding-bottom: 1.25rem;
-  /* 20px */
 }
 
 .finance-info {
@@ -421,10 +428,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   max-width: 24.56rem;
-  /* 393px */
   background-color: var(--pos-inner-yellow);
   padding-bottom: 1.25rem;
-  /* 20px */
   min-height: 100vh;
 }
 
@@ -676,7 +681,8 @@ body {
   margin-left: 0;
 }
 
-.flight-container, .finance-item {
+.flight-container,
+.finance-item {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -836,7 +842,8 @@ body {
   /* 20px */
 }
 
-.modal#mfa, .modal#forgot-pass {
+.modal#mfa,
+.modal#forgot-pass {
   width: 3.125rem;
   height: 3.125rem;
   border-radius: 60%;
@@ -865,8 +872,10 @@ body {
 }
 
 .modal#forgot-pass.expandSuccess {
-  width: 20%; /* Expanded size */
-  height: 15%; /* Adjust as needed */
+  width: 20%;
+  /* Expanded size */
+  height: 15%;
+  /* Adjust as needed */
 }
 
 .modal#forgot-pass.shrinked {
@@ -1388,13 +1397,11 @@ input:checked+.slider:before {
 .flight-type-toggle {
   display: inline-flex;
   border: 0.0625rem solid #000;
-  border-radius: 62.44rem;
+  border-radius: .7rem;
   overflow: hidden;
   background-color: var(--pos-inner-yellow);
   margin: 0.375rem auto;
-  /* Center the element horizontally */
   justify-content: center;
-  /* Ensure buttons inside are centered */
   margin-bottom: 5%;
 }
 
@@ -1414,26 +1421,26 @@ input:checked+.slider:before {
   color: #fff;
 }
 
-.dp__input {
-  border-radius: 0.375rem !important;
-  background-color: var(--pos-grey) !important;
-  font-family: var(--font-primary) !important;
+.event-page-desktop hr {
+  color: var(--pos-grey);
+  width: 75%;
+  margin-top: 1%;
+  opacity: 0.4;
 }
 
-.dp__input::placeholder {
-  opacity: 1 !important;
-  font-family: var(--font-primary) !important;
-  font-weight: 400 !important;
+.holding-flights h2 {
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  width: auto;
+  align-content: left;
 }
 
 @media only screen and (max-width: 56rem) {
 
   .login-container {
     padding-top: 20%;
-  }
-
-  .register-container {
-
   }
 
   /* Make home container fluid */
@@ -1487,6 +1494,10 @@ input:checked+.slider:before {
     padding-bottom: 1rem;
   }
 
+  .flight-type-toggle {
+    width: max-content;
+  }
+
   .flight-itinerary {
     max-width: 100%;
     padding-bottom: 1rem;
@@ -1508,8 +1519,10 @@ input:checked+.slider:before {
   }
 
   .modal#forgot-pass.expandSuccess {
-    width: 55%; /* Expanded size */
-    height: 16%; /* Adjust as needed */
+    width: 55%;
+    /* Expanded size */
+    height: 16%;
+    /* Adjust as needed */
   }
 
   .modal#forgot-pass.shrinked {
@@ -1521,7 +1534,7 @@ input:checked+.slider:before {
     padding: 0%;
   }
 
-  .modal#forgot-pass .loading-spinner{
+  .modal#forgot-pass .loading-spinner {
     padding-top: .75rem;
   }
 
@@ -1530,8 +1543,75 @@ input:checked+.slider:before {
     height: 3.5rem;
     border-top: 0.25rem solid var(--pos-yellow);
   }
+
+  .planner-event-picture-display {
+    width: 20rem;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1.25rem;
+  }
+
+  .planner-event-picture-display .file-input-wrapper {
+    margin-left: -4rem;
+  }
+
 }
 
+
+  /* Wrapper for the file input */
+  .file-input-wrapper {
+    display: flex;
+    align-items: center;
+    width:20%;
+    max-width: 20%;
+    background: var(--gradient-4);
+    border-radius: 1.25rem;
+  }
+
+  /* Hide the default file input */
+  .file-input-wrapper input[type="file"] {
+    display: none;
+  }
+
+  /* Style the custom label as a button */
+  .custom-file-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background: var(--top-gradient);
+    /* Use the gradient variable */
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: var(--pos-yellow);
+    /* Ensure text is visible on the gradient */
+    text-align: center;
+  }
+
+  /* Hover effect */
+  .custom-file-label:hover {
+    transform: scale(1.05);
+    /* Slightly enlarge */
+    opacity: 0.9;
+    /* Slightly dim the gradient on hover */
+  }
+
+  /* Active effect */
+  .custom-file-label:active {
+    transform: scale(0.98);
+    /* Slightly shrink */
+    opacity: 0.8;
+    /* Further dim the gradient on click */
+  }
+  .file-input-wrapper span {
+    margin-right: 0.5rem;
+  }
 
 /*---------------DESKTOP------------------*/
 
@@ -1553,21 +1633,17 @@ input:checked+.slider:before {
     background-clip: text;
     color: transparent;
     font-size: 2rem;
-    /* 32px */
-    margin-top: 0.94rem;
-    margin-bottom: 0.94rem;
     text-align: left;
     position: relative;
-    right: 35%;
     font-weight: 600;
-    padding-top: 3%;
+    margin-left: 5%;
   }
 
   .home-desktop hr {
     color: var(--pos-grey);
     width: 90%;
     margin-top: 1%;
-    margin-left: 6%;
+    opacity: 0.4;
   }
 
   .home-header-desktop {
@@ -1578,12 +1654,8 @@ input:checked+.slider:before {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 100%;
-    padding-top: 1%;
-    padding-bottom: 1%;
     gap: 1%;
   }
-
 
   .home-header__text-desktop {
     display: flex;
@@ -1613,7 +1685,7 @@ input:checked+.slider:before {
     position: relative;
     display: flex;
     align-items: center;
-    width: 95%;
+    width: 100%;
     overflow: hidden;
     border-radius: 15%;
   }
@@ -1631,7 +1703,7 @@ input:checked+.slider:before {
     z-index: 1;
   }
 
-  .p-event__wrapper::before{
+  .p-event__wrapper::before {
     left: 0;
     background: linear-gradient(to right, var(--pos-inner-yellow), rgba(255, 255, 255, 0));
   }
@@ -1645,10 +1717,8 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 1%;
     width: 90%;
     max-width: none;
-
     /* Prevent wrapping of items */
     justify-content: flex-start;
     /* Align items to the start */
@@ -1678,14 +1748,13 @@ input:checked+.slider:before {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
 
-  .scroll-button.prev {
-    left: 0%;
-    z-index: 998;
-  }
-
-  .scroll-button.next {
-    right: 0%;
-    z-index: 998;
+  .scroll-button {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 0.25rem solid var(--pos-yellow);
+    border-top: 0.25rem solid transparent;
+    animation: rotation 1s linear infinite;
   }
 
   .scroll-button:hover {
@@ -1696,11 +1765,11 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     max-width: 100%;
+    min-height: 100vh;
     background-color: var(--pos-inner-yellow);
   }
-
 
   .event-desktop-content {
     display: flex;
@@ -1708,14 +1777,9 @@ input:checked+.slider:before {
     align-items: left;
     justify-content: left;
     width: 50%;
-    max-width: 100%;
     height: 100%;
-    max-height: 100vh;
     white-space: nowrap;
-    /* Prevent wrapping of items */
     justify-content: flex-start;
-    /* Align items to the start */
-    margin-right: 5%;
     margin-top: 2%;
   }
 
@@ -1822,11 +1886,119 @@ input:checked+.slider:before {
     background-color: var(--pos-inner-yellow);
   }
 
-  .itinerary-event-container {
+  .event-desktop-search {
+    background: var(--top-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
     display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    background-color: var(--pos-inner-yellow);
+    margin-bottom: 3%;
+  }
+
+  .search-inputs {
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    gap: 1rem;
+    max-width: 100%;
+  }
+
+  .search-inputs input {
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+  }
+
+  .autocomplete-wrapper {
+    position: relative;
+    width: 150%;
+  }
+
+  .date-picker-wrapper {
+    position: relative;
+    width: 85%;
+  }
+
+  .map-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  div.event-desktop-search div.search-inputs div.autocomplete-wrapper input#map.form-control.p-textfield.pac-target-input {
+    padding-left: 2.5rem;
+  }
+
+  .event-search-date {
+    width: 60% !important;
+  }
+
+  .search-inputs {
+    position: relative;
+    /* Ensure the container is positioned for child elements */
+  }
+
+  .search-inputs .error-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    /* Keep it behind the inputs by default */
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+    gap: 0.31rem;
+    margin-left: 0.81rem;
+    height: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    /* Start slightly below */
+    transition: height 0.15s ease, opacity 0.7s ease, transform 0.3s ease;
+    pointer-events: none;
+    /* Prevent it from blocking interactions */
+  }
+
+  .search-inputs .error-container.show {
+    z-index: 10;
+    /* Bring it above the inputs when visible */
+    height: 5em;
+    opacity: 1;
+    transform: translateY(0);
+    /* Move to its original position */
+    margin-bottom: 0.44rem;
+    pointer-events: none;
+    /* Allow interactions only when visible */
+  }
+
+  .flight-search-header {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    justify-content: left;
+    max-width: 100%;
+    margin: 0rem;
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+
+  .flight-search-header .flight-type-toggle {
+    background-color: var(--pos-grey);
+    margin-left: 0;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    width: max-content;
+  }
+
+  .departure-error {
+    display: flex;
+    flex-direction: column;
   }
 
   .itinerary-event-container .p-event--desktop-header {
@@ -1861,6 +2033,8 @@ input:checked+.slider:before {
     padding: 1%;
   }
 
+  /*DESKTOP VIEW FOR PLANNERCREATE PLANNER*/
+
   .p-event__wrapper {
     overflow: unset
   }
@@ -1868,7 +2042,6 @@ input:checked+.slider:before {
   .event-desktop-contentBox {
     /* position:relative; */
     margin-top: 5rem;
-    background: var(--gradient-2);
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -1895,7 +2068,7 @@ input:checked+.slider:before {
   }
 
   .event-desktop-contentBox label {
-    position:absolute;
+    position: absolute;
     top: 2rem;
     right: 2rem;
   }
@@ -1905,10 +2078,11 @@ input:checked+.slider:before {
     flex-direction: column;
     justify-content: end;
     align-items: left;
-    width: 20%;
-    max-width: 20%;
+    width: 80%;
     height: 100%;
-    margin: 0 2rem 0 2rem;
+    background: var(--gradient-3);
+    padding-left: 2rem;
+    border-radius: 1.25rem;
   }
 
   .event-desktop-contentBox__info h2 {
@@ -1930,18 +2104,22 @@ input:checked+.slider:before {
 
   .event-desktop-container {
     background-color: var(--pos-inner-yellow);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        box-sizing: border-box;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
   }
 
   /* Wrapper for the file input */
   .file-input-wrapper {
     display: flex;
     align-items: center;
+    width: 20%;
+    max-width: 20%;
+    background: var(--gradient-4);
+    border-radius: 1.25rem;
   }
 
   /* Hide the default file input */
@@ -1949,33 +2127,39 @@ input:checked+.slider:before {
     display: none;
   }
 
-    /* Style the custom label as a button */
+  /* Style the custom label as a button */
   .custom-file-label {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0.75rem 1.5rem;
-    background: var(--top-gradient); /* Use the gradient variable */
+    background: var(--top-gradient);
+    /* Use the gradient variable */
     font-size: 1rem;
     font-weight: bold;
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    color: var(--pos-yellow); /* Ensure text is visible on the gradient */
+    color: var(--pos-yellow);
+    /* Ensure text is visible on the gradient */
     text-align: center;
   }
 
   /* Hover effect */
   .custom-file-label:hover {
-    transform: scale(1.05); /* Slightly enlarge */
-    opacity: 0.9; /* Slightly dim the gradient on hover */
+    transform: scale(1.05);
+    /* Slightly enlarge */
+    opacity: 0.9;
+    /* Slightly dim the gradient on hover */
   }
 
   /* Active effect */
   .custom-file-label:active {
-    transform: scale(0.98); /* Slightly shrink */
-    opacity: 0.8; /* Further dim the gradient on click */
+    transform: scale(0.98);
+    /* Slightly shrink */
+    opacity: 0.8;
+    /* Further dim the gradient on click */
   }
 
   .file-input-wrapper span {
@@ -1997,31 +2181,49 @@ input:checked+.slider:before {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
-    max-width: 100%;
+    width: 90%;
+    max-width: 95%;
     padding: 1rem;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin: 2rem 0 2rem 0;
+    gap:1rem;
   }
 
   .event-form__desktop h2 {
-    all:unset;
+    all: unset;
     color: var(--pos-dark-grey);
     font-size: 2rem;
   }
 
   .event-form__desktop--topbar .p-textfield {
-    width: 100%;
-    height: 1rem;
+    height: 4rem;
     border-radius: 0.375rem;
+    margin: unset;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .event-form__desktop--topbar .p-textfield:hover {
+    border: 0.125rem solid rgb(167, 177, 177);
+  }
+
+  .event-form__desktop--topbar .planner-date .dp__input_wrap {
+    display: flex;
+  }
+
+  .event-form__desktop--topbar .planner-date .dp__input_wrap input {
+    border-radius: 0.375rem;
+    height: 4rem;
+    width: 23rem;
   }
 
   .planner-description {
     width: 80%;
   }
-  .planner-description .p-textfield__textarea-container{
+
+  .planner-description .p-textfield__textarea-container {
     border-radius: 0.375rem;
   }
+
   .evTopMargin {
     margin-top: 1rem;
   }
@@ -2029,4 +2231,220 @@ input:checked+.slider:before {
   .p-event--block-planner {
     overflow: hidden;
   }
+
+  /*SITE ADMIN HOME PAGE CSS =====================================================================================*/
+
+  .home-desktop__admin-search {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 100%;
+    margin: 0.5rem 0 0.5rem 0;
+    align-self: flex-start;
+  }
+
+  .home-desktop__admin-search h1 {
+    position: unset;
+  }
+
+  .home-desktop__admin-search hr {
+    width: 100%;
+    margin: 1rem 0 1rem 0;
+  }
+
+  .home-desktop__admin-searchHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 25rem;
+    max-width: 100%;
+    padding: 0.25rem;
+    margin: 0.5rem 0 0.5rem 0;
+    align-self: flex-start;
+
+  }
+
+  .home-desktop__admin-searchHeader label {
+    font-size: 1.5rem;
+    color: var(--pos-dark-grey);
+    font-weight: 400;
+    margin-right: 1rem;
+  }
+
+  .home-desktop__admin-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 90%;
+    max-width: 100%;
+    padding: 0.5rem;
+  }
+
+  .home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    align-content: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .home-desktop__admin-buttonGrid .p-event--org-block .org-container {
+    height: 10rem;
+    cursor: pointer;
+    background: var(--side-gradient);
+  }
+
+  .home-desktop__admin-buttonGrid .p-event--org-block .org-container:hover {
+    box-shadow: var(--inner-shadow);
+  }
+
+  .home-desktop__admin-buttonGrid .p-event--org-block {
+    width: 100%;
+    margin: unset;
+    padding: unset;
+  }
+
+  .home-desktop__admin-buttonGrid .p-event--org-block .org-container h1 {
+    position: unset;
+    font-weight: 400;
+    color: var(--pos-white);
+  }
+
+  .home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient .p-button {
+    width: 100%;
+    height: 100%;
+    padding: 0.375rem;
+  }
+
+  .home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient .p-button:hover {
+    box-shadow: var(--inner-shadow);
+  }
+
+  .home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient .p-button p {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: transparent;
+  }
+
+  .home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient .p-button .plus-icon {
+    font-size: 3rem;
+    font-weight: 900;
+    padding: unset;
+    margin-top: -0.75rem;
+  }
 }
+
+@media screen and (min-width: 1920px) {
+  .home-desktop__admin-body {
+    width: 60%;
+    max-width: 60%;
+    align-self: flex-start;
+    margin-left: 5rem;
+  }
+}
+
+/*SITE ADMIN HOME PAGE CSS =====================================================================================*/
+
+.register-form input {
+  box-shadow: var(--drop-shadow);
+}
+
+.login-container input {
+  box-shadow: var(--drop-shadow);
+}
+
+/*------------------DESKTOP STYLES OVER 1080p ---------------------*/
+
+@media screen and (min-width: 1920px) {
+
+  .home-desktop h1 {
+    margin-top: 3%;
+    text-align: left;
+    justify-content: left;
+
+  }
+
+
+  /* HOMEPAGES */
+
+  .scroll-wrapper {
+    /* width: 80%;
+    max-width: 80%;
+    align-self: flex-start;
+    margin-left: 10rem; */
+  }
+
+  .p-event__container-desktop {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  hr {
+    /* width: 60%;
+    max-width: 60%; */
+    /* align-self: flex-start;
+    margin-left: 10rem; */
+    /* margin-right:auto */
+  }
+
+  /* REGISTRATION */
+  .register-form {
+    align-self: flex-start;
+    margin-left: 10rem;
+    /* background: var(--top-gradient); */
+    margin: 1.5rem 3rem 0.5rem 3rem;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+    height: 95vh;
+    border-radius: 0.9375rem;
+    /* box-shadow: var(--drop-shadow); */
+  }
+
+  .exit-icon {
+    position: absolute;
+    left: 29rem;
+    /* 11px */
+    top: 0.75rem;
+    /* 11px */
+    cursor: pointer;
+  }
+
+
+  /* LOGIN */
+  .login-container {
+    width: 25rem;
+    align-self: flex-start;
+    margin-left: 10rem;
+    /* background: var(--top-gradient); */
+    margin: 1.5rem 3rem 0.5rem 3rem;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+    height: 95vh;
+    border-radius: 0.9375rem;
+    /* box-shadow: var(--drop-shadow); */
+  }
+
+
+  /* PLANNERCREATE */
+  .event-desktop-contentBox {
+    width: 60%;
+    max-width: 70rem;
+    align-self: flex-start;
+    margin-left: 10rem;
+  }
+
+  .event-form__desktop {
+    width: 60%;
+    max-width: 70rem;
+    align-self: flex-start;
+    margin-left: 10rem;
+    align-items: unset;
+  }
+
+  .event-form__desktop--topbar {
+    width: 70rem;
+    margin-left: -1rem;
+  }
+  
+}}
