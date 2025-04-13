@@ -37,6 +37,7 @@ const errors = ref({ date: '', location: '' })
 const roundtripRange = ref(null)
 const showInviteModal = ref(false)
 const isMobile = ref(window.innerWidth <= 768);
+const userInfo = ref({});
 
 // const editableName = ref(eventStore.currentEvent.eventName)
 // const editableStartDate = ref(eventStore.currentEvent.startDate)
@@ -304,11 +305,109 @@ const goToInvitePage = () => {
 
 //  console.log(bookingData.itinerary[0])
 
+const isModalVisible = ref(false)
+
+// Function to open the modal
+const openModal = async () => {
+    await fetchUserData();
+    isModalVisible.value = true
+}
+
+// Function to close the modal
+const closeModal = () => {
+    isModalVisible.value = false
+}
+
+
+
+// Function to handle modal option selection
+const handleModalOption = async (option) => {
+    console.log(`Selected option: ${option}`)
+    if (option === 'Logout') {
+        try {
+            const response = await api.apiFetch('/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                userStore.$reset() // Reset the user store
+                localStorage.clear() // Clear local storage
+                router.push({ name: 'Login' }) // Redirect to login page
+            }
+        } catch (error) {
+            console.error('Failed to logout:', error)
+        }
+    } else if (option === 'Edit') {
+        router.push({ name: 'EditUser' })
+    }
+    closeModal()
+}
+
+const fetchUserData = async () => {
+    try {
+        const response = await api.apiFetch(`/user/${userStore.user_id}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            userInfo.value = await response.json();
+        } else {
+            console.error('Failed to fetch user data');
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+};
+
 </script>
 
 <template>
     <!-----------------------------------------------------------MODAL------------------------------------------------------------>
+    <template v-if="isModalVisible && !isMobile">
+        <div>
+            <div class="modal-overlay" @click="closeModal"></div>
+            <div class="modal modal-container">
+                <div class="modal-profile">
+                    <div class="modal-profile-img-name">
+                        <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
+                        <PProfilePic design="big" :profileImage='userStore.profile_picture' />
+                        <div class="modal-profile-title-org">
+                            <h5>{{ userStore.role_id }}</h5>
+                            <p>{{ userStore.org.name }}</p>
+                        </div>
+                    </div>
 
+                    <div class="modal-profile-info-container">
+                        <div class="modal-profile-info">
+                            <div class="profile-content">
+                                <h5>Email</h5>
+                                <p>{{ userStore.email }}</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Phone</h5>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+                                    }}</p>
+                            </div>
+
+                            <div class="profile-content">
+                                <h5>Gender</h5>
+                                <p v-if="userInfo.gender == 'm'">Male</p>
+                                <p v-else>Female</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Date of Birth</h5>
+                                <p>{{ format(userInfo.dob, 'MMMM do, yyyy') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-profile-options">
+                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')" />
+                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
     <!-- -----------------------------------------------------------DESKTOP------------------------------------------------------->
 
     <template v-if="editView && !isMobile">

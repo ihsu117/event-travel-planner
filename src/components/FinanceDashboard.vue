@@ -16,7 +16,7 @@ const flightStore = useFlightStore()
 const userStore = useUserStore()
 const router = useRouter()
 const userInfo = ref({});
-
+const loading = ref(false)
 
 const isApproveModalVisible = ref(false)
 const flightSelected = ref(null)
@@ -77,6 +77,7 @@ const checkAndLoadEvent = () => {
 }
 
 onMounted(async () => {
+    loading.value = true;
     checkAndLoadEvent()
     try {
         const response = await api.apiFetch(`/flights/eventflights/${eventStore.currentEvent.id}`, {
@@ -88,7 +89,7 @@ onMounted(async () => {
         })
         if (response.ok) {
             flightStore.setEventFlightResults(response.json())
-
+            loading.value = false;
         }
     } catch (error) {
         console.error('Failed to fetch flights:', error)
@@ -331,23 +332,6 @@ const formatTimestamp = (timestamp) => {
   });
 };
 
-const eventHistoryOpen = (event) => {
-    console.log('clickedme')
-    // Get the clicked <li> element
-    const parentLi = event.target.closest('li');
-
-    if (parentLi) {
-        // Find the child <ul> element within the clicked <li>
-        const childUl = parentLi.querySelector('ul');
-        console.log(childUl)
-
-        if (childUl) {
-            // Toggle the 'open' class on the child <ul>
-            childUl.classList.toggle('open');
-        }
-    }
-};
-
 </script>
 
 <template>
@@ -411,130 +395,137 @@ const eventHistoryOpen = (event) => {
                 :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header"
                 @back-click="() => handleBack('Home')" />
 
-            <div class="event-desktop-content">
-                <div class="event-date-desktop">
-                    <h2>Description</h2>
-                    <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
-                </div>
-                <div class="budget-card">
-                    <div class="budget-card-header">
-                        <h3>Event Budget Settings</h3>
-                        <svg @click="openEditModal" class="budget-edit-icon" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M8.707 19.707L18 10.414L13.586 6l-9.293 9.293a1 1 0 0 0-.263.464L3 21l5.242-1.03c.176-.044.337-.135.465-.263M21 7.414a2 2 0 0 0 0-2.828L19.414 3a2 2 0 0 0-2.828 0L15 4.586L19.414 9z" />
-                        </svg>
+            <div class="finance-desktop-content">
+                <div class="finance-event-info">
+                    <div class="finance-event-desc">
+                        <h2>Description</h2>
+                        <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
-                    <div class="budget-card-row">
-                        <span class="budget-card-label">Budget:</span>
-                        <span class="budget-card-value budget-green">
-                            {{ new Intl.NumberFormat('en-US', {
-                                style: 'currency', currency: 'USD'
-                            }).format(eventStore.currentEvent.maxBudget) }}
-                        </span>
-                    </div>
-                    <div class="budget-card-row">
-                        <span class="budget-card-label">Auto Approve:</span>
-                        <span class="budget-card-value">
-                            {{ eventStore.currentEvent.autoapprove ? 'Enabled' : 'Disabled' }}
-                        </span>
-                    </div>
-                    <div class="budget-card-row" v-if="eventStore.currentEvent.autoapprove">
-                        <span class="budget-card-label">Threshold:</span>
-                        <span class="budget-card-value">
-                            {{ new Intl.NumberFormat('en-US', {
-                                style: 'currency', currency: 'USD'
-                            }).format(eventStore.currentEvent.autoapprove_threshold) }}
-                        </span>
-                    </div>
-                </div>
-
-                <div v-if="isEditModalVisible">
-                    <div class="modal-overlay" @click="closeEditModal"></div>
-                    <div class="modal budget-modal">
-                        <h2 class="modal-title">Set Budget</h2>
-
-                        <label class="modal-label" for="budget-amount">Amount</label>
-                        <PTextField v-model="editModalBudget" id="budget-amount" class="modal-input" type="number"
-                            placeholder="Enter amount" />
-
-                        <label class="modal-label">Auto Approve</label>
-                        <label class="switch">
-                            <input type="checkbox" v-model="editModalAuto" />
-                            <span class="slider round"></span>
-                        </label>
-
-                        <div v-if="editModalAuto" class="threshold-container">
-                            <label class="modal-label" for="threshold">Threshold</label>
-                            <PTextField v-model="editModalThreshold" id="threshold" class="modal-input" type="number"
-                                placeholder="Enter threshold" />
+                    <div class="budget-card">
+                        <div class="budget-card-header">
+                            <h3>Event Budget Settings</h3>
+                            <svg @click="openEditModal" class="budget-edit-icon" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M8.707 19.707L18 10.414L13.586 6l-9.293 9.293a1 1 0 0 0-.263.464L3 21l5.242-1.03c.176-.044.337-.135.465-.263M21 7.414a2 2 0 0 0 0-2.828L19.414 3a2 2 0 0 0-2.828 0L15 4.586L19.414 9z" />
+                            </svg>
                         </div>
-
-                        <div class="modal-options">
-                            <PButton design="gradient-small" label="Save" @click="saveUpdatedValue"></PButton>
+                        <div class="budget-card-row">
+                            <span class="budget-card-label">Budget:</span>
+                            <span class="budget-card-value budget-green">
+                                {{ new Intl.NumberFormat('en-US', {
+                                    style: 'currency', currency: 'USD'
+                                }).format(eventStore.currentEvent.maxBudget) }}
+                            </span>
+                        </div>
+                        <div class="budget-card-row">
+                            <span class="budget-card-label">Auto Approve:</span>
+                            <span class="budget-card-value">
+                                {{ eventStore.currentEvent.autoapprove ? 'Enabled' : 'Disabled' }}
+                            </span>
+                        </div>
+                        <div class="budget-card-row" v-if="eventStore.currentEvent.autoapprove">
+                            <span class="budget-card-label">Threshold:</span>
+                            <span class="budget-card-value">
+                                {{ new Intl.NumberFormat('en-US', {
+                                    style: 'currency', currency: 'USD'
+                                }).format(eventStore.currentEvent.autoapprove_threshold) }}
+                            </span>
                         </div>
                     </div>
-                </div>
 
-                <div v-if="isApproveModalVisible">
-                    <div class="modal-overlay" @click="closeApproveModal"></div>
-                    <div class="modal">
+                    <div v-if="isEditModalVisible">
+                        <div class="modal-overlay" @click="closeEditModal"></div>
+                        <div class="modal budget-modal">
+                            <h2 class="modal-title">Set Budget</h2>
 
-                        <!-- <div>{{flightSelected}}</div> -->
-                        <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
-                            :price="flightSelected.price" :airline="flightSelected.airline" :flightDate="flightSelected.flightDate"
-                            :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime"
-                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" :passangerName="flightSelected.owner"
-                            design="finance" style=""></PFlight>
+                            <label class="modal-label" for="budget-amount">Amount</label>
+                            <PTextField v-model="editModalBudget" id="budget-amount" class="modal-input" type="number"
+                                placeholder="Enter amount" />
 
-                        <div class="modal-options">
-                            <h2 class="modal-approve" @click="handleApproveModalOption('Approve')">Approve</h2>
-                            <h2 class="modal-deny" @click="handleApproveModalOption('Deny')">Deny</h2>
+                            <label class="modal-label">Auto Approve</label>
+                            <label class="switch">
+                                <input type="checkbox" v-model="editModalAuto" />
+                                <span class="slider round"></span>
+                            </label>
+
+                            <div v-if="editModalAuto" class="threshold-container">
+                                <label class="modal-label" for="threshold">Threshold</label>
+                                <PTextField v-model="editModalThreshold" id="threshold" class="modal-input" type="number"
+                                    placeholder="Enter threshold" />
+                            </div>
+
+                            <div class="modal-options">
+                                <PButton design="gradient-small" label="Save" @click="saveUpdatedValue"></PButton>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="isApproveModalVisible">
+                        <div class="modal-overlay" @click="closeApproveModal"></div>
+                        <div class="modal">
+
+                            <!-- <div>{{flightSelected}}</div> -->
+                            <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
+                                :price="flightSelected.price" :airline="flightSelected.airline" :flightDate="flightSelected.flightDate"
+                                :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime"
+                                :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" :passangerName="flightSelected.owner"
+                                design="finance" style=""></PFlight>
+
+                            <div class="modal-options">
+                                <h2 class="modal-approve" @click="handleApproveModalOption('Approve')">Approve</h2>
+                                <h2 class="modal-deny" @click="handleApproveModalOption('Deny')">Deny</h2>
+                            </div>
                         </div>
                     </div>
                 </div>
+                
+                <div class="finance-items-cont">
+                    <div class="finance-item">
+                        <h3>Waiting for Approval</h3>
+                        <div class="finance-approval-cont">
+                            <PFlight v-for="(flight, index) in flightStore.flightResults"
+                                :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
+                                :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
+                                :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
+                                :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
+                                :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
+                                :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.itinerary.logoURL"
+                                :flightID="String(flight.flightID)" @click="openApproveModal(flight)" />
+                        </div>
 
-            </div>
+                        <div v-if="!loading && flightStore.flightResults.length == 0" style="color: black;">
+                            <p>No approvals at the moment! :)</p>
+                        </div>
+                    </div>
 
-            <div class="finance-flight-cont">
                 <div class="flight-container">
-                    <h3>Waiting for Approval</h3>
-                    <Button class="hiddenB"></Button>
-                    <div class="p-event__container">
-                        <PFlight v-for="(flight, index) in flightStore.flightResults"
-                            :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
-                            :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
-                            :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
-                            :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
-                            :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.itinerary.logoURL"
-                            :flightID="String(flight.flightID)" @click="openApproveModal(flight)" />
+                    <div class="finance-item">
+                        <div class="finance-flight-title">
+                            <h3>Transaction History</h3>
+                            <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
+                        </div>
                     </div>
-                </div>
-
-                <div class="flight-container">
-                    <h3>Transaction History</h3>
-                    <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
                     <div class="p-event__container--history">
                         <div v-if="eventHistory.length > 0">
-                            <ul class="event-history">
-                                <li v-for="(event, index) in eventHistory" :key="index" @click="eventHistoryOpen">
-                                    {{ formatTimestamp(event.lastEdited)}} - {{ event.updater.firstName[0] }}, {{ event.updater.lastName }}
-                                    <ul>
-                                       <li>Budget: {{event.originalBudget || 'N/A'}} → {{event.updatedBudget || 'N/A'}}</li>
-                                       <li>Auto-Approve: {{event.updatedAutoApprove}}</li>
-                                       <li>Threshold: {{event.updatedAutoApprovethreshold  || 'Disabled'}}</li>
-                                    </ul>
-                                </li>
-                            </ul>
+                            <div v-for="(event, index) in eventHistory" :key="index">
+                                {{ formatTimestamp(event.lastEdited)}} 
+                                {{ event.updater.firstName }}
+                                {{ event.updater.lastName }}
+                                {{event.originalBudget || 'N/A'}} 
+                                {{event.updatedBudget || 'N/A'}}
+                                {{event.updatedAutoApprove}}
+                                {{event.updatedAutoApprovethreshold  || 'Disabled'}}
+                            </div>
                         </div>
                         <div v-else>
                             <p>No event history available.</p>
                         </div>
                     </div>
                 </div>
-            </div>
 
+                </div>
+            </div>
         </div>
     </template>
 
