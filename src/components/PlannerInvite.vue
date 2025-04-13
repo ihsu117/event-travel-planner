@@ -523,7 +523,7 @@ const updateScreenSize = () => {
 
                     <PFinanceBlock design="invite" v-for="user in invitedUsers" :key="user.id"
                         :name="(user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : user.email"
-                        :email="user.email" :profileImage="user.profilePicture"/>
+                        :email="user.email" :profileImage="user.profilePic"/>
                 </div>
 
                 <div>
