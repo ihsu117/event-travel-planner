@@ -331,23 +331,6 @@ const formatTimestamp = (timestamp) => {
   });
 };
 
-const eventHistoryOpen = (event) => {
-    console.log('clickedme')
-    // Get the clicked <li> element
-    const parentLi = event.target.closest('li');
-
-    if (parentLi) {
-        // Find the child <ul> element within the clicked <li>
-        const childUl = parentLi.querySelector('ul');
-        console.log(childUl)
-
-        if (childUl) {
-            // Toggle the 'open' class on the child <ul>
-            childUl.classList.toggle('open');
-        }
-    }
-};
-
 </script>
 
 <template>
@@ -517,7 +500,7 @@ const eventHistoryOpen = (event) => {
                     <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
                     <div class="p-event__container--history">
                         <div v-if="eventHistory.length > 0">
-                            <div v-for="(event, index) in eventHistory" :key="index" @click="eventHistoryOpen">
+                            <div v-for="(event, index) in eventHistory" :key="index">
                                 {{ formatTimestamp(event.lastEdited)}} 
                                 {{ event.updater.firstName }}
                                 {{ event.updater.lastName }}
