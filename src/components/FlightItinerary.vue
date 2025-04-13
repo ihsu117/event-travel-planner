@@ -215,7 +215,7 @@ console.log("ITINERARIES: ", itineraries.value)
   <template v-if="!isMobile">
     <div class="home-desktop">
       <div class="home-header-desktop">
-        <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
+        <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
       </div>
 
       <div v-if="$route?.query?.type !== 'bookingSummary'">

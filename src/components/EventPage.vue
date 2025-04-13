@@ -412,7 +412,7 @@ const fetchUserData = async () => {
     <template v-if="editView && !isMobile">
         <div class="home-header-desktop">
             <div class="home-header__text-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
             </div>
         </div>
         <div class="event-desktop-container">
@@ -485,7 +485,7 @@ const fetchUserData = async () => {
     <template v-if="userStore.role_id == 'Event Planner' && !editView && !isMobile">
         <div class="event-page-desktop">
             <div class="home-header-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
             </div>
             <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                 :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
@@ -541,7 +541,7 @@ const fetchUserData = async () => {
     <template v-if="userStore.role_id == 'Attendee' && !editView && !isMobile">
         <div class="event-page-desktop">
             <div class="home-header-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton />
             </div>
             <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                 :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"

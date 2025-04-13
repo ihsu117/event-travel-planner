@@ -3,7 +3,7 @@ export { default as PlannerInvite } from './PlannerInvite.vue'
 </script>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { PButton, PTextField, PFinanceBlock, PEvent } from '@poseidon-components'
 import { useEventStore } from '../stores/eventStore.js'

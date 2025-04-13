@@ -387,7 +387,7 @@ const formatTimestamp = (timestamp) => {
     <template v-if="!isMobile && (isFinance || isEventPlanner || isAdmin || isSiteAdmin)">
         <div class="finance-dashboard-desktop">
             <div class="home-header-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
             </div>
 
             <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"

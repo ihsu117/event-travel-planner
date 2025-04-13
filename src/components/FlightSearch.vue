@@ -269,7 +269,7 @@ onUnmounted(() => {
   <template v-if="!isMobile">
     <div class="home-header-desktop">
       <div class="home-header__text-desktop">
-        <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
+        <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
       </div>
     </div>
     <div class="flight-desktop-search">

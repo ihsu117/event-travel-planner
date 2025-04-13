@@ -94,7 +94,7 @@ const returnItineraries = computed(() => {
     <template v-if="!isMobile">
         <div class="home-desktop">
             <div class="home-header-desktop">
-                <HeaderBar :openModal="openModal" :profileImage="userStore.profile_picture" />
+                <HeaderBar :openModal="openModal" :profileImage="userStore.profile_picture" backButton/>
             </div>
             <div class="itnry-container">
                 <h1>Departing Itinerary</h1>
