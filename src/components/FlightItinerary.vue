@@ -259,10 +259,10 @@ console.log("ITINERARIES: ", itineraries.value)
             <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="itinerary.carrier" :originCity="itinerary.origin_city" :destinationCity="itinerary.destination_city" :flightDepTime="itinerary.departure_time"
               :logoURL="flightStore.currentFlight.logoURL" :flightArrTime="itinerary.arrival_time"
               :flightNumber="itinerary.flight_num" :flightClass="itinerary.class"
-              :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="itineraries.length"
+              :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="flightStore.itineraries[0].length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
-            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+            <PFlight v-if="index !== flightStore.itineraries[0].length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 
@@ -271,10 +271,10 @@ console.log("ITINERARIES: ", itineraries.value)
             <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="itinerary.carrier" :originCity="itinerary.origin_city" :destinationCity="itinerary.destination_city" :flightDepTime="itinerary.departure_time"
               :logoURL="flightStore.currentFlight.logoURL" :flightArrTime="itinerary.arrival_time"
               :flightNumber="itinerary.flight_num" :flightClass="itinerary.class"
-              :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="itineraries.length"
+              :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="flightStore.itineraries[1].length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
-            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+            <PFlight v-if="index !== flightStore.itineraries[1].length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 
