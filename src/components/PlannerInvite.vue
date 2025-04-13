@@ -512,7 +512,7 @@ onMounted(() => {
 
                     <PFinanceBlock design="invite" v-for="user in invitedUsers" :key="user.id"
                         :name="(user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : user.email"
-                        :email="user.email" :profileImage="user.profile_picture"/>
+                        :email="user.email" :profileImage="user.profilePicture"/>
                 </div>
 
                 <div>
