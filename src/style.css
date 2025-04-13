@@ -407,7 +407,6 @@ body {
   justify-content: center;
   max-width: 100%;
   background-color: var(--pos-inner-yellow);
-  padding-bottom: 1rem;
 }
 
 .finance-info {

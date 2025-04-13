@@ -384,7 +384,7 @@ const fetchUserData = async () => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -546,6 +546,38 @@ const fetchUserData = async () => {
             <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                 :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
                 :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" />
+
+
+
+            <div v-if="bookingData" class="holding-flights">
+                <h2>Your Flight: {{ bookingData.status.name }}</h2>
+                <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
+                    <PFlight design="desktop-block" :airline="bookingItinerary.airline"
+                        :logoURL="bookingItinerary.logoURL" :price="bookingPrice" :flightClass="segment.class"
+                        :flightType="segment.flight_type" :seat :origin="segment.origin"
+                        :destination="segment.destination" :flightDate="new Date(segment.departure_time)"
+                        :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time"
+                        :flightDuration="segment.duration" @click="handleFlightClick(flightStore.currentFlight)" />
+                </div>
+            </div>
+
+            <div v-else class="event-desktop-search">
+                <!--Search Bar-->
+                <div class="flight-search-header">
+                    <h2>Flight Search</h2>
+                    <div class="flight-type-toggle">
+                        <button :class="['flight-btn', flightType === 0 ? 'active' : '']" @click="flightType = 0">
+                            One way
+                        </button>
+                        <button :class="['flight-btn', flightType === 1 ? 'active' : '']" @click="flightType = 1">
+                            Round trip
+                        </button>
+                    </div>
+                </div>
+
+                
+            </div>
+            <hr>
             <div class="event-desktop-content">
                 <div class="event-date-desktop">
                     <h2>Date</h2>
@@ -575,59 +607,6 @@ const fetchUserData = async () => {
                 </div>
             </div>
 
-            <hr>
-
-            <div v-if="!bookingData" class="event-desktop-search">
-                <!--Search Bar-->
-                <div class="flight-search-header">
-                    <h2>Flight Search</h2>
-                    <div class="flight-type-toggle">
-                        <button :class="['flight-btn', flightType === 0 ? 'active' : '']" @click="flightType = 0">
-                            One way
-                        </button>
-                        <button :class="['flight-btn', flightType === 1 ? 'active' : '']" @click="flightType = 1">
-                            Round trip
-                        </button>
-                    </div>
-                </div>
-
-                <div class="search-inputs">
-                    <div class="autocomplete-wrapper">
-                        <!-- Your SVG icon -->
-                        <svg class="map-icon" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
-                            viewBox="0 0 24 24">
-                            <path fill="#a9a9a9"
-                                d="m12 20.9l4.95-4.95a7 7 0 1 0-9.9 0zm0 2.828l-6.364-6.364a9 9 0 1 1 12.728 0zM12 13a2 2 0 1 0 0-4a2 2 0 0 0 0 4m0 2a4 4 0 1 1 0-8a4 4 0 0 1 0 8" />
-                        </svg>
-                        <!-- VueGoogleAutocomplete component -->
-                        <VueGoogleAutocomplete class="p-textfield" id="map" types="airport" country="us"
-                            classname="form-control" placeholder="Departure Airport"
-                            v-on:placechanged="handlePlaceChanged" required />
-                    </div>
-                    <VueDatePicker v-if="flightType === 0" v-model="departDate" :min-date="isToday"
-                        :enable-time-picker="false" :placeholder="'Departure Date'" exactMatch="true"
-                        :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
-                        @update:model-value="handleOneWayDate"></VueDatePicker>
-
-                    <VueDatePicker v-if="flightType === 1" :range="true" :min-date="isToday" :enable-time-picker="false"
-                        v-model="roundtripRange" format='MM/dd/yyyy' :placeholder="'Departure & Return Dates'"
-                        :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
-                        @update:model-value="handleRoundtripDate">
-                    </VueDatePicker>
-                    <PButton design="gradient" label="Search" @click="toFlightSearch" />
-                </div>
-            </div>
-            <div v-if="bookingData" class="holding-flights">
-                <h2>Your Flight: {{ bookingData.status.name }}</h2>
-                <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
-                    <PFlight design="desktop-block" :airline="bookingItinerary.airline"
-                        :logoURL="bookingItinerary.logoURL" :price="bookingPrice" :flightClass="segment.class"
-                        :flightType="segment.flight_type" :seat :origin="segment.origin"
-                        :destination="segment.destination" :flightDate="new Date(segment.departure_time)"
-                        :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time"
-                        :flightDuration="segment.duration" @click="handleFlightClick(flightStore.currentFlight)" />
-                </div>
-            </div>
         </div>
 
     </template>
