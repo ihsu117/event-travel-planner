@@ -112,8 +112,7 @@ const handleBack = (targetRoute) => {
 
 //Function to handle the flight click
 const handleFlightClick = (flight) => {
-    flightStore.setCurrentFlight(flight)
-    router.push({ name: 'FlightItinerary' })
+    router.push({ name: 'BookingItinerary', query: {eventID: eventStore.currentEvent.id} })
 }
 
 //Function to search for flights with Duffel API
