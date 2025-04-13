@@ -1614,7 +1614,7 @@ input:checked+.slider:before {
     position: relative;
     display: flex;
     align-items: center;
-    width: 95%;
+    width: 100%;
     overflow: hidden;
     border-radius: 15%;
   }
@@ -2130,4 +2130,138 @@ input:checked+.slider:before {
   .p-event--block-planner {
     overflow: hidden;
   }
+}
+/*SITE ADMIN HOME PAGE CSS =====================================================================================*/
+
+.home-desktop__admin-search {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  margin: 0.5rem 0 0.5rem 0;
+  align-self: flex-start;
+}
+
+.home-desktop__admin-search h1 {
+  position: unset;
+}
+.home-desktop__admin-search hr {
+  width: 100%;
+  margin: 1rem 0 1rem 0;
+}
+
+.home-desktop__admin-searchHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 25rem;
+  max-width: 100%;
+  padding: 0.25rem;
+  margin: 0.5rem 0 0.5rem 0;
+  align-self: flex-start;
+
+}
+.home-desktop__admin-searchHeader label {
+  font-size: 1.5rem;
+  color: var(--pos-dark-grey);
+  font-weight: 400;
+  margin-right: 1rem;
+}
+
+.home-desktop__admin-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 90%;
+  max-width: 100%;
+  padding: 0.5rem;
+}
+
+.home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  align-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.home-desktop__admin-buttonGrid .p-event--org-block .org-container {
+  height: 10rem;
+  cursor: pointer;
+  background: var(--side-gradient);
+}
+
+.home-desktop__admin-buttonGrid .p-event--org-block .org-container:hover {
+  box-shadow: var(--inner-shadow);
+}
+
+.home-desktop__admin-buttonGrid .p-event--org-block {
+  width: 100%;
+  margin: unset;
+  padding: unset;
+}
+
+.home-desktop__admin-buttonGrid .p-event--org-block .org-container h1{
+  position:unset;
+  font-weight: 400;
+  color: var(--pos-white);
+}
+
+.home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient .p-button{
+  width: 100%;
+  height: 100%;
+  padding: 0.375rem;
+}
+
+.home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient .p-button:hover{
+  box-shadow: var(--inner-shadow);
+}
+
+.home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient .p-button p{
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: transparent;
+}
+
+.home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient .p-button .plus-icon{
+  font-size: 3rem;
+  font-weight: 900;
+  padding: unset;
+  margin-top: -0.75rem;
+}
+
+@media screen and (min-width: 1920px) {
+  .home-desktop__admin-body {
+    width: 60%;
+    max-width: 60%;
+    align-self: flex-start;
+    margin-left: 5rem;
+  }
+  
+}
+
+/*SITE ADMIN HOME PAGE CSS =====================================================================================*/
+
+@media screen and (min-width: 1920px) {
+  .scroll-wrapper{
+    width: 60%;
+    max-width: 60%;
+    align-self: flex-start;
+    margin-left: 10rem;
+  }
+  .p-event__container-desktop {
+    width:100%;
+    overflow-x: auto;
+  }
+  hr {
+    width: 60%;
+    max-width: 60%;
+    align-self: flex-start;
+    margin-left: 10rem;
+    margin-right:auto
+  }
+
 }
