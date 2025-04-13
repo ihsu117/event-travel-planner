@@ -303,7 +303,7 @@ const backgroundImageStyle = computed(() => {
                 </div>
                 <div class="planner-event-destination">
                     <h2>Destination</h2>
-                    <PTextField label="Event Name" v-model="destinationCode" />
+                    <!-- <PTextField label="Event Name" v-model="destinationCode" /> -->
                     <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
                         classname="form-control" placeholder="Destination Airport"
                         v-on:placechanged="handlePlaceChanged">
@@ -335,8 +335,26 @@ const backgroundImageStyle = computed(() => {
                 <div class="planner-event-picture">
                     <h2>Picture</h2>
                     <!-- File input for image upload -->
-                    <input type="file" accept="image/*" @change="handleImageUpload" />
-                    <p v-if="pictureLink">Image uploaded successfully!</p>
+                    <div class="planner-event-picture-display" :style="{
+                        backgroundImage: `var(--side-gradient), url(${pictureLink})`,
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center'
+                        }">
+                        <div class="file-input-wrapper">
+                            <label for="file-upload" class="custom-file-label">
+                                <span>Add Image</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4z" />
+                                </svg>
+                            </label>
+
+                            <input type="file" id="file-upload" accept="image/*" @change="handleImageUpload" />
+                        </div>
+                    </div>
+                    <!-- <input type="file" accept="image/*" @change="handleImageUpload" />
+                    <p v-if="pictureLink">Image uploaded successfully!</p> -->
                 </div>
                 <div class="planner-event-budget">
                     <h2>Max Budget</h2>
