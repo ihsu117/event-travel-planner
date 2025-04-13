@@ -1985,6 +1985,7 @@ input:checked+.slider:before {
     max-width: 100%;
     margin: 0rem;
     margin-top: 2rem;
+    margin-bottom: 2rem;
     gap: 1rem;
   }
 

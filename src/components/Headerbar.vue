@@ -26,12 +26,18 @@ const router = useRouter()
 const goHome = () => {
     router.push({ name: 'Home' })
 }
+
+const handleBack = () => {
+    router.go(-1); // Navigate to the previous page in the browser's history
+};
+
 </script>
 
 <template>
     <div class="home-header-desktop" style="display:flex; align-items: center;">
 
-        
+        <svg v-show="backButton" @click="handleBack" class="header-back-icon" xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 1024 1024"><path fill="#fff" d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64"/><path fill="#fff" d="m237.248 512l265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312z"/></svg>
+
         <div class="home-header__text-desktop">
             <p>Welcome, {{ userStore.first_name }}!</p>
             <p class="role-bubble">{{ userStore.role_id }}</p>
@@ -61,6 +67,17 @@ const goHome = () => {
 }
 
 .home-icon:hover {
+    transform: scale(1.1);
+}
+
+.header-back-icon {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-left: 1.5rem;
+}
+
+.header-back-icon:hover {
     transform: scale(1.1);
 }
 
