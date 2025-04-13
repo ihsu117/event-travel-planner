@@ -26,6 +26,7 @@ const description = ref('')
 const destinationCode = ref('')
 const startDate = ref('')
 const endDate = ref('')
+const dateRange = ref([])
 const pictureLink = ref('') // This will hold the base64-encoded image
 const maxBudget = ref('')
 const eventStore = useEventStore()
@@ -207,6 +208,44 @@ const createEvent = async () => {
     }
 }
 
+const createEventDesktop = async () => {
+    try {
+        const eventData = {
+            name: eventName.value,
+            description: description.value,
+            startDate: formatDateForBackend(dateRange.value[0]),
+            endDate: formatDateForBackend(dateRange.value[1]),
+            // destinationCode: destinationCode.value,
+            lat: latitude.value,
+            long: longitude.value,
+            pictureLink: pictureLink.value, // Send the base64-encoded image
+            maxBudget: maxBudget.value,
+            financeMan: {},
+            autoApprove: Boolean(false),
+        }
+
+        const response = await api.apiFetch('/events', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(eventData),
+            credentials: 'include'
+        })
+
+        if (response.ok) {
+            const result = await response.json()
+            console.log('Event created successfully:', result)
+            toEventPage(result.eventId)
+
+        } else {
+            console.error('Failed to create event:', await response.json())
+        }
+    } catch (error) {
+        console.error('Error creating event:', error)
+    }
+}
+
 const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
@@ -242,6 +281,13 @@ const handlePlaceChanged = (place) => {
     longitude.value = place.longitude;
     console.log('Selected Location:', place);
 }
+
+// Computed style for the background image
+const backgroundImageStyle = computed(() => {
+  return pictureLink.value
+    ? { backgroundImage: `url(${pictureLink.value})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : {};
+});
 
 </script>
 
@@ -421,8 +467,15 @@ const handlePlaceChanged = (place) => {
                         </VueDatePicker>
                     </div>
                     <div class="planner-event-budget">
-                        <h2>Max Budget</h2>
-                        <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" required />
+                        <h2>Budget</h2>
+                        <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" placeholder="$00000" required />
+                    </div>
+                    <div class="planner-event-destination">
+                        <h2>Locale</h2>
+                        <vue-google-autocomplete class="p-textfield" id="map"
+                            types="airport" country="us" classname="form-control" placeholder="Enter Address"
+                            v-on:placechanged="handlePlaceChanged" required>
+                        </vue-google-autocomplete>
                     </div>
                 </div>
 
@@ -435,7 +488,7 @@ const handlePlaceChanged = (place) => {
                 <br>
                 <br>
                 <div class="submitDiv">
-                    <PButton label="Create Event" @click="createEvent" design="gradient"></PButton>
+                    <PButton label="Create Event" @click="createEventDesktop" design="gradient"></PButton>
                 </div>
             </div>
         </div>

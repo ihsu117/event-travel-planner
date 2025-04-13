@@ -22,7 +22,7 @@ const bookingData = ref(null)
 const isMobile = ref(window.innerWidth <= 768);
 
 const updateScreenSize = () => {
-  isMobile.value = window.innerWidth <= 768;
+    isMobile.value = window.innerWidth <= 768;
 };
 
 // Call the function when the component is mounted
@@ -35,6 +35,10 @@ onMounted(async () => {
 onUnmounted(() => {
     window.removeEventListener('resize', updateScreenSize);
 })
+
+const handleBack = (targetRoute) => {
+  router.push({ name: targetRoute });
+}
 
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
 const checkAndLoadFlightBooking = async () => {
@@ -51,7 +55,7 @@ const checkAndLoadFlightBooking = async () => {
                 bookingData.value = flightData
                 console.log(bookingData.value)
             }
-                
+
         } catch (error) {
             console.error('Failed to fetch current booking data:', error)
         }
@@ -59,36 +63,35 @@ const checkAndLoadFlightBooking = async () => {
 }
 
 const departItineraries = computed(() => {
-  const flightItinerary = bookingData?.value?.itinerary.itinerary;
-  if (!flightItinerary || !flightItinerary.length) return [];
+    const flightItinerary = bookingData?.value?.itinerary.itinerary;
+    if (!flightItinerary || !flightItinerary.length) return [];
 
-  const firstItem = flightItinerary[0];
-  // If there's a nested itinerary array, use it; otherwise, assume flightItinerary is already the segments array.
-  if (firstItem.itinerary && Array.isArray(firstItem.itinerary) && firstItem.itinerary.length > 0) {
-    return firstItem.itinerary;
-  }
+    const firstItem = flightItinerary[0];
+    // If there's a nested itinerary array, use it; otherwise, assume flightItinerary is already the segments array.
+    if (firstItem.itinerary && Array.isArray(firstItem.itinerary) && firstItem.itinerary.length > 0) {
+        return firstItem.itinerary;
+    }
 
-  return flightItinerary;
+    return flightItinerary;
 });
 
 const returnItineraries = computed(() => {
-  const flightItinerary = bookingData?.value?.itinerary.itinerary;
-  if (!flightItinerary || !flightItinerary.length) return [];
+    const flightItinerary = bookingData?.value?.itinerary.itinerary;
+    if (!flightItinerary || !flightItinerary.length) return [];
 
-  const firstItem = flightItinerary[1];
-  // If there's a nested itinerary array, use it; otherwise, assume flightItinerary is already the segments array.
-  if (firstItem.itinerary && Array.isArray(firstItem.itinerary) && firstItem.itinerary.length > 0) {
-    return firstItem.itinerary;
-  }
+    const firstItem = flightItinerary[1];
+    // If there's a nested itinerary array, use it; otherwise, assume flightItinerary is already the segments array.
+    if (firstItem.itinerary && Array.isArray(firstItem.itinerary) && firstItem.itinerary.length > 0) {
+        return firstItem.itinerary;
+    }
 
-  return flightItinerary;
+    return flightItinerary;
 });
 
 </script>
 
 <template>
     <template v-if="!isMobile">
-    <!-- <template v-if="!isMobile"> -->
         <div class="home-desktop">
             <div class="home-header-desktop">
                 <HeaderBar :openModal="openModal" :profileImage="userStore.profile_picture" />
@@ -125,33 +128,37 @@ const returnItineraries = computed(() => {
         </div>
     </template>
 
-    <!-- <template v-if="!isMobile"> -->
     <template v-if="isMobile">
-        <div class="p-event__container">
-            <h1>Departing Itinerary</h1>
-            <div class="p-event__entry" v-for="(itinerary, index) in departItineraries" :key="index">
-                <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
-                    :flightArrTime="itinerary.arrival_time" :destinationCity="itinerary.destination_city"
-                    :originCity="itinerary.origin_city" :flightNumber="itinerary.flight_num"
-                    :flightClass="itinerary.class" :flightDuration="itinerary.duration"
-                    :currentIndex="index + 1" :totalFlights="departItineraries.length"
-                    :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
-                </PFlight>
-                <PFlight v-if="index !== departItineraries.length - 1" design="layover" v-bind="itinerary"
-                    :layoverDuration="itinerary.layover"></PFlight>
-            </div>
+        <div class="flight-itinerary">
+            <PEvent design="itinerary-header" :airline="bookingData?.itinerary?.airline" :name="'Flight Itinerary'"
+                :pictureLink="bookingData?.itinerary?.logoURL" @back-click="() => handleBack('Event')" />
 
-            <h1>Returning Itinerary</h1>
-            <div class="p-event__entry" v-for="(itinerary, index) in returnItineraries" :key="index">
-                <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
-                    :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
-                    :flightClass="itinerary.class" :flightDuration="itinerary.duration"
-                    :destinationCity="itinerary.destination_city" :originCity="itinerary.origin_city"
-                    :currentIndex="index + 1" :totalFlights="returnItineraries.length"
-                    :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
-                </PFlight>
-                <PFlight v-if="index !== returnItineraries.length - 1" design="layover" v-bind="itinerary"
-                    :layoverDuration="itinerary.layover"></PFlight>
+            <div class="p-event__container">
+                <h1>Departing Itinerary</h1>
+                <div class="p-event__entry" v-for="(itinerary, index) in departItineraries" :key="index">
+                    <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+                        :flightArrTime="itinerary.arrival_time" :destinationCity="itinerary.destination_city"
+                        :originCity="itinerary.origin_city" :flightNumber="itinerary.flight_num"
+                        :flightClass="itinerary.class" :flightDuration="itinerary.duration" :currentIndex="index + 1"
+                        :totalFlights="departItineraries.length"
+                        :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
+                    </PFlight>
+                    <PFlight v-if="index !== departItineraries.length - 1" design="layover" v-bind="itinerary"
+                        :layoverDuration="itinerary.layover"></PFlight>
+                </div>
+
+                <h1>Returning Itinerary</h1>
+                <div class="p-event__entry" v-for="(itinerary, index) in returnItineraries" :key="index">
+                    <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
+                        :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
+                        :flightClass="itinerary.class" :flightDuration="itinerary.duration"
+                        :destinationCity="itinerary.destination_city" :originCity="itinerary.origin_city"
+                        :currentIndex="index + 1" :totalFlights="returnItineraries.length"
+                        :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
+                    </PFlight>
+                    <PFlight v-if="index !== returnItineraries.length - 1" design="layover" v-bind="itinerary"
+                        :layoverDuration="itinerary.layover"></PFlight>
+                </div>
             </div>
         </div>
     </template>
