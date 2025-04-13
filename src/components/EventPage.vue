@@ -517,12 +517,6 @@ const fetchUserData = async () => {
                                 :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                         </div>
                     </div>
-                    <div class="event-edit-button">
-                        <PButton design="gradient" label="Add/Edit Users" @click="goToInvitePage"></PButton>
-                    </div>
-                    <div class="event-edit-button">
-                        <PButton design="gradient" label="Save Changes" @click="saveChanges" />
-                    </div>
                 </div>
             </div>
 

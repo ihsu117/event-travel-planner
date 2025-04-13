@@ -443,7 +443,11 @@ const handleHScroll = (e) => {
             <div class="home-header-desktop">
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
             </div>
-            <h1>Upcoming Events</h1>
+            <div class="event-header">
+                <h1>Upcoming Events</h1>
+                <PButton label="Create Event" @click="handleCreateEvent" design="gradient-small"></PButton>
+            </div>
+
             <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
                 <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
@@ -459,7 +463,7 @@ const handleHScroll = (e) => {
                         :maxBudget="event.maxBudget" :destinationCode="event.destinationCode"
                         :financeMan="event.financeMan" :autoApprove="event.autoApprove"
                         :autoApproveThreshold="event.autoApproveThreshold" design="block-planner"
-                        @event-click="handleEventClick" />
+                        @event-click="handleEventClick" @editClick="handleEditEventClick" />
 
                 </div>
                 <div v-if="!loading && upcomingEvents.length == 0" style="color: black;">
@@ -468,7 +472,9 @@ const handleHScroll = (e) => {
             </div>
 
             <hr>
-            <h1>Previous Events</h1>
+            <div class="event-header">
+                <h1>Previous Events</h1>
+            </div>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll">
 
                 <div v-if="loading" class="spinner">
