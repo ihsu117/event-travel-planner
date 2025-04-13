@@ -266,7 +266,7 @@ const handleHScroll = (e) => {
 
 <template>
 
-    <!-------------------------------------------------------------------DESKTOP VIEW------------------------------------------------------------------->
+    <!-------------------------------------------------------------------MODAL------------------------------------------------------------------->
 
     <template v-if="isModalVisible && !isMobile">
         <div>
@@ -315,6 +315,8 @@ const handleHScroll = (e) => {
         </div>
     </template>
 
+    <!-------------------------------------------------------------------DESKTOP VIEWS------------------------------------------------------------------->
+
     <!--Home Page for Attendee-->
 
     <template v-if="isAttendee && !isMobile">
@@ -357,6 +359,7 @@ const handleHScroll = (e) => {
                     </div>
                 </div>
 
+
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
@@ -384,11 +387,13 @@ const handleHScroll = (e) => {
             </div>
             <h1>Upcoming Events</h1>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
+
                 <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
                         <span class="loader"></span>
                     </div>
                 </div>
+
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <!--Dynamic Events-->
                     <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
@@ -401,11 +406,12 @@ const handleHScroll = (e) => {
                         @event-click="handleEventClick" />
 
                 </div>
+
                 <div v-if="!loading && upcomingEvents.length == 0" style="color: black;">
                     <p>You have not been invited to any upcoming events...</p>
                 </div>
-            </div>
 
+            </div>
             <hr>
             <h1>Previous Events</h1>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll">
@@ -425,7 +431,9 @@ const handleHScroll = (e) => {
                         :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
                         design="block-finance" @event-click="handleEventClick" />
                 </div>
+
                 <div v-if="!loading && previousEvents.length == 0" style="color: black;">
+                    <p>You have no previous events to show...</p>
                     <p>You have no previous events to show...</p>
                 </div>
 
@@ -469,6 +477,7 @@ const handleHScroll = (e) => {
                 <div v-if="!loading && upcomingEvents.length == 0" style="color: black;">
                     <p>You have not been invited to any upcoming events...</p>
                 </div>
+
             </div>
 
             <hr>
@@ -498,7 +507,42 @@ const handleHScroll = (e) => {
 
             </div>
             <hr>
+        </div>
+    </template>
 
+    <!--Home Page for Site Admin-->
+
+    <template v-if="isSiteAdmin && !isMobile">
+        <div class="home-desktop">
+            <div class="home-header-desktop">
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
+            </div>
+            <div class="home-desktop__admin-body">
+                <div class="home-desktop__admin-search">
+                    <h1>Organizations</h1>
+                    <div class="home-desktop__admin-searchHeader"> 
+                        <label for="searchBox">Search</label>
+                        <PTextField id='searchBox' label="Search" v-model="searchQuery" placeholder="Organization Name" />
+                    </div>
+                    <hr>
+                </div>
+
+            <!--Organizations-->
+
+                <div class="home-desktop__admin-buttonGrid">
+                    <div v-if="organizations.length > 0" class="p-event__wrapper--NoGradient">
+                        <PButton label="Create Organization" @click="orgModalOpen()" design="planner"></PButton>
+                            <div v-if="loading" class="spinner">
+                                <div class="loading-spinner" v-show="loading">
+                                    <span class="loader"></span>
+                                </div>
+                            </div>
+                        <!--Dynamic Events-->
+                        <PEvent design="org-block" v-for="org in organizations.slice(1)" :key="org.id" :id="org.id"
+                            :organization="org" @click="handleOrgClick(org)" />
+                    </div>
+                </div>
+            </div>
         </div>
     </template>
 
@@ -701,6 +745,8 @@ const handleHScroll = (e) => {
             </div>
         </div>
     </template>
+
+    <!--Home Page for Site Admin-->
 
     <template v-if="isSiteAdmin && isMobile">
         <div class="home">
