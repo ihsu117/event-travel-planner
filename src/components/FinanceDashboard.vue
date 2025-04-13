@@ -275,7 +275,7 @@ const handleModalOption = async (option) => {
 
 
 
-console.log(eventStore.currentEvent.id)
+
 </script>
 <template>
     <!-- -----------------------------------------------------------MODAL------------------------------------------------------->
@@ -434,7 +434,7 @@ console.log(eventStore.currentEvent.id)
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.itinerary.logoURL"
                             :flightID="String(flight.flightID)" @click="openApproveModal(flight)" />
                     </div>
                 </div>
@@ -513,7 +513,7 @@ console.log(eventStore.currentEvent.id)
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
                             :flightType="flight.flightType" :flightClass="flight.flightClass"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.itinerary.logoURL"
                             :flightID="flight.flightID" @click="openApproveModal(flight)" />
                     </div>
                 </div>

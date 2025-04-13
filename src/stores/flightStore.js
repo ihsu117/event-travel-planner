@@ -133,7 +133,8 @@ export const useFlightStore = defineStore('flight', {
                     airline: flight.airline || '',
                     logoURL: flight.logoURL || '',
                     offer_id: flight.offer_id,
-                    owner: flight.owner
+                    owner: flight.owner,
+                    itinerary: JSON.parse(flight.itinerary)
                 }));
 
                 console.log('Processed flights:', this.flightResults);
