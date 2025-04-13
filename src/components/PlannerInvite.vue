@@ -23,7 +23,6 @@ const isModalVisible = ref(false)
 const fileInput = ref(null)
 
 const invitedUsers = ref([])
-const newUsersInvited = ref([])
 
 const orgId = computed(() => route.params.orgId)
 const role_id = ref('Attendee')
@@ -141,6 +140,7 @@ const addAttendee = async () => {
         if (response.ok) {
             const result = await response.json()
             console.log('Invites sent successfully:', result)
+
         } else {
             console.error('Failed to send invites:', await response.json())
         }
@@ -152,12 +152,10 @@ const addAttendee = async () => {
 
 const submitChange = async () => {
     if (selectedFinman.value == '') {
-        console.error('No finance manager selected') 
+        console.error('No finance manager selected')
     } else {
         await addFinanceManager()
-        if (selectedUsers.value.length <= 0) {
-            console.error('No selected users to invite')
-        } else {
+        if (selectedUsers.value.length > 0) {
             await addAttendee()
             if (newUsers.value.length > 0) {
                 for (const user of newUsers.value) {
@@ -168,10 +166,23 @@ const submitChange = async () => {
                 console.log('New users:', newUsers.value)
             } else {
                 console.error('No new users to invite')
-                closeModal()
+            }
+        } else {
+            console.error('No users selected')
+            if (newUsers.value.length > 0) {
+                for (const user of newUsers.value) {
+                    const email = user.id
+                    await addNewAttendee(email)
+                }
+                newUsers.value = []
+                console.log('New users:', newUsers.value)
+            } else {
+                console.error('No new users to invite')
             }
         }
     }
+    getInvitedUsers()
+    loadOrgUsers()
 }
 
 // User Loading --------------------------------
@@ -194,6 +205,24 @@ const loadOrgUsers = async () => {
     }
 }
 
+const getInvitedUsers = async () => {
+    try {
+        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}/attendees`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const result = await response.json()
+            console.log('Invited users:', result)
+            invitedUsers.value = result
+        } else {
+            console.error('Failed to load invited users:', await response.json())
+        }
+    } catch (error) {
+        console.error('Error loading invited users:', error)
+    }
+}
+
 const adminGetUsers = async () => {
     userStore.clearUserList()
     try {
@@ -213,6 +242,13 @@ const adminGetUsers = async () => {
         console.error('Error loading organization users:', error)
     }
 }
+
+const remainingUsers = computed(() => {
+    const invited = invitedUsers.value || []
+    return userStore.users.filter(user => {
+        return user.role_id === 'Attendee' && !invited.some(invitedUser => invitedUser.id === user.user_id)
+    })
+})
 //----------------------------------------
 
 
@@ -359,6 +395,7 @@ const handleBack = (targetRoute) => {
 
 onMounted(() => {
     if (!isOrgListPage.value) {
+        getInvitedUsers()
         loadOrgUsers()
     } else {
         adminGetUsers()
@@ -411,11 +448,21 @@ onMounted(() => {
                         @click="selectFinanceManager(user.user_id)" required />
                 </div>
 
+                <h2>Attendee</h2>
+                <div class="p-event__container">
+                    <PFinanceBlock design="invite"
+                        v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')"
+                        :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                        :profileImage="user.profile_picture"
+                        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
+                        @click="selectFinanceManager(user.user_id)" required />
+                </div>
+
                 <h2>Attendees</h2>
                 <div class="p-event__container">
 
                     <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
+                        v-for="user in remainingUsers" :key="user.user_id"
                         :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
                         :email="user.email" :profileImage="user.profile_picture"
                         :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
@@ -450,8 +497,7 @@ onMounted(() => {
                 <h2>Attendees</h2>
                 <div class="p-event__container">
                     <PButton design="planner" @click="openModal" label="Add User"></PButton>
-                    <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
+                    <PFinanceBlock design="invite" v-for="user in remainingUsers" :key="user.user_id"
                         :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
                         :email="user.email" :profileImage="user.profile_picture"
                         :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
@@ -460,6 +506,15 @@ onMounted(() => {
                         :profileImage="user.profile_picture" :class="{ selected: isNewUserSelected(user.email) }"
                         @click="selectNewUser(user.email)" />
                 </div>
+
+                <h2>Invited Attendees</h2>
+                <div class="p-event__container">
+
+                    <PFinanceBlock design="invite" v-for="user in invitedUsers" :key="user.id"
+                        :name="(user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : user.email"
+                        :email="user.email" :profileImage="user.profile_picture"/>
+                </div>
+
                 <div>
                     <PButton label="Send Invites" @click="submitChange" design="gradient"></PButton>
                 </div>

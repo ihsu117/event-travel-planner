@@ -18,7 +18,8 @@ export const useEventStore = defineStore('event', {
       financeMan: null,
       inviteLink: '',
       autoapprove: false,
-      autoapprove_threshold: 0
+      autoapprove_threshold: 0,
+      attendees: []
     }
   }),
 
@@ -40,7 +41,8 @@ export const useEventStore = defineStore('event', {
         financeMan: eventData.financeMan || eventData.finance_man,
         inviteLink: eventData.inviteLink || eventData.invite_link,
         autoapprove: eventData.autoApprove || eventData.autoapprove,
-        autoapprove_threshold: eventData.autoApproveThreshold || eventData.autoapprove_threshold
+        autoapprove_threshold: eventData.autoApproveThreshold || eventData.autoapprove_threshold,
+        attendees: eventData.attendees || eventData.attendees || []
     }
       console.log(this.currentEvent)
       localStorage.setItem('currentEvent', JSON.stringify(this.currentEvent));
@@ -72,7 +74,8 @@ export const useEventStore = defineStore('event', {
         financeMan: null,
         inviteLink: '',
         autoapprove: false,
-        autoapprove_threshold: 0
+        autoapprove_threshold: 0,
+        attendees: []
       }
       localStorage.removeItem('currentEvent')
     }
