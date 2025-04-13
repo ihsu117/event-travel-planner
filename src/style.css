@@ -142,7 +142,7 @@
   padding-bottom: 2%;
 }
 
-.form-name h1{
+.form-name h1 {
   display: flex;
   flex-direction: column;
   padding-left: 5%;
@@ -165,11 +165,12 @@
   padding-bottom: 5%;
 }
 
-.form-title h1, .form-gender h1{
+.form-title h1,
+.form-gender h1 {
   padding-left: 10%;
   font-size: 1.25rem;
   font-weight: 400%;
-} 
+}
 
 .register-form .form-phone {
   display: flex;
@@ -404,11 +405,9 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 24.56rem;
-  /* 393px */
+  max-width: 100%;
   background-color: var(--pos-inner-yellow);
-  padding-bottom: 1.25rem;
-  /* 20px */
+  padding-bottom: 1rem;
 }
 
 .finance-info {
@@ -421,10 +420,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   max-width: 24.56rem;
-  /* 393px */
   background-color: var(--pos-inner-yellow);
   padding-bottom: 1.25rem;
-  /* 20px */
   min-height: 100vh;
 }
 
@@ -676,7 +673,8 @@ body {
   margin-left: 0;
 }
 
-.flight-container, .finance-item {
+.flight-container,
+.finance-item {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -836,7 +834,8 @@ body {
   /* 20px */
 }
 
-.modal#mfa, .modal#forgot-pass {
+.modal#mfa,
+.modal#forgot-pass {
   width: 3.125rem;
   height: 3.125rem;
   border-radius: 60%;
@@ -865,8 +864,10 @@ body {
 }
 
 .modal#forgot-pass.expandSuccess {
-  width: 20%; /* Expanded size */
-  height: 15%; /* Adjust as needed */
+  width: 20%;
+  /* Expanded size */
+  height: 15%;
+  /* Adjust as needed */
 }
 
 .modal#forgot-pass.shrinked {
@@ -1388,13 +1389,11 @@ input:checked+.slider:before {
 .flight-type-toggle {
   display: inline-flex;
   border: 0.0625rem solid #000;
-  border-radius: 62.44rem;
+  border-radius: .7rem;
   overflow: hidden;
   background-color: var(--pos-inner-yellow);
   margin: 0.375rem auto;
-  /* Center the element horizontally */
   justify-content: center;
-  /* Ensure buttons inside are centered */
   margin-bottom: 5%;
 }
 
@@ -1414,16 +1413,21 @@ input:checked+.slider:before {
   color: #fff;
 }
 
-.dp__input {
-  border-radius: 0.375rem !important;
-  background-color: var(--pos-grey) !important;
-  font-family: var(--font-primary) !important;
+.event-page-desktop hr {
+  color: var(--pos-grey);
+  width: 75%;
+  margin-top: 1%;
+
+  opacity: 0.4;
 }
 
-.dp__input::placeholder {
-  opacity: 1 !important;
-  font-family: var(--font-primary) !important;
-  font-weight: 400 !important;
+.holding-flights h2{
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  width: auto;
+  align-content: left;
 }
 
 @media only screen and (max-width: 56rem) {
@@ -1432,9 +1436,7 @@ input:checked+.slider:before {
     padding-top: 20%;
   }
 
-  .register-container {
-
-  }
+  .register-container {}
 
   /* Make home container fluid */
   .home {
@@ -1508,8 +1510,10 @@ input:checked+.slider:before {
   }
 
   .modal#forgot-pass.expandSuccess {
-    width: 55%; /* Expanded size */
-    height: 16%; /* Adjust as needed */
+    width: 55%;
+    /* Expanded size */
+    height: 16%;
+    /* Adjust as needed */
   }
 
   .modal#forgot-pass.shrinked {
@@ -1521,7 +1525,7 @@ input:checked+.slider:before {
     padding: 0%;
   }
 
-  .modal#forgot-pass .loading-spinner{
+  .modal#forgot-pass .loading-spinner {
     padding-top: .75rem;
   }
 
@@ -1578,12 +1582,8 @@ input:checked+.slider:before {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 100%;
-    padding-top: 1%;
-    padding-bottom: 1%;
     gap: 1%;
   }
-
 
   .home-header__text-desktop {
     display: flex;
@@ -1631,7 +1631,7 @@ input:checked+.slider:before {
     z-index: 1;
   }
 
-  .p-event__wrapper::before{
+  .p-event__wrapper::before {
     left: 0;
     background: linear-gradient(to right, var(--pos-inner-yellow), rgba(255, 255, 255, 0));
   }
@@ -1645,7 +1645,7 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 1%;
+
     width: 90%;
     max-width: none;
 
@@ -1822,11 +1822,71 @@ input:checked+.slider:before {
     background-color: var(--pos-inner-yellow);
   }
 
-  .itinerary-event-container {
+  .event-desktop-search {
+    background: var(--top-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
     display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    background-color: var(--pos-inner-yellow);
+    width: 50%;
+    margin-bottom: 3%;
+  }
+
+  .search-inputs {
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    gap: 1rem;
+    max-width: 100%;
+  }
+
+  .search-inputs input {
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+  }
+
+  .autocomplete-wrapper {
+    position: relative;
+    width: 150%;
+  }
+
+  .map-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .autocomplete-wrapper > input:nth-child(2) {
+    padding-left: 2.2rem;
+  }
+
+  .event-search-date {
+    width: 60% !important;
+  }
+
+  .flight-search-header {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    justify-content: left;
+    max-width: 100%;
+    margin: 1rem;
+    margin-bottom: auto;
+    gap: 1rem;
+  }
+
+  .flight-search-header .flight-type-toggle{
+    background-color: var(--pos-grey);
+    margin-left: 0;
+    margin-top: 2%;
+    margin-bottom: 2%;
   }
 
   .itinerary-event-container .p-event--desktop-header {
@@ -1895,7 +1955,7 @@ input:checked+.slider:before {
   }
 
   .event-desktop-contentBox label {
-    position:absolute;
+    position: absolute;
     top: 2rem;
     right: 2rem;
   }
@@ -1930,12 +1990,12 @@ input:checked+.slider:before {
 
   .event-desktop-container {
     background-color: var(--pos-inner-yellow);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        box-sizing: border-box;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
   }
 
   /* Wrapper for the file input */
@@ -1949,33 +2009,39 @@ input:checked+.slider:before {
     display: none;
   }
 
-    /* Style the custom label as a button */
+  /* Style the custom label as a button */
   .custom-file-label {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0.75rem 1.5rem;
-    background: var(--top-gradient); /* Use the gradient variable */
+    background: var(--top-gradient);
+    /* Use the gradient variable */
     font-size: 1rem;
     font-weight: bold;
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    color: var(--pos-yellow); /* Ensure text is visible on the gradient */
+    color: var(--pos-yellow);
+    /* Ensure text is visible on the gradient */
     text-align: center;
   }
 
   /* Hover effect */
   .custom-file-label:hover {
-    transform: scale(1.05); /* Slightly enlarge */
-    opacity: 0.9; /* Slightly dim the gradient on hover */
+    transform: scale(1.05);
+    /* Slightly enlarge */
+    opacity: 0.9;
+    /* Slightly dim the gradient on hover */
   }
 
   /* Active effect */
   .custom-file-label:active {
-    transform: scale(0.98); /* Slightly shrink */
-    opacity: 0.8; /* Further dim the gradient on click */
+    transform: scale(0.98);
+    /* Slightly shrink */
+    opacity: 0.8;
+    /* Further dim the gradient on click */
   }
 
   .file-input-wrapper span {
@@ -2005,7 +2071,7 @@ input:checked+.slider:before {
   }
 
   .event-form__desktop h2 {
-    all:unset;
+    all: unset;
     color: var(--pos-dark-grey);
     font-size: 2rem;
   }
@@ -2019,9 +2085,11 @@ input:checked+.slider:before {
   .planner-description {
     width: 80%;
   }
-  .planner-description .p-textfield__textarea-container{
+
+  .planner-description .p-textfield__textarea-container {
     border-radius: 0.375rem;
   }
+
   .evTopMargin {
     margin-top: 1rem;
   }
