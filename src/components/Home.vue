@@ -400,7 +400,7 @@ const handleHScroll = (e) => {
 
                 </div>
                 <div v-if="!loading && upcomingEvents.length == 0" style="color: black;">
-                <p>You have not been invited to any upcoming events...</p>
+                    <p>You have not been invited to any upcoming events...</p>
                 </div>
             </div>
 
