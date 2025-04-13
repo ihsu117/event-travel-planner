@@ -332,23 +332,6 @@ const formatTimestamp = (timestamp) => {
   });
 };
 
-const eventHistoryOpen = (event) => {
-    console.log('clickedme')
-    // Get the clicked <li> element
-    const parentLi = event.target.closest('li');
-
-    if (parentLi) {
-        // Find the child <ul> element within the clicked <li>
-        const childUl = parentLi.querySelector('ul');
-        console.log(childUl)
-
-        if (childUl) {
-            // Toggle the 'open' class on the child <ul>
-            childUl.classList.toggle('open');
-        }
-    }
-};
-
 </script>
 
 <template>
@@ -525,16 +508,15 @@ const eventHistoryOpen = (event) => {
                     </div>
                     <div class="p-event__container--history">
                         <div v-if="eventHistory.length > 0">
-                            <ul class="event-history">
-                                <li v-for="(event, index) in eventHistory" :key="index" @click="eventHistoryOpen">
-                                    {{ formatTimestamp(event.lastEdited)}} - {{ event.updater.firstName[0] }}, {{ event.updater.lastName }}
-                                    <ul>
-                                       <li>Budget: {{event.originalBudget || 'N/A'}} → {{event.updatedBudget || 'N/A'}}</li>
-                                       <li>Auto-Approve: {{event.updatedAutoApprove}}</li>
-                                       <li>Threshold: {{event.updatedAutoApprovethreshold  || 'Disabled'}}</li>
-                                    </ul>
-                                </li>
-                            </ul>
+                            <div v-for="(event, index) in eventHistory" :key="index">
+                                {{ formatTimestamp(event.lastEdited)}} 
+                                {{ event.updater.firstName }}
+                                {{ event.updater.lastName }}
+                                {{event.originalBudget || 'N/A'}} 
+                                {{event.updatedBudget || 'N/A'}}
+                                {{event.updatedAutoApprove}}
+                                {{event.updatedAutoApprovethreshold  || 'Disabled'}}
+                            </div>
                         </div>
                         <div v-else>
                             <p>No event history available.</p>
