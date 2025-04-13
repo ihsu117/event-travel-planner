@@ -13,6 +13,10 @@ const props = defineProps({
     profileImage: {
         type: String,
         default: ''
+    },
+    backButton: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -26,6 +30,8 @@ const goHome = () => {
 
 <template>
     <div class="home-header-desktop" style="display:flex; align-items: center;">
+
+        
         <div class="home-header__text-desktop">
             <p>Welcome, {{ userStore.first_name }}!</p>
             <p class="role-bubble">{{ userStore.role_id }}</p>

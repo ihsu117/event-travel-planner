@@ -26,6 +26,7 @@ const description = ref('')
 const destinationCode = ref('')
 const startDate = ref('')
 const endDate = ref('')
+const dateRange = ref([])
 const pictureLink = ref('') // This will hold the base64-encoded image
 const maxBudget = ref('')
 const eventStore = useEventStore()
@@ -207,6 +208,44 @@ const createEvent = async () => {
     }
 }
 
+const createEventDesktop = async () => {
+    try {
+        const eventData = {
+            name: eventName.value,
+            description: description.value,
+            startDate: formatDateForBackend(dateRange.value[0]),
+            endDate: formatDateForBackend(dateRange.value[1]),
+            // destinationCode: destinationCode.value,
+            lat: latitude.value,
+            long: longitude.value,
+            pictureLink: pictureLink.value, // Send the base64-encoded image
+            maxBudget: maxBudget.value,
+            financeMan: {},
+            autoApprove: Boolean(false),
+        }
+
+        const response = await api.apiFetch('/events', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(eventData),
+            credentials: 'include'
+        })
+
+        if (response.ok) {
+            const result = await response.json()
+            console.log('Event created successfully:', result)
+            toEventPage(result.eventId)
+
+        } else {
+            console.error('Failed to create event:', await response.json())
+        }
+    } catch (error) {
+        console.error('Error creating event:', error)
+    }
+}
+
 const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
@@ -243,6 +282,13 @@ const handlePlaceChanged = (place) => {
     console.log('Selected Location:', place);
 }
 
+// Computed style for the background image
+const backgroundImageStyle = computed(() => {
+  return pictureLink.value
+    ? { backgroundImage: `url(${pictureLink.value})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : {};
+});
+
 </script>
 
 <template>
@@ -257,7 +303,7 @@ const handlePlaceChanged = (place) => {
                 </div>
                 <div class="planner-event-destination">
                     <h2>Destination</h2>
-                    <PTextField label="Event Name" v-model="destinationCode" />
+                    <!-- <PTextField label="Event Name" v-model="destinationCode" /> -->
                     <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
                         classname="form-control" placeholder="Destination Airport"
                         v-on:placechanged="handlePlaceChanged">
@@ -289,8 +335,26 @@ const handlePlaceChanged = (place) => {
                 <div class="planner-event-picture">
                     <h2>Picture</h2>
                     <!-- File input for image upload -->
-                    <input type="file" accept="image/*" @change="handleImageUpload" />
-                    <p v-if="pictureLink">Image uploaded successfully!</p>
+                    <div class="planner-event-picture-display" :style="{
+                        backgroundImage: `var(--side-gradient), url(${pictureLink})`,
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center'
+                        }">
+                        <div class="file-input-wrapper">
+                            <label for="file-upload" class="custom-file-label">
+                                <span>Add Image</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4z" />
+                                </svg>
+                            </label>
+
+                            <input type="file" id="file-upload" accept="image/*" @change="handleImageUpload" />
+                        </div>
+                    </div>
+                    <!-- <input type="file" accept="image/*" @change="handleImageUpload" />
+                    <p v-if="pictureLink">Image uploaded successfully!</p> -->
                 </div>
                 <div class="planner-event-budget">
                     <h2>Max Budget</h2>
@@ -399,30 +463,23 @@ const handlePlaceChanged = (place) => {
             </div>
             <div class="event-form__desktop">
                 <div class="event-form__desktop--topbar">
+                    <div class="planner-date">
+                        <h2>Date</h2>
+                        <VueDatePicker class="evTopMargin" v-model="dateRange" :range="true" :enable-time-picker="false"
+                            :placeholder="'mm/dd/yyyy - mm/dd/yyyy'" exactMatch="true"
+                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
+                        </VueDatePicker>
+                    </div>
+                    <div class="planner-event-budget">
+                        <h2>Budget</h2>
+                        <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" placeholder="$00000" required />
+                    </div>
                     <div class="planner-event-destination">
                         <h2>Destination</h2>
                         <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
                             classname="form-control" placeholder="Destination Airport"
                             v-on:placechanged="handlePlaceChanged" required>
                         </vue-google-autocomplete>
-                    </div>
-                    <div class="planner-start-date">
-                        <h2>Start Date</h2>
-                        <VueDatePicker class="evTopMargin" v-model="startDate" :enable-time-picker="false"
-                            :placeholder="'Start Date'" exactMatch="true"
-                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply>
-                        </VueDatePicker>
-                    </div>
-                    <div class="planner-end-date">
-                        <h2>End Date</h2>
-                        <VueDatePicker class="evTopMargin" v-model="endDate" :enable-time-picker="false"
-                            :placeholder="'End Date'" exactMatch="true"
-                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
-                        </VueDatePicker>
-                    </div>
-                    <div class="planner-event-budget">
-                        <h2>Max Budget</h2>
-                        <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" required />
                     </div>
                 </div>
 
@@ -435,7 +492,7 @@ const handlePlaceChanged = (place) => {
                 <br>
                 <br>
                 <div class="submitDiv">
-                    <PButton label="Create Event" @click="createEvent" design="gradient"></PButton>
+                    <PButton label="Create Event" @click="createEventDesktop" design="gradient"></PButton>
                 </div>
             </div>
         </div>
