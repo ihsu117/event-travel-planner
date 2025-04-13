@@ -89,6 +89,7 @@ onMounted(async () => {
         })
         if (response.ok) {
             flightStore.setEventFlightResults(response.json())
+            await loadEventHistory();
             loading.value = false;
         }
     } catch (error) {
@@ -115,7 +116,6 @@ const updateFlight = async (selection) => {
         })
         if (response.ok) {
             console.log("booked flight")
-            loadEventHistory();
         }
     } catch (error) {
         console.log(error);
@@ -228,10 +228,6 @@ const getEventHistory = async () => {
     }
 };
 
-
-onMounted(() => {
-    loadEventHistory();
-});
 
 const budgetColor = computed(() => {
     const budgetThreshold = eventStore.currentEvent.maxBudget * 0.3;
