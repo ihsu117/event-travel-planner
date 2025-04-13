@@ -542,6 +542,7 @@ body {
   justify-content: center;
   max-width: 100%;
   background-color: var(--pos-inner-yellow);
+  height: 100vh;
 }
 
 .finance-dashboard p {

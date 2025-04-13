@@ -28,7 +28,6 @@ const editView = ref(false)
 const loading = ref(false)
 const eventContainer = ref(null);
 const orgModal = ref(false);
-const scrWrapper = ref(null);
 
 //Computed properties to check the role of the user
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
@@ -43,31 +42,6 @@ const isMobile = ref(window.innerWidth <= 768);
 const updateScreenSize = () => {
     isMobile.value = window.innerWidth <= 768;
 };
-
-const scrollLeft = () => {
-    if (eventContainer.value) {
-        eventContainer.value.scrollBy({
-            left: -775, // Adjust scroll distance as needed
-            behavior: 'smooth',
-        });
-    }
-};
-
-const scrollRight = () => {
-    if (eventContainer.value) {
-        eventContainer.value.scrollBy({
-            left: 775, // Adjust scroll distance as needed
-            behavior: 'smooth',
-        });
-    }
-};
-
-const handleHScroll = (e) => {
-    if(scrWrapper.value) {
-        if (e.deltaY > 0) scrWrapper.value.scrollLeft += 100;
-        else scrWrapper.value.scrollLeft -= 100;
-    }
-}
 
 //Fetch events from the API
 onMounted(async () => {
@@ -279,6 +253,15 @@ const createOrg = () => {
     }
 }
 
+
+const handleHScroll = (e) => {
+    const element = e.currentTarget;
+    if(element) {
+        if (e.deltaY > 0) element.scrollLeft += 100;
+        else element.scrollLeft -= 100;
+    }
+}
+
 </script>
 
 <template>
@@ -393,7 +376,7 @@ const createOrg = () => {
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture'/>
             </div>
             <h1>Upcoming Events</h1>
-            <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
+            <div class="scroll-wrapper" @wheel.stop="handleHScroll">
 
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <div class="loading-spinner" v-show="loading">
@@ -413,7 +396,7 @@ const createOrg = () => {
 
             <hr>
             <h1>Previous Events</h1>
-            <div class="scroll-wrapper">
+            <div class="scroll-wrapper" @wheel.stop="handleHScroll">
 
                 <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
