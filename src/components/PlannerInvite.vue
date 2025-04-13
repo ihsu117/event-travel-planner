@@ -3,7 +3,7 @@ export { default as PlannerInvite } from './PlannerInvite.vue'
 </script>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { PButton, PTextField, PFinanceBlock, PEvent } from '@poseidon-components'
 import { useEventStore } from '../stores/eventStore.js'
@@ -523,7 +523,7 @@ const updateScreenSize = () => {
 
                     <PFinanceBlock design="invite" v-for="user in invitedUsers" :key="user.id"
                         :name="(user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : user.email"
-                        :email="user.email" :profileImage="user.profilePicture"/>
+                        :email="user.email" :profileImage="user.profilePic"/>
                 </div>
 
                 <div>
