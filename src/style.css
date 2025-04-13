@@ -2240,28 +2240,34 @@ input:checked+.slider:before {
     align-self: flex-start;
     margin-left: 5rem;
   }
-  
+   
 }
 
 /*SITE ADMIN HOME PAGE CSS =====================================================================================*/
 
 @media screen and (min-width: 1920px) {
+  .home-desktop h1 {
+    margin-top: 3%;
+    text-align: left;
+    justify-content: left;
+    
+  }
   .scroll-wrapper{
-    width: 60%;
-    max-width: 60%;
+    /* width: 80%;
+    max-width: 80%;
     align-self: flex-start;
-    margin-left: 10rem;
+    margin-left: 10rem; */
   }
   .p-event__container-desktop {
     width:100%;
     overflow-x: auto;
   }
   hr {
-    width: 60%;
-    max-width: 60%;
-    align-self: flex-start;
-    margin-left: 10rem;
-    margin-right:auto
+    /* width: 60%;
+    max-width: 60%; */
+    /* align-self: flex-start;
+    margin-left: 10rem; */
+    /* margin-right:auto */
   }
 
 }
