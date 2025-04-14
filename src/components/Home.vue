@@ -434,7 +434,6 @@ const handleHScroll = (e) => {
 
                 <div v-if="!loading && previousEvents.length == 0" style="color: black;">
                     <p>You have no previous events to show...</p>
-                    <p>You have no previous events to show...</p>
                 </div>
 
             </div>
