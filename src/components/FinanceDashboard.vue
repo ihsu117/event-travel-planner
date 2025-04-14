@@ -44,7 +44,8 @@ console.log('Role:', userStore.role_id)
 
 // Function to save the updated value
 const saveUpdatedValue = async () => {
-    try {
+    if (editModalBudget.value) {
+        try {
         const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
             method: 'PUT',
             credentials: 'include',
@@ -67,6 +68,32 @@ const saveUpdatedValue = async () => {
     } catch (error) {
         console.error('Error updating value:', error)
     }
+    } else {
+        try {
+        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                maxBudget: eventStore.currentEvent.maxBudget,
+                autoApprove: Boolean(editModalAuto.value),
+                autoApproveThreshold: Number(editModalThreshold.value) || 0
+            })
+        })
+        if (response.ok) {
+            closeEditModal()
+            checkAndLoadEvent()
+            window.location.reload()
+        } else {
+            console.error('Failed to update value:', await response.text())
+        }
+    } catch (error) {
+        console.error('Error updating value:', error)
+    }
+    }
+    
 }
 
 const checkAndLoadEvent = () => {
