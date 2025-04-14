@@ -844,7 +844,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                         </div>
 
                         <vue-google-autocomplete v-if="flightType != null" class="p-textfield--small" id="map"
-                            types="airport" country="us" classname="form-control" placeholder="Departure Airport"
+                            types="airport" country="us" classname="form-control" placeholder="Departure Airport" v-model="departureAirportField"
                             v-on:placechanged="handlePlaceChanged">
                         </vue-google-autocomplete>
                     </div>
