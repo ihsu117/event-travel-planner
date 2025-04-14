@@ -259,19 +259,21 @@ const statusClass = computed(() => {
                     </PFlight>
                 </div>
 
-                <h1>Returning Itinerary</h1>
-                <div v-for="(itinerary, index) in returnItineraries" :key="index">
-                    <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="itinerary.carrier"
-                        :originCity="itinerary.origin_city" :destinationCity="itinerary.destination_city"
-                        :flightDepTime="itinerary.departure_time" :logoURL="bookingData?.itinerary?.logoURL"
-                        :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
-                        :flightClass="itinerary.class" :flightDuration="itinerary.duration" :currentIndex="index + 1"
-                        :totalFlights="returnItineraries.length"
-                        :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
-                    </PFlight>
-                    <PFlight v-if="index !== returnItineraries.length - 1" design="layover" v-bind="itinerary"
-                        :layoverDuration="layoverDurationCalc(itinerary.arrival_time, returnItineraries[index + 1].departure_time)">
-                    </PFlight>
+                <div v-if="bookingData?.value?.itinerary?.itinerary.length > 1">
+                    <h1>Returning Itinerary</h1>
+                    <div v-for="(itinerary, index) in returnItineraries" :key="index">
+                        <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="itinerary.carrier"
+                            :originCity="itinerary.origin_city" :destinationCity="itinerary.destination_city"
+                            :flightDepTime="itinerary.departure_time" :logoURL="bookingData?.itinerary?.logoURL"
+                            :flightArrTime="itinerary.arrival_time" :flightNumber="itinerary.flight_num"
+                            :flightClass="itinerary.class" :flightDuration="itinerary.duration" :currentIndex="index + 1"
+                            :totalFlights="returnItineraries.length"
+                            :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
+                        </PFlight>
+                        <PFlight v-if="index !== returnItineraries.length - 1" design="layover" v-bind="itinerary"
+                            :layoverDuration="layoverDurationCalc(itinerary.arrival_time, returnItineraries[index + 1].departure_time)">
+                        </PFlight>
+                    </div>
                 </div>
             </div>
         </div>
