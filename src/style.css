@@ -2308,11 +2308,10 @@ input:checked+.slider:before {
   }
 }
 
-@media screen and (min-width: 1920px) {
+@media screen and (min-width: 1921px) {
   .home-desktop__admin-body {
-    width: 70rem;
-    max-width: 95%;
-    scale: 1.25;
+    transform: scale(1.25);
+    transform-origin: top left;
     margin-top: 5rem;
   }
 }
