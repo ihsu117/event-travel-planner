@@ -326,12 +326,12 @@ const handleHScroll = (e) => {
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
             </div>
             <h1>Upcoming Events</h1>
-            <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
-                <div v-if="loading" class="spinner">
+            <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
                         <span class="loader"></span>
                     </div>
                 </div>
+            <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <!--Dynamic Events-->
                     <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
@@ -351,15 +351,12 @@ const handleHScroll = (e) => {
 
             <hr>
             <h1>Previous Events</h1>
-            <div class="scroll-wrapper" @wheel.stop="handleHScroll">
-
-                <div v-if="loading" class="spinner">
+            <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
                         <span class="loader"></span>
                     </div>
                 </div>
-
-
+            <div class="scroll-wrapper" @wheel.stop="handleHScroll">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
@@ -386,14 +383,12 @@ const handleHScroll = (e) => {
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
             </div>
             <h1>Upcoming Events</h1>
-            <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
-
-                <div v-if="loading" class="spinner">
+            <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
                         <span class="loader"></span>
                     </div>
                 </div>
-
+            <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <!--Dynamic Events-->
                     <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
@@ -414,14 +409,12 @@ const handleHScroll = (e) => {
             </div>
             <hr>
             <h1>Previous Events</h1>
-            <div class="scroll-wrapper" @wheel.stop="handleHScroll">
-
-                <div v-if="loading" class="spinner">
+            <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
                         <span class="loader"></span>
                     </div>
                 </div>
-
+            <div class="scroll-wrapper" @wheel.stop="handleHScroll">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
@@ -450,17 +443,16 @@ const handleHScroll = (e) => {
             <div class="home-header-desktop">
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
             </div>
-            <div class="event-header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
                 <h1>Upcoming Events</h1>
                 <PButton label="Create Event" @click="handleCreateEvent" design="gradient-small"></PButton>
             </div>
-
-            <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
-                <div v-if="loading" class="spinner">
+            <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
                         <span class="loader"></span>
                     </div>
-                </div>
+            </div>
+            <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <!--Dynamic Events-->
                     <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
@@ -480,17 +472,13 @@ const handleHScroll = (e) => {
             </div>
 
             <hr>
-            <div class="event-header">
-                <h1>Previous Events</h1>
-            </div>
-            <div class="scroll-wrapper" @wheel.stop="handleHScroll">
-
-                <div v-if="loading" class="spinner">
+            <h1>Previous Events</h1>
+            <div v-if="loading" class="spinner">
                     <div class="loading-spinner" v-show="loading">
                         <span class="loader"></span>
                     </div>
                 </div>
-
+            <div class="scroll-wrapper" @wheel.stop="handleHScroll">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"

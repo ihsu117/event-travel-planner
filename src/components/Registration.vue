@@ -23,7 +23,7 @@ const dob = ref('')
 const password = ref('')
 const confPass = ref('')
 const profileImage = ref(null)
-const errors = ref({ email: '', password: '' })
+const errors = ref({ email: '', password: '', firstName: '', lastName: '', phoneNumber: '' })
 const userInfo = ref({})
 
 // Other reactive vars
@@ -79,6 +79,38 @@ const validatePassword = () => {
     errors.value.password = ''
     return true
 }
+
+// Validation function for required fields and phone number
+const validateFields = () => {
+    let isValid = true;
+
+    // Reset errors
+    errors.value = { email: '', password: '', firstName: '', lastName: '', phoneNumber: '' };
+
+    // Validate first name
+    if (!firstName.value.trim()) {
+        errors.value.firstName = 'First name is required';
+        isValid = false;
+    }
+
+    // Validate last name
+    if (!lastName.value.trim()) {
+        errors.value.lastName = 'Last name is required';
+        isValid = false;
+    }
+
+    // Validate phone number
+    const phoneRegex = /^\d{10}$/; // Matches exactly 10 digits
+    if (!phoneNumber.value.trim()) {
+        errors.value.phoneNumber = 'Phone number is required';
+        isValid = false;
+    } else if (!phoneRegex.test(phoneNumber.value)) {
+        errors.value.phoneNumber = 'Phone number must be exactly 10 digits';
+        isValid = false;
+    }
+
+    return isValid;
+};
 
 const fetchUserData = async () => {
     try {
@@ -204,11 +236,14 @@ const updateUser = async () => {
 
 
 const handleSubmit = async () => {
-    if (isEditUser) {
-        await updateUser()
+    // Validate fields before proceeding
+    if (!validateFields()) return;
+
+    if (isEditUser.value) {
+        await updateUser();
     } else {
-        if (!validatePassword()) return
-        await updateUser()
+        if (!validatePassword()) return;
+        await updateUser();
     }
 }
 
@@ -248,7 +283,9 @@ onMounted(async () => {
                 <h1>Name</h1>
                 <div class="register-form-name">
                     <PTextField design="login-small" v-model="firstName" label="First Name" />
+                    <p v-if="errors.firstName" class="input-error">{{ errors.firstName }}</p>
                     <PTextField design="login-small" v-model="lastName" label="Last Name" />
+                    <p v-if="errors.lastName" class="input-error">{{ errors.lastName }}</p>
                 </div>
             </div>
 
@@ -268,13 +305,14 @@ onMounted(async () => {
             <div class="form-phone">
                 <h1>Phone Number</h1>
                 <PTextField v-model="phoneNumber" label="123-456-7890" />
+                <p v-if="errors.phoneNumber" class="input-error">{{ errors.phoneNumber }}</p>
             </div>
 
             <div class="form-dob">
                 <h1>Date of Birth</h1>
                 <VueDatePicker id="dob" v-model="dob" :enable-time-picker="false" :placeholder="'MM/DD/YYYY'"
                     exactMatch="true" :config="{ closeOnAutoApply: false, keepActionRow: true }"
-                    :text-input="{ format: 'MM/dd/yyyy' }" :max-date="today" autocomplete="off" hide-input-icon />
+                    :text-input="{ format: 'MM/dd/yyyy' }" :max-date="new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]" autocomplete="off" />
             </div>
 
             <div class="form-password-container">
