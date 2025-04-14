@@ -121,7 +121,7 @@ const toFlightSearch = () => {
     if (latitude.value == '' || longitude.value == '') {
         errors.value.location = 'Departure airport is required.'
     }
-    if (!departDate.value || !roundtripRange.value) {
+    if (!departDate.value && !roundtripRange.value) {
         errors.value.date = 'Date is required.'
     } else {
 
