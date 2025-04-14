@@ -1730,7 +1730,7 @@ input:checked+.slider:before {
     z-index: 1;
   }
 
-  .p-event__wrapper::before {
+  /* .p-event__wrapper::before {
     left: 0;
     background: linear-gradient(to right, var(--pos-inner-yellow), rgba(255, 255, 255, 0));
   }
@@ -1738,7 +1738,7 @@ input:checked+.slider:before {
   .p-event__wrapper::after {
     right: 0;
     background: linear-gradient(to left, var(--pos-inner-yellow), rgba(255, 255, 255, 0));
-  }
+  } */
 
   .p-event__container-desktop {
     display: flex;
@@ -2061,204 +2061,7 @@ input:checked+.slider:before {
     padding: 1%;
   }
 
-  /*DESKTOP VIEW FOR PLANNERCREATE PLANNER*/
-
-  .p-event__wrapper {
-    overflow: unset
-  }
-
-  .event-desktop-contentBox {
-    /* position:relative; */
-    margin-top: 5rem;
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    max-width: 90%;
-    height: 25rem;
-    max-height: 25%;
-    justify-content: flex-start;
-    /* Align items to the start */
-    border-radius: 1.25rem;
-    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); */
-  }
-
-  .event-desktop-contentBox {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-  }
-
-  .event-desktop-contentBox input {
-    all: unset;
-    font-size: 3.5rem;
-    color: var(--pos-white);
-    margin-left: 1rem;
-  }
-
-  .event-desktop-contentBox label {
-    position: absolute;
-    top: 2rem;
-    right: 2rem;
-  }
-
-  .event-desktop-contentBox__info {
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    align-items: left;
-    width: 80%;
-    height: 100%;
-    background: var(--gradient-3);
-    padding-left: 2rem;
-    border-radius: 1.25rem;
-  }
-
-  .event-desktop-contentBox__info h2 {
-    font-size: 2rem;
-    margin: 1rem 0 2rem 0.5rem;
-    color: var(--pos-white);
-    font-weight: 400;
-  }
-
-  .event-desktop-contentBox .event-desktop-contentBox__textField {
-    background: rgba(128, 128, 128, 0.4);
-    height: 4rem;
-    width: 20rem;
-    overflow: hidden;
-    padding: 1.5rem;
-    border-radius: 1.25rem;
-    border: 0.0625rem solid var(--pos-grey);
-  }
-
-  .event-desktop-container {
-    background-color: var(--pos-inner-yellow);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    box-sizing: border-box;
-  }
-
-  /* Wrapper for the file input */
-  .file-input-wrapper {
-    display: flex;
-    align-items: center;
-    width: 20%;
-    max-width: 20%;
-    background: var(--gradient-4);
-    border-radius: 1.25rem;
-  }
-
-  /* Hide the default file input */
-  .file-input-wrapper input[type="file"] {
-    display: none;
-  }
-
-  /* Style the custom label as a button */
-  .custom-file-label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    background: var(--top-gradient);
-    /* Use the gradient variable */
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    color: var(--pos-yellow);
-    /* Ensure text is visible on the gradient */
-    text-align: center;
-  }
-
-  /* Hover effect */
-  .custom-file-label:hover {
-    transform: scale(1.05);
-    /* Slightly enlarge */
-    opacity: 0.9;
-    /* Slightly dim the gradient on hover */
-  }
-
-  /* Active effect */
-  .custom-file-label:active {
-    transform: scale(0.98);
-    /* Slightly shrink */
-    opacity: 0.8;
-    /* Further dim the gradient on click */
-  }
-
-  .file-input-wrapper span {
-    margin-right: 0.5rem;
-  }
-
-  .event-form__desktop {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 100%;
-    background-color: var(--pos-inner-yellow);
-    padding-bottom: 1.25rem;
-  }
-
-  .event-form__desktop--topbar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 90%;
-    max-width: 95%;
-    padding: 1rem;
-    margin: 2rem 0 2rem 0;
-    gap:1rem;
-  }
-
-  .event-form__desktop h2 {
-    all: unset;
-    color: var(--pos-dark-grey);
-    font-size: 2rem;
-  }
-
-  .event-form__desktop--topbar .p-textfield {
-    height: 4rem;
-    border-radius: 0.375rem;
-    margin: unset;
-    padding: 1rem;
-    margin-top: 1rem;
-  }
-
-  .event-form__desktop--topbar .p-textfield:hover {
-    border: 0.125rem solid rgb(167, 177, 177);
-  }
-
-  .event-form__desktop--topbar .planner-date .dp__input_wrap {
-    display: flex;
-  }
-
-  .event-form__desktop--topbar .planner-date .dp__input_wrap input {
-    border-radius: 0.375rem;
-    height: 4rem;
-    width: 23rem;
-  }
-
-  .planner-description {
-    width: 80%;
-  }
-
-  .planner-description .p-textfield__textarea-container {
-    border-radius: 0.375rem;
-  }
-
-  .evTopMargin {
-    margin-top: 1rem;
-  }
-
-  .p-event--block-planner {
-    overflow: hidden;
-  }
+  
 
   /*SITE ADMIN HOME PAGE CSS =====================================================================================*/
 
@@ -2438,8 +2241,7 @@ input:checked+.slider:before {
     /* 11px */
     cursor: pointer;
   }
-
-
+  
   /* LOGIN */
   .login-container {
     width: 25rem;
@@ -2451,28 +2253,6 @@ input:checked+.slider:before {
     height: 95vh;
     border-radius: 0.9375rem;
     /* box-shadow: var(--drop-shadow); */
-  }
-
-
-  /* PLANNERCREATE */
-  .event-desktop-contentBox {
-    width: 60%;
-    max-width: 70rem;
-    align-self: flex-start;
-    margin-left: 10rem;
-  }
-
-  .event-form__desktop {
-    width: 60%;
-    max-width: 70rem;
-    align-self: flex-start;
-    margin-left: 10rem;
-    align-items: unset;
-  }
-
-  .event-form__desktop--topbar {
-    width: 70rem;
-    margin-left: -1rem;
   }
   
 }
