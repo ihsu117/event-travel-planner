@@ -32,6 +32,7 @@ const editView = ref(route.query.editView === 'true')
 const flightType = ref(0);
 const latitude = ref('');
 const longitude = ref('');
+const departureAirportField = ref('');
 const errors = ref({ date: '', location: '' })
 const roundtripRange = ref(null)
 const showInviteModal = ref(false)
@@ -118,12 +119,18 @@ const handleFlightClick = (flight) => {
 const toFlightSearch = () => {
     errors.value.date = ''
     errors.value.location = ''
-    if (latitude.value == '' || longitude.value == '') {
+    console.log(departureAirportField.value)
+    let hasError = false;
+
+    if (latitude.value == '' || longitude.value == '' || departureAirportField.value == '') {
         errors.value.location = 'Departure airport is required.'
+        hasError = true;
     }
     if (!departDate.value && !roundtripRange.value) {
         errors.value.date = 'Date is required.'
-    } else {
+        hasError = true;
+    } 
+    if (!hasError) {
 
         flightStore.clearFlights()
         console.log(eventStore.currentEvent);
@@ -611,7 +618,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                         </svg>
                         <!-- VueGoogleAutocomplete component -->
                         <VueGoogleAutocomplete class="p-textfield" id="map" types="airport" country="us"
-                            classname="form-control" placeholder="Departure Airport"
+                            classname="form-control" placeholder="Departure Airport" v-model="departureAirportField"
                             v-on:placechanged="handlePlaceChanged" required />
                     </div>
 
