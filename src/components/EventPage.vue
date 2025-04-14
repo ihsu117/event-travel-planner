@@ -359,10 +359,12 @@ const fetchUserData = async () => {
 
 const statusClass = computed(() => {
     const statusName = bookingData.value?.status?.name?.toLowerCase();
-    if (statusName === 'pending') {
+    if (statusName === 'pending approval') {
         return 'pending';
     } else if (statusName === 'denied') {
         return 'denied';
+    } else if (statusName === 'approved') {
+        return 'approved';
     } else {
         return ''; // For approved or any other status, no extra style
     }
@@ -825,17 +827,3 @@ const statusClass = computed(() => {
     </template>
 
 </template>
-
-<style scoped>
-.role-bubble.pending {
-    background-color: blue;
-    border: var(--pos-blue) 1px solid;
-    color: #ffffff;
-}
-
-.role-bubble.denied {
-    background-color: red;
-    border: var(--pos-red) 1px solid;
-    color: #ffffff;
-}
-</style>

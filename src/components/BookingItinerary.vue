@@ -173,10 +173,12 @@ const layoverDurationCalc = (arrival_time, departure_time) => {
 
 const statusClass = computed(() => {
     const statusName = bookingData.value?.status?.name?.toLowerCase();
-    if (statusName === 'pending') {
+    if (statusName === 'pending approval') {
         return 'pending';
     } else if (statusName === 'denied') {
         return 'denied';
+    } else if (statusName === 'approved') {
+        return 'approved';
     } else {
         return ''; // For approved or any other status, no extra style
     }
@@ -281,6 +283,9 @@ const statusClass = computed(() => {
                 :pictureLink="bookingData?.itinerary?.logoURL" @back-click="() => handleBack('Event')" />
 
             <div class="p-event__container">
+                <h1>Booking Status: <p class="role-bubble" :class="statusClass" style="text-align: center; margin-right: 0; font-size: 1rem;">
+                        {{ bookingData?.status?.name }}</p>
+                </h1>
                 <h1>Departing Itinerary</h1>
                 <div class="p-event__entry" v-for="(itinerary, index) in departItineraries" :key="index">
                     <PFlight design="itinerary" v-bind="itinerary" :flightDepTime="itinerary.departure_time"
