@@ -1719,6 +1719,10 @@ input:checked+.slider:before {
     width: 100%;
   }
 
+  .home-header__text-desktop p:first-child {
+    margin-left: 2rem;
+  }
+
   .role-bubble {
     color: var(--pos-green);
     background-color: #BBF7D0;
