@@ -727,7 +727,7 @@ const handleHScroll = (e) => {
                     :destinationCode="event.destinationCode" :financeMan="event.financeMan"
                     :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
                     design="block-planner" @editClick="handleEditEventClick(event)"
-                    @event-click="handleEditEventClick(event)" />
+                    @event-click="handleEventClick(event)" />
                 <PButton label="Create Event" @click="handleCreateEvent" design="planner"></PButton>
             </div>
             <hr>
@@ -744,7 +744,7 @@ const handleHScroll = (e) => {
                     :destinationCode="event.destinationCode" :financeMan="event.financeMan"
                     :autoApprove="event.autoApprove" :autoApproveThreshold="event.autoApproveThreshold"
                     design="block-planner" @editClick="handleEditEventClick(event)"
-                    @event-click="handleEditEventClick(event)" />
+                    @event-click="handleEventClick(event)" />
             </div>
         </div>
     </template>
