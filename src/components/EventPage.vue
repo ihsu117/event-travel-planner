@@ -39,6 +39,7 @@ const showInviteModal = ref(false)
 const isMobile = ref(window.innerWidth <= 768);
 const userInfo = ref({});
 const dateRange = ref([])
+const loading = ref(false);
 
 // const editableName = ref(eventStore.currentEvent.eventName)
 // const editableStartDate = ref(eventStore.currentEvent.startDate)
@@ -247,6 +248,7 @@ const checkAndLoadEvent = async () => {
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
 const checkAndLoadFlightBooking = async () => {
     if (isAttendee.value) {
+        loading.value = true;
         try {
             const response = await api.apiFetch('/flights/bookedflight/' + eventStore.currentEvent.id, {
                 credentials: 'include'
@@ -268,7 +270,7 @@ const checkAndLoadFlightBooking = async () => {
             console.error('Failed to fetch current booking data:', error)
         }
     }
-
+    loading.value = false;
     if (flightStore.currentFlight.itinerary) {
         bookingItinerary.value = flightStore.currentFlight.itinerary;
         bookingPrice.value = flightStore.currentFlight.price;
@@ -594,7 +596,13 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
                 :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" />
 
-            <div v-if="!bookingData || bookingData?.status?.id == 2" class="event-desktop-search">
+            <div v-if="loading" class="spinner">
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
+            </div>
+
+            <div v-if="!loading && (!bookingData || bookingData?.status?.id == 2)" class="event-desktop-search">
                 <!--Search Bar-->
                 <div class="flight-search-header">
                     <h2>Flight Search</h2>
@@ -663,7 +671,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
 
                 </div>
             </div>
-            <div v-if="bookingData" class="holding-flights">
+            <div v-if="!loading && bookingData" class="holding-flights">
                 <h2>Your Flight: <p class="role-bubble" :class="statusClass" style="display: inline; font-size: 1rem;">
                         {{ bookingData?.status?.name }}</p>
                 </h2>
@@ -764,15 +772,28 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 <div class="event-description">
                     <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                 </div>
-                <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
+
+                <div v-if="loading" class="spinner">
+                    <div class="loading-spinner" v-show="loading">
+                        <span class="loader"></span>
+                    </div>
+                </div>
+
+                <div v-if="!loading && bookingData">
+                    <h1>Your Booking: <p class="role-bubble" :class="statusClass" style="display: inline; font-size: 1rem;">
+                        {{ bookingData?.status?.name }}</p>
+                    </h1>
+                    <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
                     <PFlight design="block" :airline="bookingItinerary.airline" :logoURL="bookingItinerary.logoURL"
                         :price="bookingPrice" :flightClass="segment.class" :flightType="segment.flight_type"
                         :origin="segment.origin" :destination="segment.destination"
                         :flightDate="new Date(segment.departure_time)" :flightDepTime="segment.departure_time"
                         :flightArrTime="segment.arrival_time" :flightDuration="segment.duration"
                         @click="handleFlightClick(flightStore.currentFlight)" />
+                    </div>
                 </div>
-                <div v-if="!bookingData || bookingData?.status?.id == 2">
+                
+                <div v-if="!loading && (!bookingData || bookingData?.status?.id == 2)">
                     <div class="flight-search-form">
                         <h1>Flight Search</h1>
                     </div>
