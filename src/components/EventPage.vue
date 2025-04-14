@@ -590,8 +590,8 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 <div class="event-desktop-content">
                     <div class="event-date-desktop">
                         <h2>Date</h2>
-                        <p>{{ formatDate(eventStore.currentEvent.startDate) }} - {{
-                            formatDate(eventStore.currentEvent.endDate) }}</p>
+                        <p>Starts: {{ formatLongDate(eventStore.currentEvent.startDate) }} </p>
+                        <p>Ends: {{ formatLongDate(eventStore.currentEvent.endDate) }}</p>
                         <h2>Description</h2>
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
