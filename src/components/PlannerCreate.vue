@@ -188,7 +188,7 @@ const handleImageUpload = async (event) => {
 
 const createEvent = async () => {
     if (eventName.value === '' || description.value === '' || startDate.value === '' || endDate.value === '' || maxBudget.value === '') {
-        toastMessage.value = 'Please fill in all required fields.'
+        toastMessage.value = 'Please fill in all fields.'
         openToast()
         return
     }
@@ -231,7 +231,7 @@ const createEvent = async () => {
 
 const createEventDesktop = async () => {
     if (eventName.value === '' || description.value === '' || startDate.value === '' || endDate.value === '' || maxBudget.value === '') {
-        toastMessage.value = 'Please fill in all required fields.'
+        toastMessage.value = 'Please fill in all fields.'
         openToast()
         return
     }
