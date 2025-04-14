@@ -28,6 +28,7 @@ const editView = ref(false)
 const loading = ref(false)
 const eventContainer = ref(null);
 const orgModal = ref(false);
+const searchQuery = ref('')
 
 //Computed properties to check the role of the user
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
@@ -47,8 +48,17 @@ const updateScreenSize = () => {
 onMounted(async () => {
     window.addEventListener('resize', updateScreenSize);
     checkAuth()
+    fetchData()
     console.log('User ID:', userStore.user_id)
     loading.value = true
+
+});
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateScreenSize);
+});
+
+const fetchData = async () => {
     if (isSiteAdmin.value) {
         try {
             const response = await api.apiFetch('/organizations', {
@@ -58,6 +68,8 @@ onMounted(async () => {
                 const orgData = await response.json()
                 console.log('Organizations:', orgData)
                 organizations.value = orgData
+
+
             }
         } catch (error) {
             console.error('Failed to fetch organizations:', response.statusText)
@@ -96,11 +108,14 @@ onMounted(async () => {
         }
     }
 }
-)
 
-
-onUnmounted(() => {
-    window.removeEventListener('resize', updateScreenSize);
+const filteredOrganizations = computed(() => {
+    const orgs = organizations.value.slice(1);
+    if (!searchQuery.value.trim()) {
+        return orgs;
+    }
+    const query = searchQuery.value.toLowerCase();
+    return orgs.filter(org => org.name.toLowerCase().includes(query));
 });
 
 const fetchUserData = async () => {
@@ -228,8 +243,6 @@ const upcomingEvents = computed(() =>
 const orgName = ref('')
 const createOrg = () => {
     console.log('Creating organization:', orgName.value)
-    const orgNameString = String(orgName.value).trim();
-    console.log('Creating organization:', orgName.value)
     if (orgName.value) {
         api.apiFetch('/organization',
             {
@@ -243,7 +256,10 @@ const createOrg = () => {
                 })
             }).then(response => {
                 if (response.ok) {
+                    orgName.value = ''
                     orgModalClose()
+                    fetchData()
+                    
                 } else {
                     console.error('Failed to create organization:', response.statusText)
                 }
@@ -517,15 +533,15 @@ const handleHScroll = (e) => {
             <!--Organizations-->
 
                 <div class="home-desktop__admin-buttonGrid">
-                    <div v-if="organizations.length > 0" class="p-event__wrapper--NoGradient">
+                    <div v-if="filteredOrganizations.length > 0" class="p-event__wrapper--NoGradient">
                         <PButton label="Create Organization" @click="orgModalOpen()" design="planner"></PButton>
                             <div v-if="loading" class="spinner">
                                 <div class="loading-spinner" v-show="loading">
                                     <span class="loader"></span>
                                 </div>
                             </div>
-                        <!--Dynamic Events-->
-                        <PEvent design="org-block" v-for="org in organizations.slice(1)" :key="org.id" :id="org.id"
+                        <!--Dynamic Organizations (Filtered)-->
+                        <PEvent design="org-block" v-for="org in filteredOrganizations" :key="org.id" :id="org.id"
                             :organization="org" @click="handleOrgClick(org)" />
                     </div>
                 </div>
