@@ -299,7 +299,7 @@ onUnmounted(() => {
           :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber"
           :seatAvailable="flight.seatAvailable" :price="flight.price" :flightType="flight.flightType"
           :flightClass="flight.flightClass" :flightGate="flight.flightGate" :airline="flight.airline"
-          :logoURL="flight.logoURL" :itinerary="flight.itinerary" :flightDuration="formatISODurationShort(flight.itinerary[0].duration)"
+          :logoURL="flight.logoURL" :itinerary="flight.itinerary" :flightDuration="flight.itinerary[0].duration"
           @click="handleFlightClick(flight)" />
         <div v-if="loading" class="spinner">
           <div class="loading-spinner" v-show="loading" style="margin-top:0">
