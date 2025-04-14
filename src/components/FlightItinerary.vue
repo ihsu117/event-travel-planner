@@ -2,19 +2,21 @@
 import { PButton, PFlight, PEvent, PProfilePic } from '@poseidon-components'
 import { useFlightStore } from '../stores/flightStore'
 import { useUserStore } from '../stores/userStore'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import api from '../assets/scripts/api.js'
-import { onMounted, onUnmounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref, computed, onUpdated} from 'vue'
 import { useEventStore } from '../stores/eventStore'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import { onDuffelAncillariesPayloadReady, renderDuffelAncillariesCustomElement } from "@duffel/components/custom-elements";
 import HeaderBar from './Headerbar.vue'
 
 const router = useRouter()
+const route = useRoute()
 const flightStore = useFlightStore()
 const userStore = useUserStore()
 const matchingReturnOptions = ref(null)
 const eventStore = useEventStore()
+const ancillariesComponent = ref(null)
 
 const isMobile = ref(window.innerWidth <= 768);
 
@@ -37,6 +39,7 @@ const handleReturnFlightClick = () => {
 
 const handleGoToSummary = () => {
   flightStore.setItinerary([itineraries.value])
+  console.log(flightStore.itineraries)
   router.push({ name: 'FlightItinerary', query: { type: "bookingSummary" } })
 }
 
@@ -84,46 +87,8 @@ console.log("CURRENTFLIGHT! ", flightStore.currentFlight)
 onMounted(async () => {
   checkAuth()
 
-  var gender;
-  var title;
-  var phoneNum;
-
-  const userDetails = await api.apiFetch(`/user/${userStore.user_id}`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'applications/json'
-    }
-  }).then(
-    response => {
-      gender = response.gender,
-      title = response.title,
-      phoneNum = "+1" + response.phone_num
-    }
-  )
-
-  renderDuffelAncillariesCustomElement({
-    offer_id: flightStore.currentFlight.offer_id,
-    services: ["seats"],
-    passengers: [
-        {
-          given_name: userStore.first_name,
-          family_name: userStore.last_name,
-          gender: gender,
-          title: title,
-          born_on: userStore.dob,
-          email: userStore.email,
-          phone_number: phoneNum
-        }
-      ],
-    client_key: flightStore.currentFlight.search_key
-    });
-
-  onDuffelAncillariesPayloadReady((data, metadata) => {
-    console.table(data);
-    flightStore.currentFlight.price = data.payments[0].amount;
-    flightStore.currentFlight.seatNumber = metadata.seat_services[0].serviceInformation.designator;
-  })
+  doDuffelSeatmapRendering()
+  
 
   window.addEventListener('resize', updateScreenSize);
   console.log("!!!!",flightStore.currentFlight)
@@ -193,6 +158,57 @@ onMounted(async () => {
 
 })
 
+onUpdated( async () => {
+ doDuffelSeatmapRendering()
+})
+
+const doDuffelSeatmapRendering = async () => {
+  var gender;
+  var title;
+  var phoneNum;
+
+  const userDetails = await api.apiFetch(`/user/${userStore.user_id}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'applications/json'
+    }
+  }).then(
+    response => {
+      gender = response.gender,
+      title = response.title,
+      phoneNum = "+1" + response.phone_num
+    }
+  )
+  console.log(ancillariesComponent.value)
+  if (ancillariesComponent.value) {
+    userStore.loadUser()
+    console.log("TRUE", ancillariesComponent.value)
+    renderDuffelAncillariesCustomElement({
+    offer_id: flightStore.currentFlight.offer_id,
+    services: ["seats"],
+    passengers: [
+        {
+          given_name: userStore.first_name,
+          family_name: userStore.last_name,
+          gender: gender,
+          title: title,
+          born_on: userStore.dob,
+          email: userStore.email,
+          phone_number: phoneNum
+        }
+      ],
+    client_key: flightStore.currentFlight.search_key
+    });
+
+    onDuffelAncillariesPayloadReady((data, metadata) => {
+      console.table(data);
+      flightStore.currentFlight.price = Math.round(data.payments[0].amount * 100) / 100;
+      flightStore.currentFlight.seatNumber = metadata.seat_services[0].serviceInformation.designator;
+    });
+  }
+}
+
 const itineraries = computed(() => {
   const flightItinerary = flightStore.currentFlight.itinerary;
   if (!flightItinerary || !flightItinerary.length) return [];
@@ -239,12 +255,11 @@ console.log("ITINERARIES: ", itineraries.value)
             <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
-          <div>
-            <duffel-ancillaries>
+          <div v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'">
+            <duffel-ancillaries ref="ancillariesComponent">
               
             </duffel-ancillaries>
           </div>
-
           <div class="flight-itinerary-button">
             <PButton
               v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
@@ -284,7 +299,11 @@ console.log("ITINERARIES: ", itineraries.value)
             <PFlight v-if="index !== flightStore.itineraries[1].length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
-
+          <div>
+            <duffel-ancillaries ref="ancillariesComponent">
+              
+            </duffel-ancillaries>
+          </div>
           <div class="flight-hold-button">
             <PButton
               v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
@@ -318,11 +337,6 @@ console.log("ITINERARIES: ", itineraries.value)
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 
-        </div>
-        <div>
-          <duffel-ancillaries>
-            
-          </duffel-ancillaries>
         </div>
         <div class="flight-itinerary-button">
           <PButton
