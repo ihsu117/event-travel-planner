@@ -14,6 +14,10 @@ const props = defineProps({
     modalOrgId: {
         type: Number,
         default: null
+    },
+    orgName: {
+        type: String,
+        default: 'org'
     }
 })
 
@@ -400,6 +404,11 @@ const handleBack = (targetRoute) => {
     router.push({ name: targetRoute })
 }
 
+const getDisplayName = (user) => {
+    const name = [user.first_name, user.last_name].filter(part => part).join(" ");
+    return name || user.email;
+}
+
 onMounted(() => {
     window.addEventListener('resize', updateScreenSize);
     if (!isAdmin.value) {
@@ -420,69 +429,82 @@ const updateScreenSize = () => {
     isMobile.value = window.innerWidth <= 768;
 };
 
+const handleCSVButtonClick = () => {
+    // If no file is selected, open the file picker.
+    if (!fileInput.value || !fileInput.value.files.length) {
+        fileInput.value.click();
+    } else {
+        // If a file is already selected, process it.
+        addByCSV();
+    }
+};
+
 </script>
 
 
 <template>
 
     <template v-if="isAdmin">
+        <div class="modal-header">
+            <h2>Users of {{ props.orgName }}</h2> 
+            <div class="user-list-buttons">
+                <PButton design="planner" @click="openModal" label="Add User"></PButton>
+                <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
+                <!-- The button triggers the form submission -->
+                <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
+            </div>
+
+            </div>
         <div class="planner-event">
             <PEvent v-if="isMobile" design="small-header" eventName="Invitations"
                 @back-click="() => handleBack('Home')" />
-                <PButton design="planner" @click="openModal" label="Add User"></PButton>
-                <form @submit.prevent="addByCSV">
-                    <input type="file" ref="fileInput" name="file" accept=".csv" required />
-                    <!-- The button triggers the form submission -->
-                    <PButton label="Add User by .CSV" type="submit" design="gradient" />
-                </form>
+            
             <div class="event-invite">
                 <div class="user-list-container">
                     <h2>Org Admins</h2>
                     <div class="p-event__container">
                         <PFinanceBlock design="invite"
                             v-for="user in userStore.users.filter(user => user.role_id === 'Org Admin')"
-                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                            :profileImage="user.profile_picture"
-                            :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                            @click="selectFinanceManager(user.user_id)" required />
+                            :key="user.user_id" :name="getDisplayName(user)" :email="user.email"
+                            :profileImage="user.profile_picture" />
                     </div>
                 </div>
 
+                <hr class="divider" />
+
                 <div class="user-list-container">
-                <h2>Event Planners</h2>
-                <div class="p-event__container">
-                    <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Event Planner')"
-                        :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                        :profileImage="user.profile_picture"
-                        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                        @click="selectFinanceManager(user.user_id)" required />
+                    <h2>Event Planners</h2>
+                    <div class="p-event__container">
+                        <PFinanceBlock design="invite"
+                            v-for="user in userStore.users.filter(user => user.role_id === 'Event Planner')"
+                            :key="user.user_id" :name="getDisplayName(user)" :email="user.email"
+                            :profileImage="user.profile_picture" />
+                    </div>
                 </div>
-            </div>
 
-            <div class="user-list-container">
-                <h2>Finance Manager</h2>
-                <div class="p-event__container">
-                    <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
-                        :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                        :profileImage="user.profile_picture"
-                        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                        @click="selectFinanceManager(user.user_id)" required />
-                </div>
-            </div>
+                <hr class="divider" />
 
-            <div class="user-list-container">
-                <h2>Attendee</h2>
-                <div class="p-event__container">
-                    <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
-                        :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                        :profileImage="user.profile_picture"
-                        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                        @click="selectFinanceManager(user.user_id)" required />
+                <div class="user-list-container">
+                    <h2>Finance Manager</h2>
+                    <div class="p-event__container">
+                        <PFinanceBlock design="invite"
+                            v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
+                            :key="user.user_id" :name="getDisplayName(user)" :email="user.email"
+                            :profileImage="user.profile_picture" />
+                    </div>
                 </div>
-            </div>
+
+                <hr class="divider" />
+
+                <div class="user-list-container">
+                    <h2>Attendee</h2>
+                    <div class="p-event__container">
+                        <PFinanceBlock design="invite"
+                            v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')"
+                            :key="user.user_id" :name="getDisplayName(user)" :email="user.email"
+                            :profileImage="user.profile_picture" />
+                    </div>
+                </div>
 
             </div>
         </div>
