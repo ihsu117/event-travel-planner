@@ -795,6 +795,7 @@ body {
   box-shadow: var(--drop-shadow);
   z-index: 1000;
   animation: fadeIn 0.15s ease-in-out;
+  
 }
 
 .modal-options {
@@ -1016,12 +1017,6 @@ body {
   overflow: hidden;
 }
 
-.modal .new-user {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .loading-spinner {
   display: flex;
   justify-content: center;
@@ -1128,8 +1123,6 @@ body {
   /* 20px */
   width: 100%;
   /* Allow the container to stretch */
-  max-width: 24.56rem;
-  /* Ensure it doesn't restrict the inputs */
 }
 
 .planner-event input {
@@ -2132,9 +2125,11 @@ input:checked+.slider:before {
     padding: 1%;
   }
 
-  .planner-invite-modal .modal-container, .planner-invite-modal .modal {
+  .planner-invite-modal .modal-container,
+  .planner-invite-modal .modal {
     background-color: var(--pos-inner-yellow);
-    width: 80%;
+    width: 90%;
+    max-width: 90%;
     min-height: 80%;
     height: 80%;
     margin: 0;
@@ -2142,7 +2137,6 @@ input:checked+.slider:before {
   }
 
   .planner-invite-modal .planner-event {
-    max-width: 80rem;
     width: 100%;
     height: 100%;
     max-height: 70rem;
@@ -2163,11 +2157,6 @@ input:checked+.slider:before {
     justify-content: flex-start;
     gap: 0.625rem;
     width: 100%;
-    max-width: 24.56rem;
-  }
-
-  .planner-event h1 {
-    text-align: left;
   }
 
   .divider {
@@ -2176,16 +2165,20 @@ input:checked+.slider:before {
     opacity: 0.4;
   }
 
-  .event-invite {
+  .event-invite, .event-invite-plan {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
     background-color: var(--pos-inner-yellow);
     padding-bottom: 1.25rem;
-    gap: 2.5rem;
     width: 25%;
     max-width: 25%;
+    position: relative;
+  }
+
+  .event-invite-plan {
+    gap: 1rem;
   }
 
   .modal-header {
@@ -2241,6 +2234,99 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .role-selection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .role-selection label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+
+  .modal-invite-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+  }
+
+  .add-user-modal div.modal {
+    width: 35%;
+    max-width: 35%;
+    min-height: 25%;
+    max-height: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+  }
+
+  .add-user-modal h2 {
+    background: var(--top-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  input[type="radio"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background-color: var(--radio-bg, #f0f0f0);
+    /* Default background color */
+    border: 2px solid #000;
+    /* Add border */
+    cursor: pointer;
+  }
+
+  /* When the radio button is checked */
+  input[type="radio"]:checked {
+    background-color: var(--radio-checked-bg, var(--gradient-bg-color));
+    /* Checked background color */
+  }
+
+  .user-list-container div.p-event__container button.p-button--planner.p-button {
+    width: 95%;
+    max-width: 95%;
+    height: 10%;
+    max-height: 10%;
+    flex-direction: row;
+    padding: 0.375rem;
+  }
+
+  .submit-invite-button {
+    margin-left: 45%;
+  }
+
+  .submit-invite-button > button:nth-child(1) {
+    background: var(--pos-grey);
+  }
+
+  .submit-invite-button > button:nth-child(1) > p:nth-child(1) {
+    background: var(--top-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  html body div#app div.planner-invite-modal div.modal.modal-container div.add-user-modal div.modal div.modal-invite-button {
+    width: 30rem;
+    height: 5rem;
   }
 
   /*SITE ADMIN HOME PAGE CSS =====================================================================================*/
@@ -2438,15 +2524,15 @@ input:checked+.slider:before {
 
 
   /*LOGIN*/
-  .login-container .login-form{
+  .login-container .login-form {
     scale: 1.25;
     margin-top: 3rem;
   }
 
   /*REGISTRATION*/
-  .register-container .register-form{
+  .register-container .register-form {
     scale: 1.1;
     margin-top: 3rem;
-  }  
+  }
 
 }

@@ -5,7 +5,7 @@ import { useFlightStore } from '../stores/flightStore'
 import { useUserStore } from '../stores/userStore'
 import { useRouter, useRoute } from 'vue-router'
 import { PEvent, PButton, PFinanceBlock, PDropDown, PTextField, PFlight, PProfilePic } from '@poseidon-components'
-import { PlannerInvite } from './PlannerInvite.vue'
+import PlannerInvite from './PlannerInvite.vue'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import api from '../assets/scripts/api.js'
 // import { usePlacesAutocomplete } from 'vue-use-places-autocomplete'
@@ -35,7 +35,6 @@ const longitude = ref('');
 const departureAirportField = ref('');
 const errors = ref({ date: '', location: '' })
 const roundtripRange = ref(null)
-const showInviteModal = ref(false)
 const isMobile = ref(window.innerWidth <= 768);
 const userInfo = ref({});
 const dateRange = ref([])
@@ -342,13 +341,6 @@ const handleOneWayDate = (date) => {
 const goToInvitePage = () => {
     router.push({ name: "Invite" });
 }
-
-// const openInviteModal = () => {
-//     showInviteModal.value = true
-//  }
-
-//  console.log(bookingData.itinerary[0])
-
 const isModalVisible = ref(false)
 
 // Function to open the modal
@@ -363,6 +355,17 @@ const closeModal = () => {
 }
 
 
+const isInviteVisible = ref(false)
+const inviteModalEvent = ref('')
+
+const inviteModalOpen = (orgId) => {
+    isInviteVisible.value = true
+    inviteModalEvent.value = eventStore.currentEvent.id
+}
+const inviteModalClose = () => {
+    isInviteVisible.value = false
+    inviteModalEvent.value = ''
+}
 
 // Function to handle modal option selection
 const handleModalOption = async (option) => {
@@ -562,6 +565,13 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 </div>
             </div>
 
+        </div>
+
+        <div v-if="isInviteVisible && editView && !isMobile" class="planner-invite-modal">
+            <div class="modal-overlay" @click="inviteModalClose"></div>
+            <div class="modal modal-container">
+                <PlannerInvite :modalOrgId="inviteModalEvent"></PlannerInvite>
+            </div>
         </div>
     </template>
 
@@ -932,15 +942,6 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                         jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                         :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
                 </div>
-            </div>
-        </div>
-    </template>
-
-    <template v-if="route?.query?.editView && showInviteModal && isMobile">
-        <div class="modal-overlay" @click="showInviteModal = false"></div>
-        <div class="modal modal-container">
-            <div class="event-invite">
-                <PlannerInvite></PlannerInvite>
             </div>
         </div>
     </template>
