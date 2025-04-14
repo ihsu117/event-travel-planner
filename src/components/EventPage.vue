@@ -106,33 +106,6 @@ const formatDate = (date) => {
     });
 };
 
-const formatLongDate = (date) => {
-    if (!date) return 'Invalid date'; // Handle null or undefined dates
-    const parsedDate = typeof date === 'string' ? new Date(date) : date;
-    // Check the validity of the date using getTime()
-    if (isNaN(parsedDate.getTime())) return 'Invalid date';
-
-    // Get components for the formatted date.
-    const weekday = parsedDate.toLocaleDateString('en-US', { weekday: 'long' });
-    const month = parsedDate.toLocaleDateString('en-US', { month: 'long' });
-    const day = parsedDate.getDate();
-    const year = parsedDate.getFullYear();
-
-    // Helper function to compute ordinal suffix
-    const ordinalSuffix = (d) => {
-        if (d > 3 && d < 21) return 'th'; // Covers 4th-20th
-        switch (d % 10) {
-        case 1: return 'st';
-        case 2: return 'nd';
-        case 3: return 'rd';
-        default: return 'th';
-        }
-    };
-
-    // Return formatted date e.g. "Wednesday, January 22nd, 2025"
-    return `${weekday}, ${month} ${day}${ordinalSuffix(day)}, ${year}`;
-};
-
 //Function to handle the back button
 const handleBack = (targetRoute) => {
     router.push({ name: targetRoute })
@@ -490,81 +463,50 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton />
             </div>
 
-            <div class="desktop-body-wrapper">
-                <!-- <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
-                :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
-                :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" /> -->
-
-                <div class="event-desktop-contentBox" :style="{
-                    backgroundImage: `var(--gradient), url(${eventStore.currentEvent.pictureLink}), url(${pictureLink})`,
-                    backgroundSize: 'cover',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center'
-                }">
-                    <div class="event-desktop-contentBox__info">
-                        <div class="event-desktop-contentBox__textField">
-                            <input type="text" v-model="editableName" :placeholder="editableName" required />
-                        </div>
-                        <h2>Hosted By {{ userStore.org.name }}</h2> <!-- Organization name -->
-                    </div>
-                    <div class="file-input-wrapper">
-                        <label for="file-upload" class="custom-file-label">
-                            <span>Replace Image</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                    d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4z" />
-                            </svg>
-                        </label>
-                        <input type="file" id="file-upload" accept="image/*" @change="handleImageUpload" />
-                    </div>
+            <div class="editEvent-desktop-content">
+                <div class="event-date-desktop">
+                    <h2>Date</h2>
+                    <VueDatePicker class="evTopMargin" v-model="dateRange" :range="true" :enable-time-picker="false"
+                        :placeholder="formatTimeForDisplay(editableStartDate, editableEndDate)" exactMatch="true"
+                        :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
+                    </VueDatePicker>
+                    <h2>Description</h2>
+                    <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description"
+                        v-model="description" required />
                 </div>
 
-                <div class="editEvent-desktop-content">
-                    <div class="event-date-desktop">
-                        <h2>Date</h2>
-                        <VueDatePicker class="evTopMargin" v-model="dateRange" :range="true" :enable-time-picker="false"
-                            :placeholder="formatTimeForDisplay(editableStartDate, editableEndDate)" exactMatch="true"
-                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
-                        </VueDatePicker>
-                        <h2>Description</h2>
-                        <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description"
-                            v-model="description" required />
-                    </div>
-
-                    <div class="event-people-desktop">
-                        <div class="event-people-desktop__userAdd">
-                            <h2>Users</h2>
-                            <div class="event-edit-button">
-                                <PButton design="gradient" label="Edit/Add" @click="inviteModalOpen(eventStore.currentEvent.id)"></PButton>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="finance-info-desktop">
-                            <div v-if="eventStore.currentEvent.financeMan?.id">
-                                <h2>Finance Lead</h2>
-                                <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
-                                    :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
-                                    jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
-                                    :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
-                            </div>
-                            <div>
-                                <h2>Event Planner</h2>
-                                <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
-                                    :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
-                                    jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
-                                    :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
-                            </div>
+                <div class="event-people-desktop">
+                    <div class="event-people-desktop__userAdd">
+                        <h2>Users</h2>
+                        <div class="event-edit-button">
+                            <PButton design="gradient" label="Edit/Add" @click="inviteModalOpen(eventStore.currentEvent.id)"></PButton>
                         </div>
                     </div>
-                </div>
-                <br>
-                <hr>
-                <br>
-                <div class="event-edit-button">
-                    <PButton design="gradient" label="Save Changes" @click="saveChanges" />
+                    <hr>
+                    <div class="finance-info-desktop">
+                        <div v-if="eventStore.currentEvent.financeMan?.id">
+                            <h2>Finance Lead</h2>
+                            <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                                :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                                jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                                :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                        </div>
+                        <div>
+                            <h2>Event Planner</h2>
+                            <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                                :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                                jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                                :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                        </div>
+                    </div>
                 </div>
             </div>
-
+            <br>
+            <hr>
+            <br>
+            <div class="event-edit-button">
+                <PButton design="gradient" label="Save Changes" @click="saveChanges" />
+            </div>
         </div>
 
         <div v-if="isInviteVisible && editView && !isMobile" class="planner-invite-modal">
@@ -590,8 +532,8 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 <div class="event-desktop-content">
                     <div class="event-date-desktop">
                         <h2>Date</h2>
-                        <p>Starts: {{ formatLongDate(eventStore.currentEvent.startDate) }} </p>
-                        <p>Ends: {{ formatLongDate(eventStore.currentEvent.endDate) }}</p>
+                        <p>{{ formatDate(eventStore.currentEvent.startDate) }} - {{
+                            formatDate(eventStore.currentEvent.endDate) }}</p>
                         <h2>Description</h2>
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
@@ -732,8 +674,8 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 <div class="event-desktop-content">
                     <div class="event-date-desktop">
                         <h2>Date</h2>
-                        <p>Starts: {{ formatLongDate(eventStore.currentEvent.startDate) }} </p>
-                        <p>Ends: {{ formatLongDate(eventStore.currentEvent.endDate) }}</p>
+                        <p>{{ formatDate(eventStore.currentEvent.startDate) }} - {{
+                            formatDate(eventStore.currentEvent.endDate) }}</p>
                         <h2>Description</h2>
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>

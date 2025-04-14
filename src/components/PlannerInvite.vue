@@ -541,7 +541,7 @@ const handleCSVButtonClick = () => {
 
             <div class="event-invite-plan">
                 <div class="user-list-container">
-                    <h2>Org Admins</h2>
+                    <h2>Finance Managers</h2>
                     <div class="p-event__container">
 
                         <PFinanceBlock design="invite"
