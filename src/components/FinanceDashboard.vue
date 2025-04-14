@@ -96,12 +96,36 @@ const saveUpdatedValue = async () => {
     
 }
 
-const checkAndLoadEvent = () => {
+// const checkAndLoadEvent = () => {
+//     const eventData = localStorage.getItem('currentEvent');
+//     if (eventData) {
+//         eventStore.loadCurrentEvent();
+//     }
+// }
+
+const checkAndLoadEvent = async () => {
     const eventData = localStorage.getItem('currentEvent');
     if (eventData) {
         eventStore.loadCurrentEvent();
     }
-}
+    try {
+        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            const eventData = await response.json();
+            eventStore.setCurrentEvent(eventData); // Update the eventStore with fresh data
+        } else {
+            console.error('Failed to fetch current event:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error fetching current event:', error);
+    }
+};
 
 onMounted(async () => {
     loading.value = true;

@@ -733,7 +733,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
         </div>
     </template>
 
-    <template v-else-if="isMobile">
+    <template v-else-if="isMobile && userStore.role_id != 'Event Planner'">
         <div class="event-page">
 
             <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
@@ -829,6 +829,35 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                     :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
                     jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
                     :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+            </div>
+        </div>
+    </template>
+
+    <template v-else="isMobile && userStore.role_id == 'Event Planner'">
+        <div class="event-page">
+
+            <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
+                :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
+                :pictureLink="eventStore.currentEvent.pictureLink" design="header"
+                @back-click="() => handleBack('Home')" />
+
+            <div class="event-content">
+                <h1>Description</h1>
+                <div class="event-description">
+                    <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
+                </div>
+                <h1>Planning Team</h1>
+                <div class="finance-info">
+                    <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                        :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                        jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                        :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan?.id"
+                        :email="eventStore.currentEvent.financeMan?.email"
+                        :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                        jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                        :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                </div>
             </div>
         </div>
     </template>
