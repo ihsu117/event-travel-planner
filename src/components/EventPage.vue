@@ -469,7 +469,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
             }">
                 <div class="event-desktop-contentBox__info">
                     <div class="event-desktop-contentBox__textField">
-                        <input type="text" v-model="eventName" :placeholder="editableName" required />
+                        <input type="text" v-model="editableName" :placeholder="editableName" required />
                     </div>
                     <h2>Hosted By {{ userStore.org.name }}</h2> <!-- Organization name -->
                 </div>
