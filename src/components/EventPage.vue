@@ -436,9 +436,8 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
     <!-- -----------------------------------------------------------DESKTOP------------------------------------------------------->
 
     <!-----------------------------------------------------------EVENT PLANNER DESKTOP EDIT------------------------------------------------------->
-    <!--eventPageDesktop-->
     <template v-if="editView && !isMobile">
-        <div class="home-header-desktop">
+        <div class="event-page-desktop">
             <div class="home-header__text-desktop">
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
             </div>

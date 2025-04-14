@@ -1464,6 +1464,60 @@ input:checked+.slider:before {
   align-content: left;
 }
 
+/* Wrapper for the file input */
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  width: 20%;
+  max-width: 20%;
+  background: var(--gradient-4);
+  border-radius: 1.25rem;
+}
+
+/* Hide the default file input */
+.file-input-wrapper input[type="file"] {
+  display: none;
+}
+
+/* Style the custom label as a button */
+.custom-file-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background: var(--top-gradient);
+  /* Use the gradient variable */
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: var(--pos-yellow);
+  /* Ensure text is visible on the gradient */
+  text-align: center;
+}
+
+/* Hover effect */
+.custom-file-label:hover {
+  transform: scale(1.05);
+  /* Slightly enlarge */
+  opacity: 0.9;
+  /* Slightly dim the gradient on hover */
+}
+
+/* Active effect */
+.custom-file-label:active {
+  transform: scale(0.98);
+  /* Slightly shrink */
+  opacity: 0.8;
+  /* Further dim the gradient on click */
+}
+
+.file-input-wrapper span {
+  margin-right: 0.5rem;
+}
+
 @media only screen and (max-width: 56rem) {
 
   .login-container {
@@ -1585,61 +1639,6 @@ input:checked+.slider:before {
   }
 
 }
-
-
-  /* Wrapper for the file input */
-  .file-input-wrapper {
-    display: flex;
-    align-items: center;
-    width:20%;
-    max-width: 20%;
-    background: var(--gradient-4);
-    border-radius: 1.25rem;
-  }
-
-  /* Hide the default file input */
-  .file-input-wrapper input[type="file"] {
-    display: none;
-  }
-
-  /* Style the custom label as a button */
-  .custom-file-label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    background: var(--top-gradient);
-    /* Use the gradient variable */
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    color: var(--pos-yellow);
-    /* Ensure text is visible on the gradient */
-    text-align: center;
-  }
-
-  /* Hover effect */
-  .custom-file-label:hover {
-    transform: scale(1.05);
-    /* Slightly enlarge */
-    opacity: 0.9;
-    /* Slightly dim the gradient on hover */
-  }
-
-  /* Active effect */
-  .custom-file-label:active {
-    transform: scale(0.98);
-    /* Slightly shrink */
-    opacity: 0.8;
-    /* Further dim the gradient on click */
-  }
-  .file-input-wrapper span {
-    margin-right: 0.5rem;
-  }
-
 /*---------------DESKTOP------------------*/
 
 @media only screen and (min-width: 48rem) {
