@@ -163,6 +163,7 @@ onUpdated( async () => {
 })
 
 const doDuffelSeatmapRendering = async () => {
+  console.log(flightStore.currentFlight.price)
   var gender;
   var title;
   var phoneNum;
@@ -203,7 +204,9 @@ const doDuffelSeatmapRendering = async () => {
 
     onDuffelAncillariesPayloadReady((data, metadata) => {
       console.table(data);
-      flightStore.currentFlight.price = Math.round(data.payments[0].amount * 100) / 100;
+      console.log(flightStore.currentFlight.price)
+      flightStore.currentFlight.price = data.payments[0].amount;
+      console.log(flightStore.currentFlight.price)
       flightStore.currentFlight.seatNumber = metadata.seat_services[0].serviceInformation.designator;
     });
   }
@@ -307,7 +310,7 @@ console.log("ITINERARIES: ", itineraries.value)
           <div class="flight-hold-button">
             <PButton
               v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
-              design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
+              design="shop" label="Hold" :price="Math.ceil(flightStore.currentFlight.price)" @click="confirmPurchase()">
             </PButton>
           </div>
 
@@ -341,7 +344,7 @@ console.log("ITINERARIES: ", itineraries.value)
         <div class="flight-itinerary-button">
           <PButton
             v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
-            design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
+            design="shop" label="Hold" :price="Math.ceil(flightStore.currentFlight.price)" @click="confirmPurchase()">
           </PButton>
         </div>
         <div class="flight-itinerary-button">
@@ -389,7 +392,7 @@ console.log("ITINERARIES: ", itineraries.value)
           <div class="flight-hold-button">
             <PButton
               v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
-              design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
+              design="shop" label="Hold" :price="Math.ceil(flightStore.currentFlight.price)" @click="confirmPurchase()">
             </PButton>
           </div>
 
