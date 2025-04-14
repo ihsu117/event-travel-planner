@@ -32,6 +32,7 @@ const editView = ref(route.query.editView === 'true')
 const flightType = ref(0);
 const latitude = ref('');
 const longitude = ref('');
+const departureAirportField = ref('');
 const errors = ref({ date: '', location: '' })
 const roundtripRange = ref(null)
 const showInviteModal = ref(false)
@@ -118,12 +119,18 @@ const handleFlightClick = (flight) => {
 const toFlightSearch = () => {
     errors.value.date = ''
     errors.value.location = ''
-    if (latitude.value == '' || longitude.value == '') {
+    console.log(departureAirportField.value)
+    let hasError = false;
+
+    if (latitude.value == '' || longitude.value == '' || departureAirportField.value == '') {
         errors.value.location = 'Departure airport is required.'
+        hasError = true;
     }
-    if (false) {
+    if (!departDate.value && !roundtripRange.value) {
         errors.value.date = 'Date is required.'
-    } else {
+        hasError = true;
+    } 
+    if (!hasError) {
 
         flightStore.clearFlights()
         console.log(eventStore.currentEvent);
@@ -359,14 +366,29 @@ const fetchUserData = async () => {
 
 const statusClass = computed(() => {
     const statusName = bookingData.value?.status?.name?.toLowerCase();
-    if (statusName === 'pending') {
+    if (statusName === 'pending approval') {
         return 'pending';
     } else if (statusName === 'denied') {
         return 'denied';
+    } else if (statusName === 'approved') {
+        return 'approved';
     } else {
         return ''; // For approved or any other status, no extra style
     }
 });
+
+const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
+    const startDate = new Date(dateTimeStart);
+    const endDate = new Date(dateTimeEnd);
+
+    const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    };
+
+    return `${startDate.toLocaleString('en-US', options)} - ${endDate.toLocaleString('en-US', options)}`;
+}
 
 </script>
 
@@ -420,27 +442,30 @@ const statusClass = computed(() => {
     </template>
     <!-- -----------------------------------------------------------DESKTOP------------------------------------------------------->
 
+    <!-----------------------------------------------------------EVENT PLANNER DESKTOP EDIT------------------------------------------------------->
     <template v-if="editView && !isMobile">
-        <div class="home-header-desktop">
+        <div class="event-page-desktop">
             <div class="home-header__text-desktop">
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
             </div>
-        </div>
-        <div class="event-desktop-container">
-            <div class="event-desktop-contentBox">
+            <!-- <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
+                :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
+                :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" /> -->
+
+            <div class="event-desktop-contentBox" :style="{
+                backgroundImage: `var(--gradient), url(${eventStore.currentEvent.pictureLink}), url(${pictureLink})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center'}">
                 <div class="event-desktop-contentBox__info">
                     <div class="event-desktop-contentBox__textField">
-                        <input type="text" v-model="eventName" placeholder="Event Name" required />
+                        <input type="text" v-model="eventName" :placeholder="editableName" required />
                     </div>
                     <h2>Hosted By {{ userStore.org.name }}</h2> <!-- Organization name -->
                 </div>
-                <!-- <label for="imageUpload">this is atest</label>
-                <input id="imageUpload" type="file" accept="image/*" @change="handleImageUpload" />
-                <p v-if="pictureLink">Image uploaded successfully!</p> -->
-
                 <div class="file-input-wrapper">
                     <label for="file-upload" class="custom-file-label">
-                        <span>Add Image</span>
+                        <span>Replace Image</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <path fill="currentColor"
                                 d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4z" />
@@ -449,49 +474,54 @@ const statusClass = computed(() => {
                     <input type="file" id="file-upload" accept="image/*" @change="handleImageUpload" />
                 </div>
             </div>
-            <div class="event-form__desktop">
-                <div class="event-form__desktop--topbar">
-                    <div class="planner-event-destination">
-                        <h2>Destination</h2>
-                        <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
-                            classname="form-control" placeholder="Destination Airport"
-                            v-on:placechanged="handlePlaceChanged" required>
-                        </vue-google-autocomplete>
-                    </div>
-                    <div class="planner-start-date">
-                        <h2>Start Date</h2>
-                        <VueDatePicker class="evTopMargin" v-model="startDate" :enable-time-picker="false"
-                            :placeholder="'Start Date'" exactMatch="true"
-                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
-                        </VueDatePicker>
-                    </div>
-                    <div class="planner-end-date">
-                        <h2>End Date</h2>
-                        <VueDatePicker class="evTopMargin" v-model="endDate" :enable-time-picker="false"
-                            :placeholder="'End Date'" exactMatch="true"
-                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
-                        </VueDatePicker>
-                    </div>
-                    <div class="planner-event-budget">
-                        <h2>Max Budget</h2>
-                        <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" required />
-                    </div>
+                
+            <div class="editEvent-desktop-content">
+                <div class="event-date-desktop">
+                    <h2>Date</h2>
+                    <VueDatePicker class="evTopMargin" v-model="dateRange" :range="true" :enable-time-picker="false"
+                        :placeholder="formatTimeForDisplay(editableStartDate, editableEndDate)" exactMatch="true"
+                        :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
+                    </VueDatePicker>
+                    <h2>Description</h2>
+                    <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description" v-model="description" required />
                 </div>
 
-                <div class="planner-description">
-                    <h2>Description</h2>
-                    <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description"
-                        v-model="description" required />
+                <div class="event-people-desktop">
+                    <div class="event-people-desktop__userAdd">
+                        <h2>Users</h2>
+                        <div class="event-edit-button">
+                            <PButton design="gradient" label="Edit/Add" @click="goToInvitePage"></PButton>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="finance-info-desktop">
+                        <div v-if="eventStore.currentEvent.financeMan?.id">
+                            <h2>Finance Lead</h2>
+                            <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                                :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                                jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                                :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                        </div>
+                        <div>
+                            <h2>Event Planner</h2>
+                            <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                                :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                                jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                                :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                        </div>
+                    </div>
                 </div>
-                <br>
-                <br>
-                <br>
-                <div class="submitDiv">
-                    <PButton label="Create Event" @click="createEvent" design="gradient"></PButton>
-                </div>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="event-edit-button">
+                <PButton design="gradient" label="Save Changes" @click="saveChanges" />
             </div>
         </div>
     </template>
+
+    <!-----------------------------------------------------------EVENT PLANNER DESKTOP NO EDIT------------------------------------------------------->
 
     <template v-if="userStore.role_id == 'Event Planner' && !editView && !isMobile">
         <div class="event-page-desktop">
@@ -511,7 +541,8 @@ const statusClass = computed(() => {
                 </div>
 
                 <div class="event-people-desktop">
-
+                    <h2>Users</h2>
+                    <hr>
                     <div class="finance-info-desktop">
                         <div v-if="eventStore.currentEvent.financeMan?.id">
                             <h2>Finance Lead</h2>
@@ -527,12 +558,6 @@ const statusClass = computed(() => {
                                 jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
                                 :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                         </div>
-                    </div>
-                    <div class="event-edit-button">
-                        <PButton design="gradient" label="Add/Edit Users" @click="goToInvitePage"></PButton>
-                    </div>
-                    <div class="event-edit-button">
-                        <PButton design="gradient" label="Save Changes" @click="saveChanges" />
                     </div>
                 </div>
             </div>
@@ -593,7 +618,7 @@ const statusClass = computed(() => {
                         </svg>
                         <!-- VueGoogleAutocomplete component -->
                         <VueGoogleAutocomplete class="p-textfield" id="map" types="airport" country="us"
-                            classname="form-control" placeholder="Departure Airport"
+                            classname="form-control" placeholder="Departure Airport" v-model="departureAirportField"
                             v-on:placechanged="handlePlaceChanged" required />
                     </div>
 
@@ -715,7 +740,7 @@ const statusClass = computed(() => {
         </div>
     </template>
 
-    <template v-else-if="isMobile">
+    <template v-else-if="isMobile && userStore.role_id != 'Event Planner'">
         <div class="event-page">
 
             <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
@@ -815,6 +840,35 @@ const statusClass = computed(() => {
         </div>
     </template>
 
+    <template v-else="isMobile && userStore.role_id == 'Event Planner'">
+        <div class="event-page">
+
+            <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
+                :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
+                :pictureLink="eventStore.currentEvent.pictureLink" design="header"
+                @back-click="() => handleBack('Home')" />
+
+            <div class="event-content">
+                <h1>Description</h1>
+                <div class="event-description">
+                    <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
+                </div>
+                <h1>Planning Team</h1>
+                <div class="finance-info">
+                    <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                        :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                        jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                        :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                    <PFinanceBlock v-if="eventStore.currentEvent.financeMan?.id"
+                        :email="eventStore.currentEvent.financeMan?.email"
+                        :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                        jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                        :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <template v-if="route?.query?.editView && showInviteModal && isMobile">
         <div class="modal-overlay" @click="showInviteModal = false"></div>
         <div class="modal modal-container">
@@ -825,17 +879,3 @@ const statusClass = computed(() => {
     </template>
 
 </template>
-
-<style scoped>
-.role-bubble.pending {
-    background-color: blue;
-    border: var(--pos-blue) 1px solid;
-    color: #ffffff;
-}
-
-.role-bubble.denied {
-    background-color: red;
-    border: var(--pos-red) 1px solid;
-    color: #ffffff;
-}
-</style>

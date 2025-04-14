@@ -2,19 +2,21 @@
 import { PButton, PFlight, PEvent, PProfilePic } from '@poseidon-components'
 import { useFlightStore } from '../stores/flightStore'
 import { useUserStore } from '../stores/userStore'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import api from '../assets/scripts/api.js'
-import { onMounted, onUnmounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref, computed, onUpdated} from 'vue'
 import { useEventStore } from '../stores/eventStore'
 import { checkAuth } from '../assets/scripts/checkAuth.js'
 import { onDuffelAncillariesPayloadReady, renderDuffelAncillariesCustomElement } from "@duffel/components/custom-elements";
 import HeaderBar from './Headerbar.vue'
 
 const router = useRouter()
+const route = useRoute()
 const flightStore = useFlightStore()
 const userStore = useUserStore()
 const matchingReturnOptions = ref(null)
 const eventStore = useEventStore()
+const ancillariesComponent = ref(null)
 
 const isMobile = ref(window.innerWidth <= 768);
 
@@ -37,6 +39,7 @@ const handleReturnFlightClick = () => {
 
 const handleGoToSummary = () => {
   flightStore.setItinerary([itineraries.value])
+  console.log(flightStore.itineraries)
   router.push({ name: 'FlightItinerary', query: { type: "bookingSummary" } })
 }
 
@@ -48,75 +51,44 @@ const confirmPurchase = async () => {
     arrive_time: flightStore.currentFlight.flightArrTime,
     price: flightStore.currentFlight.price,
     date: flightStore.currentFlight.flightDate,
-    seatNumber: flightStore.currentFlight.seatNumber
-  }
+    seatNumber: flightStore.currentFlight.seatNumber,
+  };
 
   const localStorageData = JSON.parse(localStorage.getItem('currentEvent'));
   const eventID = localStorageData?.id; // Extract the eventID
 
-  return api.apiFetch('/flights/hold', {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      offerID: flightStore.currentFlight.offer_id,
-      passID: flightStore.currentFlight.passID,
-      flight: flightData,
-      eventID: eventID,
-    })
-  }).then(
-    response => console.log(response)
-  ).then(
-    router.push({ name: 'Event' })
-  )
-}
+  try {
+    const response = await api.apiFetch('/flights/hold', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        offerID: flightStore.currentFlight.offer_id,
+        passID: flightStore.currentFlight.passID,
+        flight: flightData,
+        eventID: eventID,
+      }),
+    });
+
+    console.log(response); // Log the response for debugging or further processing
+
+    // Now that the response is received, navigate to the event page
+    router.push({ name: 'Event' });
+  } catch (error) {
+    console.error('Error during purchase confirmation:', error);
+    // Optionally, handle errors (show an error message, etc.)
+  }
+};
+
 console.log("CURRENTFLIGHT! ", flightStore.currentFlight)
 
 onMounted(async () => {
   checkAuth()
 
-  var gender;
-  var title;
-  var phoneNum;
-
-  const userDetails = await api.apiFetch(`/user/${userStore.user_id}`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'applications/json'
-    }
-  }).then(
-    response => {
-      gender = response.gender,
-      title = response.title,
-      phoneNum = "+1" + response.phone_num
-    }
-  )
-
-  renderDuffelAncillariesCustomElement({
-    offer_id: flightStore.currentFlight.offer_id,
-    services: ["seats"],
-    passengers: [
-        {
-          given_name: userStore.first_name,
-          family_name: userStore.last_name,
-          gender: gender,
-          title: title,
-          born_on: userStore.dob,
-          email: userStore.email,
-          phone_number: phoneNum
-        }
-      ],
-    client_key: flightStore.currentFlight.search_key
-    });
-
-  onDuffelAncillariesPayloadReady((data, metadata) => {
-    console.table(data);
-    flightStore.currentFlight.price = data.payments[0].amount;
-    flightStore.currentFlight.seatNumber = metadata.seat_services[0].serviceInformation.designator;
-  })
+  doDuffelSeatmapRendering()
+  
 
   window.addEventListener('resize', updateScreenSize);
   console.log("!!!!",flightStore.currentFlight)
@@ -186,6 +158,57 @@ onMounted(async () => {
 
 })
 
+onUpdated( async () => {
+ doDuffelSeatmapRendering()
+})
+
+const doDuffelSeatmapRendering = async () => {
+  var gender;
+  var title;
+  var phoneNum;
+
+  const userDetails = await api.apiFetch(`/user/${userStore.user_id}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'applications/json'
+    }
+  }).then(
+    response => {
+      gender = response.gender,
+      title = response.title,
+      phoneNum = "+1" + response.phone_num
+    }
+  )
+  console.log(ancillariesComponent.value)
+  if (ancillariesComponent.value) {
+    userStore.loadUser()
+    console.log("TRUE", ancillariesComponent.value)
+    renderDuffelAncillariesCustomElement({
+    offer_id: flightStore.currentFlight.offer_id,
+    services: ["seats"],
+    passengers: [
+        {
+          given_name: userStore.first_name,
+          family_name: userStore.last_name,
+          gender: gender,
+          title: title,
+          born_on: userStore.dob,
+          email: userStore.email,
+          phone_number: phoneNum
+        }
+      ],
+    client_key: flightStore.currentFlight.search_key
+    });
+
+    onDuffelAncillariesPayloadReady((data, metadata) => {
+      console.table(data);
+      flightStore.currentFlight.price = Math.round(data.payments[0].amount * 100) / 100;
+      flightStore.currentFlight.seatNumber = metadata.seat_services[0].serviceInformation.designator;
+    });
+  }
+}
+
 const itineraries = computed(() => {
   const flightItinerary = flightStore.currentFlight.itinerary;
   if (!flightItinerary || !flightItinerary.length) return [];
@@ -232,12 +255,11 @@ console.log("ITINERARIES: ", itineraries.value)
             <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
-          <div>
-            <duffel-ancillaries>
+          <div v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'">
+            <duffel-ancillaries ref="ancillariesComponent">
               
             </duffel-ancillaries>
           </div>
-
           <div class="flight-itinerary-button">
             <PButton
               v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
@@ -259,10 +281,10 @@ console.log("ITINERARIES: ", itineraries.value)
             <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="itinerary.carrier" :originCity="itinerary.origin_city" :destinationCity="itinerary.destination_city" :flightDepTime="itinerary.departure_time"
               :logoURL="flightStore.currentFlight.logoURL" :flightArrTime="itinerary.arrival_time"
               :flightNumber="itinerary.flight_num" :flightClass="itinerary.class"
-              :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="itineraries.length"
+              :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="flightStore.itineraries[0].length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
-            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+            <PFlight v-if="index !== flightStore.itineraries[0].length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 
@@ -271,13 +293,17 @@ console.log("ITINERARIES: ", itineraries.value)
             <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="itinerary.carrier" :originCity="itinerary.origin_city" :destinationCity="itinerary.destination_city" :flightDepTime="itinerary.departure_time"
               :logoURL="flightStore.currentFlight.logoURL" :flightArrTime="itinerary.arrival_time"
               :flightNumber="itinerary.flight_num" :flightClass="itinerary.class"
-              :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="itineraries.length"
+              :flightDuration="itinerary.duration" :currentIndex="index + 1" :totalFlights="flightStore.itineraries[1].length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
-            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+            <PFlight v-if="index !== flightStore.itineraries[1].length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
-
+          <div>
+            <duffel-ancillaries ref="ancillariesComponent">
+              
+            </duffel-ancillaries>
+          </div>
           <div class="flight-hold-button">
             <PButton
               v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
@@ -312,11 +338,6 @@ console.log("ITINERARIES: ", itineraries.value)
           </div>
 
         </div>
-        <div>
-          <duffel-ancillaries>
-            
-          </duffel-ancillaries>
-        </div>
         <div class="flight-itinerary-button">
           <PButton
             v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
@@ -347,7 +368,7 @@ console.log("ITINERARIES: ", itineraries.value)
               :currentIndex="index + 1" :totalFlights="itineraries.length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
-            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+            <PFlight v-if="index !== flightStore.itineraries[0].length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 
@@ -361,7 +382,7 @@ console.log("ITINERARIES: ", itineraries.value)
               :currentIndex="index + 1" :totalFlights="itineraries.length"
               :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
             </PFlight>
-            <PFlight v-if="index !== itineraries.length - 1" design="layover" v-bind="itinerary"
+            <PFlight v-if="index !== flightStore.itineraries[1].length - 1" design="layover" v-bind="itinerary"
               :layoverDuration="itinerary.layover"></PFlight>
           </div>
 

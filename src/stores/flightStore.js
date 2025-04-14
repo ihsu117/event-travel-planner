@@ -128,7 +128,7 @@ export const useFlightStore = defineStore('flight', {
                     seatNumber: '' || 'TBD',
                     seatAvailable: 1,
                     passID: flight.attendee_id,
-                    price: Math.round(flight.price),
+                    price: flight.price,
                     flightType: flight.flightType || '',
                     flightClass: flight.flightClass || '',
                     flightGate: flight.flightGate || 'TBD',

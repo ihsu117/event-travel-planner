@@ -43,6 +43,7 @@ const lastCreatedEventId = ref(null)
 const userInfo = ref({});
 const latitude = ref('');
 const longitude = ref('');
+const toastMessage = ref('');
 
 const organizations = ref([])
 
@@ -121,6 +122,7 @@ const handleOrgClick = (org) => {
 }
 
 const isModalVisible = ref(false)
+const isToastVisible = ref(false)
 
 // Function to open the modal
 const openModal = async () => {
@@ -130,6 +132,20 @@ const openModal = async () => {
 
 // Function to close the modal
 const closeModal = () => {
+    isModalVisible.value = false
+}
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Function to open the modal
+const openToast = async () => {
+    isToastVisible.value = true
+    await wait(4000); // Wait for 2 seconds
+    isToastVisible.value = false; // Hide the toast
+}
+
+// Function to close the modal
+const closeToast = () => {
     isModalVisible.value = false
 }
 
@@ -171,6 +187,11 @@ const handleImageUpload = async (event) => {
 }
 
 const createEvent = async () => {
+    if (eventName.value === '' || description.value === '' || startDate.value === '' || endDate.value === '' || maxBudget.value === '') {
+        toastMessage.value = 'Please fill in all fields.'
+        openToast()
+        return
+    }
     try {
         const eventData = {
             name: eventName.value,
@@ -209,6 +230,11 @@ const createEvent = async () => {
 }
 
 const createEventDesktop = async () => {
+    if (eventName.value === '' || description.value === '' || startDate.value === '' || endDate.value === '' || maxBudget.value === '') {
+        toastMessage.value = 'Please fill in all fields.'
+        openToast()
+        return
+    }
     try {
         const eventData = {
             name: eventName.value,
@@ -372,6 +398,15 @@ const backgroundImageStyle = computed(() => {
                 <PTextField v-model="newEmail" label="Enter Attendee Email" />
                 <PButton @click="addUser" design="login" label="Send Invite"></PButton>
             </div>
+        </div>
+    </template>
+    
+    <!--------------------------------------------------------------- TOAST --------------------------------------------------------------->
+
+    <template v-if="isToastVisible && !isMobile">
+        <div class="modal-overlay" @click="closeToast"></div>
+        <div class="modal">
+            <h1 class="toastModal">{{ toastMessage }}</h1>
         </div>
     </template>
 
