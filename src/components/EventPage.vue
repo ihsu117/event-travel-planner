@@ -504,38 +504,40 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                             v-model="description" required />
                     </div>
 
-                <div class="event-people-desktop">
-                    <div class="event-people-desktop__userAdd">
-                        <h2>Users</h2>
-                        <div class="event-edit-button">
-                            <PButton design="gradient" label="Edit/Add" @click="inviteModalOpen(eventStore.currentEvent.id)"></PButton>
+                    <div class="event-people-desktop">
+                        <div class="event-people-desktop__userAdd">
+                            <h2>Users</h2>
+                            <div class="event-edit-button">
+                                <PButton design="gradient" label="Edit/Add" @click="goToInvitePage"></PButton>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="finance-info-desktop">
-                        <div v-if="eventStore.currentEvent.financeMan?.id">
-                            <h2>Finance Lead</h2>
-                            <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
-                                :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
-                                jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
-                                :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
-                        </div>
-                        <div>
-                            <h2>Event Planner</h2>
-                            <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
-                                :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
-                                jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
-                                :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                        <hr>
+                        <div class="finance-info-desktop">
+                            <div v-if="eventStore.currentEvent.financeMan?.id">
+                                <h2>Finance Lead</h2>
+                                <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                                    :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                                    jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                                    :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                            </div>
+                            <div>
+                                <h2>Event Planner</h2>
+                                <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                                    :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                                    jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                                    :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <br>
+                <hr>
+                <br>
+                <div class="event-edit-button">
+                    <PButton design="gradient" label="Save Changes" @click="saveChanges" />
+                </div>
             </div>
-            <br>
-            <hr>
-            <br>
-            <div class="event-edit-button">
-                <PButton design="gradient" label="Save Changes" @click="saveChanges" />
-            </div>
+
         </div>
 
         <div v-if="isInviteVisible && editView && !isMobile" class="planner-invite-modal">
