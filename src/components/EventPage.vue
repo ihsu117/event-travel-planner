@@ -590,123 +590,126 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
             <div class="home-header-desktop">
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton />
             </div>
-            <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
-                :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
-                :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" />
+            <div class="desktop-body-wrapper">
+                <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
+                    :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
+                    :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" />
 
-            <div v-if="!bookingData || bookingData?.status?.id == 2" class="event-desktop-search">
-                <!--Search Bar-->
-                <div class="flight-search-header">
-                    <h2>Flight Search</h2>
-                    <div class="flight-type-toggle">
-                        <button :class="['flight-btn', flightType === 0 ? 'active' : '']" @click="flightType = 0">
-                            One way
-                        </button>
-                        <button :class="['flight-btn', flightType === 1 ? 'active' : '']" @click="flightType = 1">
-                            Round trip
-                        </button>
+                <div v-if="!bookingData || bookingData?.status?.id == 2" class="event-desktop-search">
+                    <!--Search Bar-->
+                    <div class="flight-search-header">
+                        <h2>Flight Search</h2>
+                        <div class="flight-type-toggle">
+                            <button :class="['flight-btn', flightType === 0 ? 'active' : '']" @click="flightType = 0">
+                                One way
+                            </button>
+                            <button :class="['flight-btn', flightType === 1 ? 'active' : '']" @click="flightType = 1">
+                                Round trip
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="search-inputs">
-                    <div class="autocomplete-wrapper">
+                    <div class="search-inputs">
+                        <div class="autocomplete-wrapper">
 
-                        <div :class="['error-container', { show: errors.location }]">
-                            <svg v-if="errors.location" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
-                                height="16" viewBox="0 0 16 16">
-                                <path fill="#FEB96E" fill-rule="evenodd"
-                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
-                                    clip-rule="evenodd" />
+                            <div :class="['error-container', { show: errors.location }]">
+                                <svg v-if="errors.location" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" viewBox="0 0 16 16">
+                                    <path fill="#FEB96E" fill-rule="evenodd"
+                                        d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p v-if="errors.location" class="input-error">{{ errors.location }}</p>
+                            </div>
+
+                            <!-- Your SVG icon -->
+                            <svg class="map-icon" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
+                                viewBox="0 0 24 24">
+                                <path fill="#a9a9a9"
+                                    d="m12 20.9l4.95-4.95a7 7 0 1 0-9.9 0zm0 2.828l-6.364-6.364a9 9 0 1 1 12.728 0zM12 13a2 2 0 1 0 0-4a2 2 0 0 0 0 4m0 2a4 4 0 1 1 0-8a4 4 0 0 1 0 8" />
                             </svg>
-                            <p v-if="errors.location" class="input-error">{{ errors.location }}</p>
+                            <!-- VueGoogleAutocomplete component -->
+                            <VueGoogleAutocomplete class="p-textfield" id="map" types="airport" country="us"
+                                classname="form-control" placeholder="Departure Airport" v-model="departureAirportField"
+                                v-on:placechanged="handlePlaceChanged" required />
                         </div>
 
-                        <!-- Your SVG icon -->
-                        <svg class="map-icon" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
-                            viewBox="0 0 24 24">
-                            <path fill="#a9a9a9"
-                                d="m12 20.9l4.95-4.95a7 7 0 1 0-9.9 0zm0 2.828l-6.364-6.364a9 9 0 1 1 12.728 0zM12 13a2 2 0 1 0 0-4a2 2 0 0 0 0 4m0 2a4 4 0 1 1 0-8a4 4 0 0 1 0 8" />
-                        </svg>
-                        <!-- VueGoogleAutocomplete component -->
-                        <VueGoogleAutocomplete class="p-textfield" id="map" types="airport" country="us"
-                            classname="form-control" placeholder="Departure Airport" v-model="departureAirportField"
-                            v-on:placechanged="handlePlaceChanged" required />
-                    </div>
+                        <div class="date-picker-wrapper">
 
-                    <div class="date-picker-wrapper">
+                            <div :class="['error-container', { show: errors.date }]">
+                                <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" viewBox="0 0 16 16">
+                                    <path fill="#FEB96E" fill-rule="evenodd"
+                                        d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p v-if="errors.date" class="input-error">{{ errors.date }}</p>
+                            </div>
 
-                        <div :class="['error-container', { show: errors.date }]">
-                            <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
-                                height="16" viewBox="0 0 16 16">
-                                <path fill="#FEB96E" fill-rule="evenodd"
-                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <p v-if="errors.date" class="input-error">{{ errors.date }}</p>
+                            <VueDatePicker v-if="flightType === 0" v-model="departDate" :min-date="new Date()"
+                                :enable-time-picker="false" :placeholder="'Departure Date'" exactMatch="true"
+                                :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
+                                @update:model-value="handleOneWayDate"></VueDatePicker>
+
+                            <VueDatePicker v-if="flightType === 1" :range="true" :min-date="new Date()"
+                                :enable-time-picker="false" v-model="roundtripRange" format='MM/dd/yyyy'
+                                :placeholder="'Departure & Return Dates'"
+                                :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
+                                @update:model-value="handleRoundtripDate">
+                            </VueDatePicker>
                         </div>
 
-                        <VueDatePicker v-if="flightType === 0" v-model="departDate" :min-date="new Date()"
-                            :enable-time-picker="false" :placeholder="'Departure Date'" exactMatch="true"
-                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
-                            @update:model-value="handleOneWayDate"></VueDatePicker>
+                        <PButton design="gradient" label="Search" @click="toFlightSearch" />
 
-                        <VueDatePicker v-if="flightType === 1" :range="true" :min-date="new Date()"
-                            :enable-time-picker="false" v-model="roundtripRange" format='MM/dd/yyyy'
-                            :placeholder="'Departure & Return Dates'"
-                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply
-                            @update:model-value="handleRoundtripDate">
-                        </VueDatePicker>
+
+                    </div>
+                </div>
+                <div v-if="bookingData" class="holding-flights">
+                    <h2>Your Flight: <p class="role-bubble" :class="statusClass" style="display: inline; font-size: 1rem;">
+                            {{ bookingData?.status?.name }}</p>
+                    </h2>
+
+                    <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
+                        <PFlight design="desktop-block" :airline="bookingItinerary.airline"
+                            :logoURL="bookingItinerary.logoURL" :price="bookingPrice" :flightClass="segment.class"
+                            :flightType="segment.flight_type" :seat :origin="segment.origin"
+                            :destination="segment.destination" :flightDate="new Date(segment.departure_time)"
+                            :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time"
+                            :flightDuration="segment.duration" @click="handleFlightClick(flightStore.currentFlight)" />
+                    </div>
+                </div>
+
+                <hr>
+                <div class="event-desktop-content">
+                    <div class="event-date-desktop">
+                        <h2>Date</h2>
+                        <p>{{ formatDate(eventStore.currentEvent.startDate) }} - {{
+                            formatDate(eventStore.currentEvent.endDate) }}</p>
+                        <h2>Description</h2>
+                        <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
 
-                    <PButton design="gradient" label="Search" @click="toFlightSearch" />
+                    <div class="event-people-desktop">
 
+                        <div class="finance-info-desktop">
+                            <div v-if="eventStore.currentEvent.financeMan?.id">
+                                <h2>Finance Lead</h2>
+                                <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
+                                    :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
+                                    jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
+                                    :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                            </div>
 
-                </div>
-            </div>
-            <div v-if="bookingData" class="holding-flights">
-                <h2>Your Flight: <p class="role-bubble" :class="statusClass" style="display: inline; font-size: 1rem;">
-                        {{ bookingData?.status?.name }}</p>
-                </h2>
-
-                <div class="selected-flight" v-if="bookingData" v-for="(segment, index) in bookingItinerary.itinerary">
-                    <PFlight design="desktop-block" :airline="bookingItinerary.airline"
-                        :logoURL="bookingItinerary.logoURL" :price="bookingPrice" :flightClass="segment.class"
-                        :flightType="segment.flight_type" :seat :origin="segment.origin"
-                        :destination="segment.destination" :flightDate="new Date(segment.departure_time)"
-                        :flightDepTime="segment.departure_time" :flightArrTime="segment.arrival_time"
-                        :flightDuration="segment.duration" @click="handleFlightClick(flightStore.currentFlight)" />
-                </div>
-            </div>
-
-            <hr>
-            <div class="event-desktop-content">
-                <div class="event-date-desktop">
-                    <h2>Date</h2>
-                    <p>{{ formatDate(eventStore.currentEvent.startDate) }} - {{
-                        formatDate(eventStore.currentEvent.endDate) }}</p>
-                    <h2>Description</h2>
-                    <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
-                </div>
-
-                <div class="event-people-desktop">
-
-                    <div class="finance-info-desktop">
-                        <div v-if="eventStore.currentEvent.financeMan?.id">
-                            <h2>Finance Lead</h2>
-                            <PFinanceBlock :email="eventStore.currentEvent.financeMan?.email"
-                                :name="eventStore.currentEvent.financeMan?.firstName + ' ' + eventStore.currentEvent.financeMan?.lastName"
-                                jobTitle="Finance Manager" :phoneNum="eventStore.currentEvent.financeMan?.phoneNum"
-                                :profileImage="eventStore.currentEvent.financeMan?.profilePic"></PFinanceBlock>
+                            <h2>Event Planner</h2>
+                            <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
+                                :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
+                                jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
+                                :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                         </div>
-
-                        <h2>Event Planner</h2>
-                        <PFinanceBlock :email="eventStore.currentEvent.createdBy?.email"
-                            :name="eventStore.currentEvent.createdBy?.firstName + ' ' + eventStore.currentEvent.createdBy?.lastName"
-                            jobTitle="Event Planner" :phoneNum="eventStore.currentEvent.createdBy?.phoneNum"
-                            :profileImage="eventStore.currentEvent.createdBy?.profilePic"></PFinanceBlock>
                     </div>
-                </div>
+                </div>                
             </div>
+
         </div>
 
     </template>
