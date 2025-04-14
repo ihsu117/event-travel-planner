@@ -350,7 +350,7 @@ const handleHScroll = (e) => {
             <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <!--Dynamic Events-->
-                    <PEvent v-for="event in events" :key="event.id" :id="event.id" :organization="event.org"
+                    <PEvent v-for="event in upcomingEvents" :key="event.id" :id="event.id" :organization="event.org"
                         :eventName="event.name" :startDate="new Date(event.startDate)"
                         :endDate="new Date(event.endDate)" :pictureLink="event.pictureLink"
                         :description="event.description" :currentBudget="event.currentBudget"
