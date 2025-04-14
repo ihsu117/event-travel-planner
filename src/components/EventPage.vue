@@ -851,7 +851,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
         </div>
     </template>
 
-    <template v-else="isMobile && userStore.role_id == 'Event Planner'">
+    <template v-else-if="isMobile && userStore.role_id == 'Event Planner'">
         <div class="event-page">
 
             <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
