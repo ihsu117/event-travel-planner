@@ -2260,10 +2260,10 @@ input:checked+.slider:before {
 
 @media screen and (min-width: 1920px) {
   .home-desktop__admin-body {
-    width: 60%;
-    max-width: 60%;
-    align-self: flex-start;
-    margin-left: 5rem;
+    width: 70rem;
+    max-width: 95%;
+    scale: 1.25;
+    margin-top: 5rem;
   }
 }
 
@@ -2344,5 +2344,8 @@ input:checked+.slider:before {
     border-radius: 0.9375rem; */
     /* box-shadow: var(--drop-shadow); */
   /* }  */
+
+
+
   
 }
