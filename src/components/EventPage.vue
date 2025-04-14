@@ -106,6 +106,33 @@ const formatDate = (date) => {
     });
 };
 
+const formatLongDate = (date) => {
+    if (!date) return 'Invalid date'; // Handle null or undefined dates
+    const parsedDate = typeof date === 'string' ? new Date(date) : date;
+    // Check the validity of the date using getTime()
+    if (isNaN(parsedDate.getTime())) return 'Invalid date';
+
+    // Get components for the formatted date.
+    const weekday = parsedDate.toLocaleDateString('en-US', { weekday: 'long' });
+    const month = parsedDate.toLocaleDateString('en-US', { month: 'long' });
+    const day = parsedDate.getDate();
+    const year = parsedDate.getFullYear();
+
+    // Helper function to compute ordinal suffix
+    const ordinalSuffix = (d) => {
+        if (d > 3 && d < 21) return 'th'; // Covers 4th-20th
+        switch (d % 10) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+        }
+    };
+
+    // Return formatted date e.g. "Wednesday, January 22nd, 2025"
+    return `${weekday}, ${month} ${day}${ordinalSuffix(day)}, ${year}`;
+};
+
 //Function to handle the back button
 const handleBack = (targetRoute) => {
     router.push({ name: targetRoute })
@@ -563,8 +590,8 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 <div class="event-desktop-content">
                     <div class="event-date-desktop">
                         <h2>Date</h2>
-                        <p>{{ formatDate(eventStore.currentEvent.startDate) }} - {{
-                            formatDate(eventStore.currentEvent.endDate) }}</p>
+                        <p>Starts: {{ formatLongDate(eventStore.currentEvent.startDate) }} </p>
+                        <p>Ends: {{ formatLongDate(eventStore.currentEvent.endDate) }}</p>
                         <h2>Description</h2>
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>
@@ -705,8 +732,8 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 <div class="event-desktop-content">
                     <div class="event-date-desktop">
                         <h2>Date</h2>
-                        <p>{{ formatDate(eventStore.currentEvent.startDate) }} - {{
-                            formatDate(eventStore.currentEvent.endDate) }}</p>
+                        <p>Starts: {{ formatLongDate(eventStore.currentEvent.startDate) }} </p>
+                        <p>Ends: {{ formatLongDate(eventStore.currentEvent.endDate) }}</p>
                         <h2>Description</h2>
                         <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                     </div>

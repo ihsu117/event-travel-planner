@@ -329,13 +329,13 @@ body {
 }
 
 .role-bubble.pending {
-  background-color: blue;
+  background-color: #5050bc;
   border: var(--pos-blue) 1px solid;
   color: #ffffff;
 }
 
 .role-bubble.denied {
-  background-color: red;
+  background-color: #d74e4e;
   border: var(--pos-red) 1px solid;
   color: #ffffff;
 }
