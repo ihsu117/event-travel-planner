@@ -1681,6 +1681,18 @@ input:checked+.slider:before {
     width: auto;
   }
 
+  .role-bubble.pending {
+    background-color: blue;
+    border: var(--pos-blue) 1px solid;
+    color: #ffffff;
+  }
+
+  .role-bubble.denied {
+    background-color: red;
+    border: var(--pos-red) 1px solid;
+    color: #ffffff;
+  }
+
   .p-event__wrapper {
     position: relative;
     display: flex;
