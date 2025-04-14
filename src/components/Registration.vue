@@ -23,7 +23,7 @@ const dob = ref('')
 const password = ref('')
 const confPass = ref('')
 const profileImage = ref(null)
-const errors = ref({ email: '', password: '', firstName: '', lastName: '', phoneNumber: '' })
+const errors = ref({ email: '', password: '', firstName: '', lastName: '', phoneNumber: '', title: '', gender: '', dob: '' })
 const userInfo = ref({})
 
 // Other reactive vars
@@ -85,7 +85,7 @@ const validateFields = () => {
     let isValid = true;
 
     // Reset errors
-    errors.value = { email: '', password: '', firstName: '', lastName: '', phoneNumber: '' };
+    errors.value = { email: '', password: '', firstName: '', lastName: '', phoneNumber: '', title: '', gender: '', dob: '' };
 
     // Validate first name
     if (!firstName.value.trim()) {
@@ -106,6 +106,23 @@ const validateFields = () => {
         isValid = false;
     } else if (!phoneRegex.test(phoneNumber.value)) {
         errors.value.phoneNumber = 'Phone number must be exactly 10 digits';
+        isValid = false;
+    }
+
+    // Validate title
+    if (!title.value) {
+        errors.value.title = 'Title is required'
+        isValid = false;
+    }
+
+    // Validate gender
+    if (!gender.value) {
+        errors.value.gender = 'Gender is required'
+        isValid = false;
+    }
+
+    if (!dob.value) {
+        errors.value.dob = 'Date of Birth is required'
         isValid = false;
     }
 
@@ -282,10 +299,30 @@ onMounted(async () => {
             <div class="form-name">
                 <h1>Name</h1>
                 <div class="register-form-name">
-                    <PTextField design="login-small" v-model="firstName" label="First Name" />
-                    <p v-if="errors.firstName" class="input-error">{{ errors.firstName }}</p>
-                    <PTextField design="login-small" v-model="lastName" label="Last Name" />
-                    <p v-if="errors.lastName" class="input-error">{{ errors.lastName }}</p>
+                    <div>
+                        <PTextField design="login-small" v-model="firstName" label="First Name" />
+                        <div :class="['error-container', { show: errors.firstName }]">
+                            <svg v-if="errors.firstName" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 16 16">
+                                <path fill="#FEB96E" fill-rule="evenodd"
+                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p v-if="errors.firstName" class="input-error">{{ errors.firstName }}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <PTextField design="login-small" v-model="lastName" label="Last Name" />
+                        <div :class="['error-container', { show: errors.lastName }]">
+                            <svg v-if="errors.lastName" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 16 16">
+                                <path fill="#FEB96E" fill-rule="evenodd"
+                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p v-if="errors.lastName" class="input-error">{{ errors.lastName }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -294,18 +331,44 @@ onMounted(async () => {
                     <h1>Title</h1>
                     <PDropDown design="login" v-model="title" description="title" dropDownLabel="Title"
                         :options="titleOptions" @option-selected="handleUpdate" />
+                    <div :class="['error-container', { show: errors.title }]">
+                        <svg v-if="errors.title" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                            height="16" viewBox="0 0 16 16">
+                            <path fill="#FEB96E" fill-rule="evenodd"
+                                d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <p v-if="errors.title" class="input-error">{{ errors.title }}</p>
+                    </div>
                 </div>
                 <div class="form-gender">
                     <h1>Gender</h1>
                     <PDropDown design="login" v-model="gender" description="gender" dropDownLabel="Gender"
                         :options="genderOptions" @option-selected="handleUpdate" />
+                    <div :class="['error-container', { show: errors.gender }]">
+                        <svg v-if="errors.gender" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                            height="16" viewBox="0 0 16 16">
+                            <path fill="#FEB96E" fill-rule="evenodd"
+                                d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    <p v-if="errors.gender" class="input-error">{{ errors.gender }}</p>
+                    </div>
                 </div>
             </div>
 
             <div class="form-phone">
                 <h1>Phone Number</h1>
                 <PTextField v-model="phoneNumber" label="123-456-7890" />
-                <p v-if="errors.phoneNumber" class="input-error">{{ errors.phoneNumber }}</p>
+                <div :class="['error-container', { show: errors.phoneNumber }]">
+                    <svg v-if="errors.phoneNumber" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                        height="16" viewBox="0 0 16 16">
+                        <path fill="#FEB96E" fill-rule="evenodd"
+                            d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <p v-if="errors.phoneNumber" class="input-error">{{ errors.phoneNumber }}</p>
+                </div>
             </div>
 
             <div class="form-dob">
@@ -313,6 +376,15 @@ onMounted(async () => {
                 <VueDatePicker id="dob" v-model="dob" :enable-time-picker="false" :placeholder="'MM/DD/YYYY'"
                     exactMatch="true" :config="{ closeOnAutoApply: false, keepActionRow: true }"
                     :text-input="{ format: 'MM/dd/yyyy' }" :max-date="new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]" autocomplete="off" />
+                <div :class="['error-container', { show: errors.dob }]">
+                    <svg v-if="errors.dob" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                        height="16" viewBox="0 0 16 16">
+                        <path fill="#FEB96E" fill-rule="evenodd"
+                            d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <p v-if="errors.dob" class="input-error">{{ errors.dob }}</p>
+                </div>
             </div>
 
             <div class="form-password-container">
