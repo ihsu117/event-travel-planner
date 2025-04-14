@@ -15,6 +15,7 @@ import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
 import { format } from 'date-fns'
 import HeaderBar from './Headerbar.vue'
+import PlannerInvite from './PlannerInvite.vue'
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
@@ -26,8 +27,10 @@ const organizations = ref([])
 const userInfo = ref({});
 const editView = ref(false)
 const loading = ref(false)
-const eventContainer = ref(null);
-const orgModal = ref(false);
+const eventContainer = ref(null)
+const orgModal = ref(false)
+const inviteModalID = ref(null) 
+const isInviteVisible = ref(false)
 
 //Computed properties to check the role of the user
 const isAttendee = computed(() => userStore.role_id === 'Attendee')
@@ -98,7 +101,6 @@ onMounted(async () => {
 }
 )
 
-
 onUnmounted(() => {
     window.removeEventListener('resize', updateScreenSize);
 });
@@ -117,8 +119,6 @@ const fetchUserData = async () => {
         console.error('Error fetching user data:', error);
     }
 };
-
-
 
 const handleEventClick = async (eventData) => {
     try {
@@ -192,6 +192,15 @@ const orgModalOpen = () => {
 }
 const orgModalClose = () => {
     orgModal.value = false
+}
+
+const inviteModalOpen = (orgId) => {
+    isInviteVisible.value = true
+    inviteModalID.value = orgId
+}
+const inviteModalClose = () => {
+    isInviteVisible.value = false
+    inviteModalID.value = ''
 }
 
 // Function to handle modal option selection
@@ -291,7 +300,7 @@ const handleHScroll = (e) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -327,10 +336,10 @@ const handleHScroll = (e) => {
             </div>
             <h1>Upcoming Events</h1>
             <div v-if="loading" class="spinner">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
                 </div>
+            </div>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <!--Dynamic Events-->
@@ -352,10 +361,10 @@ const handleHScroll = (e) => {
             <hr>
             <h1>Previous Events</h1>
             <div v-if="loading" class="spinner">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
                 </div>
+            </div>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
@@ -384,10 +393,10 @@ const handleHScroll = (e) => {
             </div>
             <h1>Upcoming Events</h1>
             <div v-if="loading" class="spinner">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
                 </div>
+            </div>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <!--Dynamic Events-->
@@ -410,10 +419,10 @@ const handleHScroll = (e) => {
             <hr>
             <h1>Previous Events</h1>
             <div v-if="loading" class="spinner">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
                 </div>
+            </div>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
@@ -448,9 +457,9 @@ const handleHScroll = (e) => {
                 <PButton label="Create Event" @click="handleCreateEvent" design="gradient-small"></PButton>
             </div>
             <div v-if="loading" class="spinner">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
+                </div>
             </div>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll" ref="scrWrapper">
                 <div class="p-event__container-desktop" ref="eventContainer">
@@ -474,10 +483,10 @@ const handleHScroll = (e) => {
             <hr>
             <h1>Previous Events</h1>
             <div v-if="loading" class="spinner">
-                    <div class="loading-spinner" v-show="loading">
-                        <span class="loader"></span>
-                    </div>
+                <div class="loading-spinner" v-show="loading">
+                    <span class="loader"></span>
                 </div>
+            </div>
             <div class="scroll-wrapper" @wheel.stop="handleHScroll">
                 <div class="p-event__container-desktop" ref="eventContainer">
                     <PEvent v-for="event in previousEvents" :key="event.id" :id="event.id" :organization="event.org"
@@ -507,30 +516,38 @@ const handleHScroll = (e) => {
             <div class="home-desktop__admin-body">
                 <div class="home-desktop__admin-search">
                     <h1>Organizations</h1>
-                    <div class="home-desktop__admin-searchHeader"> 
+                    <div class="home-desktop__admin-searchHeader">
                         <label for="searchBox">Search</label>
-                        <PTextField id='searchBox' label="Search" v-model="searchQuery" placeholder="Organization Name" />
+                        <PTextField id='searchBox' label="Search" v-model="searchQuery"
+                            placeholder="Organization Name" />
                     </div>
                     <hr>
                 </div>
 
-            <!--Organizations-->
+                <!--Organizations-->
 
                 <div class="home-desktop__admin-buttonGrid">
                     <div v-if="organizations.length > 0" class="p-event__wrapper--NoGradient">
                         <PButton label="Create Organization" @click="orgModalOpen()" design="planner"></PButton>
-                            <div v-if="loading" class="spinner">
-                                <div class="loading-spinner" v-show="loading">
-                                    <span class="loader"></span>
-                                </div>
+                        <div v-if="loading" class="spinner">
+                            <div class="loading-spinner" v-show="loading">
+                                <span class="loader"></span>
                             </div>
+                        </div>
                         <!--Dynamic Events-->
                         <PEvent design="org-block" v-for="org in organizations.slice(1)" :key="org.id" :id="org.id"
-                            :organization="org" @click="handleOrgClick(org)" />
+                            :organization="org" @click="inviteModalOpen(org.id)" />
                     </div>
                 </div>
             </div>
         </div>
+
+        <div v-if="isSiteAdmin && !isMobile && isInviteVisible" class="planner-invite-modal">
+            <div class="modal-overlay" @click="inviteModalClose"></div>
+                <div class="modal modal-container">
+                    <PlannerInvite :modalOrgId="inviteModalID"></PlannerInvite>
+                </div>
+            </div>
     </template>
 
 
@@ -560,7 +577,7 @@ const handleHScroll = (e) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -777,30 +794,6 @@ const handleHScroll = (e) => {
                 </div>
                 <!--Dynamic Events-->
                 <PEvent design="org-block" :organization="userStore.org" @click="handleOrgClick(userStore.org)" />
-            </div>
-        </div>
-    </template>
-
-    <template v-if="isSiteAdmin && !isMobile">
-        <div class="home">
-            <div class="home-header">
-
-                <div class="home-header__text">
-                    <p>Welcome, {{ userStore.first_name }}</p>
-                    <p class="role-bubble">{{ userStore.role_id }}</p>
-                </div>
-                <PProfilePic design="small" @click="openModal" :profileImage='userStore.profile_picture' />
-            </div>
-
-            <h1>Organizations</h1>
-            <div class="p-event__container">
-                <PButton label="Create Org" @click="orgModalOpen()" design="planner"></PButton>
-                <div class="loading-spinner" v-show="loading">
-                    <span class="loader"></span>
-                </div>
-                <!--Dynamic Events-->
-                <PEvent design="org-block" v-for="org in organizations.slice(1)" :key="org.id" :id="org.id"
-                    :organization="org" @click="handleOrgClick(org)" />
             </div>
         </div>
     </template>

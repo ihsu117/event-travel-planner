@@ -10,6 +10,13 @@ import { useEventStore } from '../stores/eventStore.js'
 import { useUserStore } from '../stores/userStore.js'
 import api from '../assets/scripts/api.js'
 
+const props = defineProps({
+    modalOrgId: {
+        type: Number,
+        default: null
+    }
+})
+
 const router = useRouter()
 const route = useRoute()
 const eventStore = useEventStore()
@@ -21,12 +28,12 @@ const emailInput = ref('')
 const inviteEmail = ref('')
 const isModalVisible = ref(false)
 const fileInput = ref(null)
-
 const invitedUsers = ref([])
 
-const orgId = computed(() => route.params.orgId)
+const orgId = computed(() => route.params.orgId || props.modalOrgId)
 const role_id = ref('Attendee')
 const isOrgListPage = computed(() => route.path.includes(`/org/list/${orgId.value}`))
+const isAdmin = computed(() => userStore.role_id === 'Org Admin' || userStore.role_id === 'Site Admin')
 console.log('Organization ID:', orgId.value)
 
 // Modal-specific reactive: do not include modal display logic here.
@@ -395,7 +402,7 @@ const handleBack = (targetRoute) => {
 
 onMounted(() => {
     window.addEventListener('resize', updateScreenSize);
-    if (!isOrgListPage.value) {
+    if (!isAdmin.value) {
         getInvitedUsers()
         loadOrgUsers()
     } else {
@@ -418,27 +425,30 @@ const updateScreenSize = () => {
 
 <template>
 
-    <template v-if="isOrgListPage">
+    <template v-if="isAdmin">
         <div class="planner-event">
-            <PEvent design="small-header" eventName="Invitations" @back-click="() => handleBack('Home')" />
-            <div class="event-invite">
+            <PEvent v-if="isMobile" design="small-header" eventName="Invitations"
+                @back-click="() => handleBack('Home')" />
                 <PButton design="planner" @click="openModal" label="Add User"></PButton>
                 <form @submit.prevent="addByCSV">
                     <input type="file" ref="fileInput" name="file" accept=".csv" required />
                     <!-- The button triggers the form submission -->
                     <PButton label="Add User by .CSV" type="submit" design="gradient" />
                 </form>
-
-                <h2>Org Admins</h2>
-                <div class="p-event__container">
-                    <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Org Admin')" :key="user.user_id"
-                        :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                        :profileImage="user.profile_picture"
-                        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                        @click="selectFinanceManager(user.user_id)" required />
+            <div class="event-invite">
+                <div class="user-list-container">
+                    <h2>Org Admins</h2>
+                    <div class="p-event__container">
+                        <PFinanceBlock design="invite"
+                            v-for="user in userStore.users.filter(user => user.role_id === 'Org Admin')"
+                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                            :profileImage="user.profile_picture"
+                            :class="{ selected: isFinanceManagerSelected(user.user_id) }"
+                            @click="selectFinanceManager(user.user_id)" required />
+                    </div>
                 </div>
 
+                <div class="user-list-container">
                 <h2>Event Planners</h2>
                 <div class="p-event__container">
                     <PFinanceBlock design="invite"
@@ -448,7 +458,9 @@ const updateScreenSize = () => {
                         :class="{ selected: isFinanceManagerSelected(user.user_id) }"
                         @click="selectFinanceManager(user.user_id)" required />
                 </div>
+            </div>
 
+            <div class="user-list-container">
                 <h2>Finance Manager</h2>
                 <div class="p-event__container">
                     <PFinanceBlock design="invite"
@@ -458,31 +470,19 @@ const updateScreenSize = () => {
                         :class="{ selected: isFinanceManagerSelected(user.user_id) }"
                         @click="selectFinanceManager(user.user_id)" required />
                 </div>
+            </div>
 
+            <div class="user-list-container">
                 <h2>Attendee</h2>
                 <div class="p-event__container">
                     <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')"
-                        :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                        v-for="user in userStore.users.filter(user => user.role_id === 'Attendee')" :key="user.user_id"
+                        :name="user.first_name + ' ' + user.last_name" :email="user.email"
                         :profileImage="user.profile_picture"
                         :class="{ selected: isFinanceManagerSelected(user.user_id) }"
                         @click="selectFinanceManager(user.user_id)" required />
                 </div>
-
-                <h2>Attendees</h2>
-                <div class="p-event__container">
-
-                    <PFinanceBlock design="invite"
-                        v-for="user in remainingUsers" :key="user.user_id"
-                        :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
-                        :email="user.email" :profileImage="user.profile_picture"
-                        :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
-
-                    <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
-                        :profileImage="user.profile_picture" :class="{ selected: isNewUserSelected(user.email) }"
-                        @click="selectNewUser(user.email)" />
-
-                </div>
+            </div>
 
             </div>
         </div>
@@ -523,7 +523,7 @@ const updateScreenSize = () => {
 
                     <PFinanceBlock design="invite" v-for="user in invitedUsers" :key="user.id"
                         :name="(user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : user.email"
-                        :email="user.email" :profileImage="user.profilePic"/>
+                        :email="user.email" :profileImage="user.profilePic" />
                 </div>
 
                 <div>
