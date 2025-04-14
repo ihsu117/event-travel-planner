@@ -115,7 +115,9 @@ export const useFlightStore = defineStore('flight', {
                     return;
                 }
 
-                this.flightResults = flightData.map(flight => ({
+                console.log(flightData.filter((f) => f.status.id == 1));
+
+                this.flightResults = flightData.filter((f) => f.status.id == 1).map(flight => ({
                     flightID: flight.flight_id,
                     flightDate: new Date(flight.depart_time),
                     flightNumber: flight.flight_num,

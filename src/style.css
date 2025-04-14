@@ -467,6 +467,33 @@ body {
   width: 100%;
 }
 
+.history-card {
+  display: flex;
+  padding: 1rem;
+  background-color: var(--pos-grey);
+  color: black;
+  aspect-ratio: 3/1;
+  flex-direction: column;
+  border-radius: 0.375rem;
+  box-shadow: var(--drop-shadow);
+}
+
+.history-card h4 {
+  display: inline-block;
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.approved-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-card p {
+  margin: 0;
+}
+
 /* .p-event__container-desktop {
   display: flex;
   flex-direction: row;
