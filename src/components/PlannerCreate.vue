@@ -494,113 +494,116 @@ const backgroundImageStyle = computed(() => {
             </div>
         </div>
         <div class="event-desktop-container">
-            <div class="event-desktop-contentBox" :style="{
-                backgroundImage: `var(--gradient), url(${pictureLink})`,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center'
-            }">
+            <div class="desktop-body-wrapper">
+                <div class="event-desktop-contentBox" :style="{
+                    backgroundImage: `var(--gradient), url(${pictureLink})`,
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center'
+                }">
 
-                <div class="event-desktop-contentBox__info">
-                    <div class="event-desktop-contentBox__textField">
-                        <input type="text" v-model="eventName" placeholder="Event Name" required />
-                        <div :class="['error-container', { show: errors.ename }]">
-                            <svg v-if="errors.ename" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                    <div class="event-desktop-contentBox__info">
+                        <div class="event-desktop-contentBox__textField">
+                            <input type="text" v-model="eventName" placeholder="Event Name" required />
+                            <div :class="['error-container', { show: errors.ename }]">
+                                <svg v-if="errors.ename" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" viewBox="0 0 16 16">
+                                    <path fill="#FEB96E" fill-rule="evenodd"
+                                        d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p v-if="errors.ename" class="input-error">Event Name is required!</p>
+                            </div>
+                        </div>
+                        <h2>Hosted By {{ userStore.org.name }}</h2> <!-- Organization name -->
+                    </div>
+                    <!-- <label for="imageUpload">this is atest</label>
+                    <input id="imageUpload" type="file" accept="image/*" @change="handleImageUpload" />
+                    <p v-if="pictureLink">Image uploaded successfully!</p> -->
+                    <div class="file-input-wrapper">
+                        <label for="file-upload" class="custom-file-label">
+                            <span>Add Image</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                    d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4z" />
+                            </svg>
+                        </label>
+
+                        <input type="file" id="file-upload" accept="image/*" @change="handleImageUpload" />
+                    </div>
+                </div>
+                <div class="event-form__desktop">
+                    <div class="event-form__desktop--topbar">
+                        <div class="planner-date">
+                            <h2>Date</h2>
+                            <VueDatePicker class="evTopMargin" v-model="dateRange" :range="true" :enable-time-picker="false"
+                                :placeholder="'mm/dd/yyyy - mm/dd/yyyy'" exactMatch="true"
+                                :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
+                            </VueDatePicker>
+                            <div :class="['error-container', { show: errors.date }]">
+                                <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" viewBox="0 0 16 16">
+                                    <path fill="#FEB96E" fill-rule="evenodd"
+                                        d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p v-if="errors.date" class="input-error">Date is required!</p>
+                            </div>
+                        </div>
+                        <div class="planner-event-budget">
+                            <h2>Budget</h2>
+                            <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" placeholder="$00000" required />
+                            <div :class="['error-container', { show: errors.budget }]">
+                                <svg v-if="errors.budget" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" viewBox="0 0 16 16">
+                                    <path fill="#FEB96E" fill-rule="evenodd"
+                                        d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p v-if="errors.budget" class="input-error">Budget is required!</p>
+                            </div>
+                        </div>
+                        <div class="planner-event-destination">
+                            <h2>Destination</h2>
+                            <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us" v-model="destinationField"
+                                classname="form-control" placeholder="Destination Airport"
+                                v-on:placechanged="handlePlaceChanged" required>
+                            </vue-google-autocomplete>
+                            <div :class="['error-container', { show: errors.dest }]">
+                                <svg v-if="errors.dest" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" viewBox="0 0 16 16">
+                                    <path fill="#FEB96E" fill-rule="evenodd"
+                                        d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p v-if="errors.dest" class="input-error">Destination is required!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="planner-description">
+                        <h2>Description</h2>
+                        <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description"
+                            v-model="description" required />
+                        <div :class="['error-container', { show: errors.desc }]">
+                            <svg v-if="errors.desc" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
                                 height="16" viewBox="0 0 16 16">
                                 <path fill="#FEB96E" fill-rule="evenodd"
                                     d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <p v-if="errors.ename" class="input-error">Event Name is required!</p>
+                            <p v-if="errors.desc" class="input-error">Description is required!</p>
                         </div>
                     </div>
-                    <h2>Hosted By {{ userStore.org.name }}</h2> <!-- Organization name -->
-                </div>
-                <!-- <label for="imageUpload">this is atest</label>
-                <input id="imageUpload" type="file" accept="image/*" @change="handleImageUpload" />
-                <p v-if="pictureLink">Image uploaded successfully!</p> -->
-                <div class="file-input-wrapper">
-                    <label for="file-upload" class="custom-file-label">
-                        <span>Add Image</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="currentColor"
-                                d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4z" />
-                        </svg>
-                    </label>
-
-                    <input type="file" id="file-upload" accept="image/*" @change="handleImageUpload" />
+                    <br>
+                    <br>
+                    <br>
+                    <div class="submitDiv">
+                        <PButton label="Create Event" @click="createEventDesktop" design="gradient"></PButton>
+                    </div>
                 </div>
             </div>
-            <div class="event-form__desktop">
-                <div class="event-form__desktop--topbar">
-                    <div class="planner-date">
-                        <h2>Date</h2>
-                        <VueDatePicker class="evTopMargin" v-model="dateRange" :range="true" :enable-time-picker="false"
-                            :placeholder="'mm/dd/yyyy - mm/dd/yyyy'" exactMatch="true"
-                            :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
-                        </VueDatePicker>
-                        <div :class="['error-container', { show: errors.date }]">
-                            <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
-                                height="16" viewBox="0 0 16 16">
-                                <path fill="#FEB96E" fill-rule="evenodd"
-                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <p v-if="errors.date" class="input-error">Date is required!</p>
-                        </div>
-                    </div>
-                    <div class="planner-event-budget">
-                        <h2>Budget</h2>
-                        <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" placeholder="$00000" required />
-                        <div :class="['error-container', { show: errors.budget }]">
-                            <svg v-if="errors.budget" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
-                                height="16" viewBox="0 0 16 16">
-                                <path fill="#FEB96E" fill-rule="evenodd"
-                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <p v-if="errors.budget" class="input-error">Budget is required!</p>
-                        </div>
-                    </div>
-                    <div class="planner-event-destination">
-                        <h2>Destination</h2>
-                        <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us" v-model="destinationField"
-                            classname="form-control" placeholder="Destination Airport"
-                            v-on:placechanged="handlePlaceChanged" required>
-                        </vue-google-autocomplete>
-                        <div :class="['error-container', { show: errors.dest }]">
-                            <svg v-if="errors.dest" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
-                                height="16" viewBox="0 0 16 16">
-                                <path fill="#FEB96E" fill-rule="evenodd"
-                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <p v-if="errors.dest" class="input-error">Destination is required!</p>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="planner-description">
-                    <h2>Description</h2>
-                    <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description"
-                        v-model="description" required />
-                    <div :class="['error-container', { show: errors.desc }]">
-                        <svg v-if="errors.desc" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
-                            height="16" viewBox="0 0 16 16">
-                            <path fill="#FEB96E" fill-rule="evenodd"
-                                d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <p v-if="errors.desc" class="input-error">Description is required!</p>
-                    </div>
-                </div>
-                <br>
-                <br>
-                <br>
-                <div class="submitDiv">
-                    <PButton label="Create Event" @click="createEventDesktop" design="gradient"></PButton>
-                </div>
-            </div>
         </div>
     </template>
 

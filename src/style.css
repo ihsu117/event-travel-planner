@@ -468,6 +468,7 @@ body {
   align-items: center;
   gap: 1%;
   width: 100%;
+  margin-top: 2%;
 }
 
 .history-card {
@@ -475,17 +476,25 @@ body {
   padding: 1rem;
   background-color: var(--pos-grey);
   color: black;
-  aspect-ratio: 3/1;
   flex-direction: column;
   border-radius: 0.375rem;
   box-shadow: var(--drop-shadow);
+  height: 7rem;
+  width: fit-content;
 }
 
 .history-card h4 {
-  display: inline-block;
+  display: block;
   font-size: 1rem;
   margin-top: 0;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.history-card h5 {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
 }
 
 .approved-card {
@@ -495,6 +504,7 @@ body {
 
 .history-card p {
   margin: 0;
+  font-size: 0.875rem;
 }
 
 /* .p-event__container-desktop {
@@ -606,8 +616,7 @@ body {
   flex-direction: column;
   align-items: left;
   justify-content: left;
-  width: 60%;
-  max-width: 100%;
+  width: max(687px, 80%);
   height: 100%;
   white-space: nowrap;
   /* Prevent wrapping of items */
@@ -1828,6 +1837,14 @@ input:checked+.slider:before {
     align-items: center;
     justify-content: flex-start;
     width: clamp(687px, 75%, 1080px);
+  }
+
+  .home-body-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: clamp(687px, 95%, 1920px);
   }
 
   .desktop-flights {
