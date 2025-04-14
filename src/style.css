@@ -310,6 +310,33 @@ body {
   font-weight: 600;
 }
 
+.pending, .denied, .approved{
+  color: var(--pos-green);
+  background-color: #BBF7D0;
+  border-radius: 2.5rem;
+  /* 40px / 16 = 2.5rem */
+  border: var(--pos-green) 1px solid;
+  font-size: 0.69rem;
+  /* 11px / 16 ≈ 0.69rem */
+  padding: 0.25rem 0.5rem;
+  /* 4px and 8px respectively */
+  margin-right: 1.88rem;
+  /* 30px / 16 ≈ 1.88rem */
+  font-weight: 600;
+}
+
+.role-bubble.pending {
+  background-color: blue;
+  border: var(--pos-blue) 1px solid;
+  color: #ffffff;
+}
+
+.role-bubble.denied {
+  background-color: red;
+  border: var(--pos-red) 1px solid;
+  color: #ffffff;
+}
+
 .home h1 {
   margin-top: 0.69rem;
   margin-bottom: 0.88rem;
@@ -1679,18 +1706,6 @@ input:checked+.slider:before {
     margin-right: 1.88rem;
     font-weight: 600;
     width: auto;
-  }
-
-  .role-bubble.pending {
-    background-color: blue;
-    border: var(--pos-blue) 1px solid;
-    color: #ffffff;
-  }
-
-  .role-bubble.denied {
-    background-color: red;
-    border: var(--pos-red) 1px solid;
-    color: #ffffff;
   }
 
   .p-event__wrapper {
