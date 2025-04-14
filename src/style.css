@@ -85,6 +85,7 @@
   opacity: 1;
   /* Fully visible */
   margin-bottom: 0.44rem;
+  margin-top: 0.44rem;
 }
 
 .error-icon {
