@@ -446,7 +446,7 @@ const handleCSVButtonClick = () => {
 
     <template v-if="isAdmin">
         <div class="modal-header">
-            <h2>Users of {{ props.orgName }}</h2> 
+            <h2>Users of {{ props.orgName }}</h2>
             <div class="user-list-buttons">
                 <PButton design="planner" @click="openModal" label="Add User"></PButton>
                 <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
@@ -454,11 +454,11 @@ const handleCSVButtonClick = () => {
                 <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
             </div>
 
-            </div>
+        </div>
         <div class="planner-event">
             <PEvent v-if="isMobile" design="small-header" eventName="Invitations"
                 @back-click="() => handleBack('Home')" />
-            
+
             <div class="event-invite">
                 <div class="user-list-container">
                     <h2>Org Admins</h2>
@@ -511,56 +511,69 @@ const handleCSVButtonClick = () => {
     </template>
 
     <template v-else>
-
-        <div class="planner-event">
-            <PEvent design="small-header" eventName="Invitations" @back-click="() => handleBack('Home')" />
-            <div class="event-invite">
-
-                <h2>Finance Manager</h2>
-                <div class="p-event__container">
-
-                    <PFinanceBlock design="invite"
-                        v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
-                        :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
-                        :profileImage="user.profile_picture"
-                        :class="{ selected: isFinanceManagerSelected(user.user_id) }"
-                        @click="selectFinanceManager(user.user_id)" required />
-                </div>
-
-                <h2>Attendees</h2>
-                <div class="p-event__container">
-                    <PButton design="planner" @click="openModal" label="Add User"></PButton>
-                    <PFinanceBlock design="invite" v-for="user in remainingUsers" :key="user.user_id"
-                        :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
-                        :email="user.email" :profileImage="user.profile_picture"
-                        :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
-
-                    <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
-                        :profileImage="user.profile_picture" :class="{ selected: isNewUserSelected(user.email) }"
-                        @click="selectNewUser(user.email)" />
-                </div>
-
-                <h2>Invited Attendees</h2>
-                <div class="p-event__container">
-
-                    <PFinanceBlock design="invite" v-for="user in invitedUsers" :key="user.id"
-                        :name="(user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : user.email"
-                        :email="user.email" :profileImage="user.profilePic" />
-                </div>
-
-                <div>
+        <div class="modal-header">
+            <h2>Attendee</h2>
+            <div class="submit-invite-button">
                     <PButton label="Send Invites" @click="submitChange" design="gradient"></PButton>
                 </div>
+        </div>
+        <div class="planner-event">
+            <PEvent v-if="isMobile" design="small-header" eventName="Invitations"
+                @back-click="() => handleBack('Home')" />
+
+            <div class="event-invite-plan">
+                <div class="user-list-container">
+                    <h2>Org Admins</h2>
+                    <div class="p-event__container">
+
+                        <PFinanceBlock design="invite"
+                            v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
+                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                            :profileImage="user.profile_picture"
+                            :class="{ selected: isFinanceManagerSelected(user.user_id) }"
+                            @click="selectFinanceManager(user.user_id)" required />
+                    </div>
+                </div>
+                <hr class="divider" />
+
+                <div class="user-list-container">
+
+                    <h2>Attendees</h2>
+                    <div class="p-event__container">
+                        <PButton design="planner" @click="openModal" label="Add User"></PButton>
+                        <PFinanceBlock design="invite" v-for="user in remainingUsers" :key="user.user_id"
+                            :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
+                            :email="user.email" :profileImage="user.profile_picture"
+                            :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
+
+                        <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
+                            :profileImage="user.profile_picture" :class="{ selected: isNewUserSelected(user.email) }"
+                            @click="selectNewUser(user.email)" />
+                    </div>
+                </div>
+
+                <hr class="divider" />
+
+                <div class="user-list-container">
+                    <h2>Invited Attendees</h2>
+                    <div class="p-event__container">
+
+                        <PFinanceBlock design="invite" v-for="user in invitedUsers" :key="user.id"
+                            :name="(user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : user.email"
+                            :email="user.email" :profileImage="user.profilePic" />
+                    </div>
+                </div>
+                
             </div>
         </div>
 
     </template>
 
     <template v-if="isModalVisible">
-        <div class="modal-overlay" @click="closeModal"></div>
-        <div class="modal">
-            <div class="new-user">
-
+        <div class="add-user-modal">
+            <div class="modal-overlay" @click="closeModal"></div>
+            <div class="modal">
+                <h2>Add User</h2>
                 <div v-if="userStore.role_id == 'Site Admin' || userStore.role_id == 'Org Admin'"
                     class="role-selection">
                     <label>
@@ -581,13 +594,16 @@ const handleCSVButtonClick = () => {
                         Attendee
                     </label>
                 </div>
-                <PTextField v-model="emailInput" label="Enter Attendee Email" />
-                <PButton v-if="userStore.role_id == 'Site Admin' || userStore.role_id == 'Org Admin'"
-                    @click="adminAddUser" design="gradient" label="Send Invite"></PButton>
-                <PButton v-if="userStore.role_id == 'Event Planner'" @click="makeNewUserEntry(emailInput)"
-                    design="gradient" label="Add User"></PButton>
+                <div class="modal-invite-button">
+                    <PTextField v-model="emailInput" label="Enter Attendee Email" />
+                    <PButton v-if="userStore.role_id == 'Site Admin' || userStore.role_id == 'Org Admin'"
+                        @click="adminAddUser" design="gradient" label="Send Invite"></PButton>
+                    <PButton v-if="userStore.role_id == 'Event Planner'" @click="makeNewUserEntry(emailInput)"
+                        design="gradient" label="Add User"></PButton>
+                </div>
             </div>
         </div>
+
     </template>
 
 </template>
