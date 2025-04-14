@@ -85,6 +85,7 @@
   opacity: 1;
   /* Fully visible */
   margin-bottom: 0.44rem;
+  margin-top: 0.44rem;
 }
 
 .error-icon {
@@ -310,7 +311,9 @@ body {
   font-weight: 600;
 }
 
-.pending, .denied, .approved{
+.pending,
+.denied,
+.approved {
   color: var(--pos-green);
   background-color: #BBF7D0;
   border-radius: 2.5rem;
@@ -1137,7 +1140,6 @@ body {
   font-size: 2rem;
   /* 32px */
   text-align: center;
-  margin-bottom: 0rem;
   /* 0px */
 }
 
@@ -1669,6 +1671,7 @@ input:checked+.slider:before {
   }
 
 }
+
 /*---------------DESKTOP------------------*/
 
 @media only screen and (min-width: 48rem) {
@@ -2112,14 +2115,17 @@ input:checked+.slider:before {
     padding: 1%;
   }
 
-  .planner-invite-modal .modal-container{
+  .planner-invite-modal .modal-container, .planner-invite-modal .modal {
     background-color: var(--pos-inner-yellow);
     width: 80%;
+    min-height: 80%;
     height: 80%;
+    margin: 0;
+    padding: 0;
   }
 
   .planner-invite-modal .planner-event {
-    max-width: 100rem;
+    max-width: 80rem;
     width: 100%;
     height: 100%;
     max-height: 70rem;
@@ -2132,46 +2138,88 @@ input:checked+.slider:before {
     justify-content: center;
     background-color: var(--pos-inner-yellow);
     padding-bottom: 1.25rem;
-    /* 20px */
+    justify-content: flex-start;
     gap: 0.625rem;
     width: 100%;
-    /* Allow the container to stretch */
     max-width: 24.56rem;
-    /* Ensure it doesn't restrict the inputs */
+  }
+
+  .planner-event h1 {
+    text-align: left;
+  }
+
+  .divider {
+    margin-top: 30%;
+    height: 30rem;
+    opacity: 0.4;
   }
 
   .event-invite {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     background-color: var(--pos-inner-yellow);
     padding-bottom: 1.25rem;
-    /* 20px */
-    gap: 0.625rem;
+    gap: 2.5rem;
+    width: 25%;
+    max-width: 25%;
+  }
+
+  .modal-header {
+    background: var(--top-gradient);
     width: 100%;
-    /* Allow the container to stretch */
-    max-width: 24.56rem;
-    /* Ensure it doesn't restrict the inputs */
+    max-width: 100%;
+    color: white;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .modal-header h2 {
+    font-weight: 400;
+    margin-left: 5%;
+    font-size: 2rem;
+    min-width: 30%;
+  }
+
+  .user-list-buttons button.p-button--planner.p-button {
+    width: 30%;
+    max-width: 30%;
+    height: 10%;
+    max-height: 10%;
+    flex-direction: row;
+    padding: 0.375rem;
   }
 
   .user-list-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 100%;
+    justify-content: flex-start;
+    min-width: 90%;
     max-width: 100%;
     padding-top: 1.25rem;
-    /* 20px */
     gap: 0.625rem;
   }
 
-    .event-invite .p-event__container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  .user-list-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 1rem;
+    width: 100%;
+    max-width: 100%;
+    margin-right: 2%;
+  }
+
+  .event-invite .p-event__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
   /*SITE ADMIN HOME PAGE CSS =====================================================================================*/
 
@@ -2179,10 +2227,10 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 100%;
-    max-width: 100%;
     margin: 0.5rem 0 0.5rem 0;
     align-self: flex-start;
+    padding-right: 3%;
+    padding-left: 3%;
   }
 
   .home-desktop__admin-search h1 {
@@ -2218,9 +2266,12 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    width: 90%;
-    max-width: 100%;
-    padding: 0.5rem;
+    width: 100%;
+  }
+
+  .home-desktop__admin-buttonGrid {
+    padding-right: 3%;
+    padding-left: 3%;
   }
 
   .home-desktop__admin-buttonGrid .p-event__wrapper--NoGradient {
@@ -2229,7 +2280,6 @@ input:checked+.slider:before {
     align-content: center;
     gap: 1.5rem;
     width: 100%;
-    max-width: 100%;
   }
 
   .home-desktop__admin-buttonGrid .p-event--org-block .org-container {
@@ -2278,11 +2328,10 @@ input:checked+.slider:before {
   }
 }
 
-@media screen and (min-width: 1920px) {
+@media screen and (min-width: 1921px) {
   .home-desktop__admin-body {
-    width: 70rem;
-    max-width: 95%;
-    scale: 1.25;
+    transform: scale(1.25);
+    transform-origin: top left;
     margin-top: 5rem;
   }
 }
@@ -2336,36 +2385,46 @@ input:checked+.slider:before {
     align-self: flex-start;
     margin-left: 10rem;
     /* background: var(--top-gradient); */
-    /* margin: 1.5rem 3rem 0.5rem 3rem;
+  /* margin: 1.5rem 3rem 0.5rem 3rem;
     padding: 0.5rem 3rem 0.5rem 3rem;
     height: 95vh;
     border-radius: 0.9375rem; */
-    /* box-shadow: var(--drop-shadow); */
+  /* box-shadow: var(--drop-shadow); */
   /* } */
 
   /* .exit-icon {
     position: absolute;
     left: 29rem; */
-    /* 11px */
-    /* top: 0.75rem; */
-    /* 11px */
-    /* cursor: pointer; */
+  /* 11px */
+  /* top: 0.75rem; */
+  /* 11px */
+  /* cursor: pointer; */
   /* } */
-  
+
   /* LOGIN */
   /* .login-container {
     width: 25rem;
     align-self: flex-start;
     margin-left: 10rem;
     /* background: var(--top-gradient); */
-    /* margin: 1.5rem 3rem 0.5rem 3rem;
+  /* margin: 1.5rem 3rem 0.5rem 3rem;
     padding: 0.5rem 3rem 0.5rem 3rem;
     height: 95vh;
     border-radius: 0.9375rem; */
-    /* box-shadow: var(--drop-shadow); */
+  /* box-shadow: var(--drop-shadow); */
   /* }  */
 
 
+  /*LOGIN*/
+  .login-container .login-form{
+    scale: 1.25;
+    margin-top: 3rem;
+  }
 
-  
+  /*REGISTRATION*/
+  .register-container .register-form{
+    scale: 1.1;
+    margin-top: 3rem;
+  }  
+
 }

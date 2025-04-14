@@ -29,7 +29,7 @@ const editView = ref(false)
 const loading = ref(false)
 const eventContainer = ref(null)
 const orgModal = ref(false)
-const inviteModalID = ref(null) 
+const inviteModalID = ref(null)
 const isInviteVisible = ref(false)
 const searchQuery = ref('')
 
@@ -210,13 +210,17 @@ const orgModalClose = () => {
     orgModal.value = false
 }
 
-const inviteModalOpen = (orgId) => {
+const inviteModalName = ref('')
+
+const inviteModalOpen = (orgId, orgName) => {
     isInviteVisible.value = true
     inviteModalID.value = orgId
+    inviteModalName.value = orgName
 }
 const inviteModalClose = () => {
     isInviteVisible.value = false
     inviteModalID.value = ''
+    inviteModalName.value = ''
 }
 
 // Function to handle modal option selection
@@ -269,7 +273,7 @@ const createOrg = () => {
                     orgName.value = ''
                     orgModalClose()
                     fetchData()
-                    
+
                 } else {
                     console.error('Failed to create organization:', response.statusText)
                 }
@@ -317,7 +321,7 @@ const handleHScroll = (e) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                }}</p>
+                                    }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -553,7 +557,7 @@ const handleHScroll = (e) => {
                         </div>
                         <!--Dynamic Organizations (Filtered)-->
                         <PEvent design="org-block" v-for="org in filteredOrganizations" :key="org.id" :id="org.id"
-                            :organization="org" @click="inviteModalOpen(org.id)" />
+                            :organization="org" @click="inviteModalOpen(org.id, org.name)" />
                     </div>
                 </div>
             </div>
@@ -561,10 +565,10 @@ const handleHScroll = (e) => {
 
         <div v-if="isSiteAdmin && !isMobile && isInviteVisible" class="planner-invite-modal">
             <div class="modal-overlay" @click="inviteModalClose"></div>
-                <div class="modal modal-container">
-                    <PlannerInvite :modalOrgId="inviteModalID"></PlannerInvite>
-                </div>
+            <div class="modal modal-container">
+                <PlannerInvite :modalOrgId="inviteModalID" :orgName="inviteModalName"></PlannerInvite>
             </div>
+        </div>
     </template>
 
 
@@ -594,7 +598,7 @@ const handleHScroll = (e) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                }}</p>
+                                    }}</p>
                             </div>
 
                             <div class="profile-content">

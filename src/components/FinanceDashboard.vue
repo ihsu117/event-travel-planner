@@ -637,7 +637,7 @@ const formatTimestamp = (timestamp) => {
                             :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
-                            :flightType="flight.flightType" :flightClass="flight.flightClass"
+                            :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
                             :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.itinerary.logoURL"
                             :flightID="flight.flightID" @click="openApproveModal(flight)" />
                     </div>
@@ -652,7 +652,7 @@ const formatTimestamp = (timestamp) => {
                             :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
-                            :flightType="flight.flightType" :flightClass="flight.flightClass"
+                            :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
                             :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
                             :flightID="flight.flightID" @click="openApproveModal(flight)" />
                     </div>
@@ -691,7 +691,7 @@ const formatTimestamp = (timestamp) => {
                         <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
                             :price="flightSelected.price" :airline="flightSelected.airline"
                             :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime"
-                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID"
+                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" :passangerName="flightSelected.owner"
                             design="finance" style=""></PFlight>
 
                         <div class="modal-options">
