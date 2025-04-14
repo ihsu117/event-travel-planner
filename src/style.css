@@ -2346,6 +2346,16 @@ input:checked+.slider:before {
   /* }  */
 
 
+  /*LOGIN*/
+  .login-container {
+    scale: 1.25;
+    margin-top: 5rem;
+  }
 
-  
+  /*REGISTRATION*/
+  .register-form{
+    scale: 1.1;
+    margin-top: 3rem;
+  }  
+
 }
