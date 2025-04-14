@@ -508,7 +508,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                         <div class="event-people-desktop__userAdd">
                             <h2>Users</h2>
                             <div class="event-edit-button">
-                                <PButton design="gradient" label="Edit/Add" @click="goToInvitePage"></PButton>
+                                <PButton design="gradient" label="Edit/Add" @click="inviteModalOpen(eventStore.currentEvent.id)"></PButton>
                             </div>
                         </div>
                         <hr>
