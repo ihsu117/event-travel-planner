@@ -273,40 +273,44 @@ onUnmounted(() => {
       </div>
     </div>
     <div class="flight-desktop-search">
-      <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
-        :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
-        :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" />
-      <h1>{{ route.query?.type == '1' ? 'Departing Flights' : (route.query?.type == 'return' ? 'Returning Flights' :
-        'Upcoming Flights') }}</h1>
-      <div class="flight-dropdown">
-        <PDropDown design="flight" dropDownLabel="Stops"
-          :options="['Any number of stops', 'Nonstop only', '1 stop or fewer', '2 stops or fewer']"
-          @option-selected="handleStopsSelection"></PDropDown>
-        <PDropDown design="flight" dropDownLabel="Airline"
-          :options="['Any', ...new Set(flightStore.flightResults.map(flight => flight.airline))]"
-          @option-selected="handleAirlineSelection"></PDropDown>
-        <PTimeRangeDropDown dropDownLabel="Select Time Range" design="flight" :minTime="0" :maxTime="1440"
-          @range-updated="handleTimeRangeUpdate">
-        </PTimeRangeDropDown>
-        <PDropDown design="flight" dropDownLabel="Sort By" :options="['Departure Time', 'Price']"
-          @option-selected="handleSortSelection"></PDropDown>
-      </div>
+      <div class="desktop-body-wrapper">
+        <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
+          :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
+          :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" />
+        <h1>{{ route.query?.type == '1' ? 'Departing Flights' : (route.query?.type == 'return' ? 'Returning Flights' :
+          'Upcoming Flights') }}</h1>
+        <div class="flight-dropdown">
+          <PDropDown design="flight" dropDownLabel="Stops"
+            :options="['Any number of stops', 'Nonstop only', '1 stop or fewer', '2 stops or fewer']"
+            @option-selected="handleStopsSelection"></PDropDown>
+          <PDropDown design="flight" dropDownLabel="Airline"
+            :options="['Any', ...new Set(flightStore.flightResults.map(flight => flight.airline))]"
+            @option-selected="handleAirlineSelection"></PDropDown>
+          <PTimeRangeDropDown dropDownLabel="Select Time Range" design="flight" :minTime="0" :maxTime="1440"
+            @range-updated="handleTimeRangeUpdate">
+          </PTimeRangeDropDown>
+          <PDropDown design="flight" dropDownLabel="Sort By" :options="['Departure Time', 'Price']"
+            @option-selected="handleSortSelection"></PDropDown>
+        </div>
 
-      <div class="desktop-flights">
-        <PFlight v-for="(flight, index) in filteredAndSortedFlights"
-          :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="desktop-block" :flightID="flight.flightID"
-          :flightDate="flight.flightDate" :flightNumber="flight.flightNumber" :origin="flight.origin" :destination="flight.destination"
-          :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber"
-          :seatAvailable="flight.seatAvailable" :price="flight.price" :flightType="flight.flightType"
-          :flightClass="flight.flightClass" :flightGate="flight.flightGate" :airline="flight.airline"
-          :logoURL="flight.logoURL" :itinerary="flight.itinerary" :flightDuration="flight.itinerary[0].duration"
-          @click="handleFlightClick(flight)" />
-        <div v-if="loading" class="spinner">
-          <div class="loading-spinner" v-show="loading" style="margin-top:0">
-            <span class="loader"></span>
+        <div class="desktop-flights">
+          <PFlight v-for="(flight, index) in filteredAndSortedFlights"
+            :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="desktop-block" :flightID="flight.flightID"
+            :flightDate="flight.flightDate" :flightNumber="flight.flightNumber" :origin="flight.origin" :destination="flight.destination"
+            :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime" :seatNumber="flight.seatNumber"
+            :seatAvailable="flight.seatAvailable" :price="flight.price" :flightType="flight.flightType"
+            :flightClass="flight.flightClass" :flightGate="flight.flightGate" :airline="flight.airline"
+            :logoURL="flight.logoURL" :itinerary="flight.itinerary" :flightDuration="flight.itinerary[0].duration"
+            @click="handleFlightClick(flight)" />
+          <div v-if="loading" class="spinner">
+            <div class="loading-spinner" v-show="loading" style="margin-top:0">
+              <span class="loader"></span>
+            </div>
           </div>
         </div>
+        
       </div>
+
     </div>
 
 

@@ -33,6 +33,7 @@ const inviteEmail = ref('')
 const isModalVisible = ref(false)
 const fileInput = ref(null)
 const invitedUsers = ref([])
+const csvUploadError = ref('')
 
 const orgId = computed(() => route.params.orgId || props.modalOrgId)
 const role_id = ref('Attendee')
@@ -330,18 +331,31 @@ const isFinanceManagerSelected = (userID) => {
 //----------------------------------------
 
 //CSV---------------------------------------------------------
+const csvErrorMessage = async (message) => {
+    csvUploadError.value = message
+    // document.querySelector('.csvUploadError').style.display = 'block'
+    console.log(csvUploadError.value);
+    document.querySelector('.csvUploadError').innerHTML = message;
+    setTimeout(() => {
+        csvUploadError.value = ''
+        document.querySelector('.csvUploadError').innerHTML = ''
+    }, 5000);
+}
+
 const addByCSV = () => {
     // Access the file input via its ref.
     const file = fileInput.value?.files[0];
 
     if (!file) {
         console.error("No file selected");
+        csvErrorMessage("No file selected");
         return;
     }
 
     // Basic check to ensure the file is a CSV.
     if (!file.name.toLowerCase().endsWith(".csv")) {
         console.error("Selected file is not a .csv file");
+        csvErrorMessage("Selected file is not a .csv file");
         return;
     }
 
@@ -375,6 +389,7 @@ const addByCSV = () => {
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error("API Error:", errorData);
+                csvErrorMessage("API Error:" + JSON.stringify(errorData));
                 return;
             }
 
@@ -382,11 +397,13 @@ const addByCSV = () => {
             console.log("Success:", data);
         } catch (error) {
             console.error("Network or Fetch Error:", error);
+            csvErrorMessage("Network or Fetch Error:" + JSON.stringify(error));
         }
     };
 
     reader.onerror = () => {
         console.error("FileReader Error:", reader.error);
+        csvErrorMessage("FileReader Error:" + JSON.stringify(reader.error));
     };
 };
 
@@ -448,6 +465,7 @@ const handleCSVButtonClick = () => {
         <div class="modal-header">
             <h2>Users of {{ props.orgName }}</h2>
             <div class="user-list-buttons">
+                <h3 class="csvUploadError">{{csvUploadError.value}}</h3>
                 <PButton design="planner" @click="openModal" label="Add User"></PButton>
                 <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
                 <!-- The button triggers the form submission -->
