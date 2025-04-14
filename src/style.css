@@ -1662,7 +1662,7 @@ input:checked+.slider:before {
     text-align: left;
     position: relative;
     font-weight: 600;
-    /* margin-left: 5%; */
+    margin-left: 5%;
   }
 
   .home-desktop hr {
@@ -2194,7 +2194,7 @@ input:checked+.slider:before {
     margin-top: 3%;
     text-align: left;
     justify-content: left;
-
+    margin-left: 5rem;
   } */
 
 
