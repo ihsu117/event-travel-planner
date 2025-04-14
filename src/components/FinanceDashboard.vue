@@ -229,7 +229,7 @@ const exportEventHistory = async () => {
             a.style.display = 'none';
             a.href = url;
             // Determine filename (you might get this from Content-Disposition header or set a default)
-            a.download = `event_history_${eventStore.currentEvent.name}_ID:${eventStore.currentEvent.id}.csv`; 
+            a.download = `event_history_${eventStore.currentEvent.eventName}_ID:${eventStore.currentEvent.id}.csv`; 
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
