@@ -296,7 +296,7 @@ const statusClass = computed(() => {
                         :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
                     </PFlight>
                     <PFlight v-if="index !== departItineraries.length - 1" design="layover" v-bind="itinerary"
-                        :layoverDuration="itinerary.layover"></PFlight>
+                        :layoverDuration="layoverDurationCalc(itinerary.arrival_time, departItineraries[index + 1].departure_time)"></PFlight>
                 </div>
 
                 <h1>Returning Itinerary</h1>
@@ -309,7 +309,7 @@ const statusClass = computed(() => {
                         :flightDate="new Date(itinerary.departure_date.split('-')[0], itinerary.departure_date.split('-')[1] - 1, itinerary.departure_date.split('-')[2])">
                     </PFlight>
                     <PFlight v-if="index !== returnItineraries.length - 1" design="layover" v-bind="itinerary"
-                        :layoverDuration="itinerary.layover"></PFlight>
+                        :layoverDuration="layoverDurationCalc(itinerary.arrival_time, returnItineraries[index + 1].departure_time)"></PFlight>
                 </div>
             </div>
         </div>
