@@ -38,6 +38,7 @@ const roundtripRange = ref(null)
 const showInviteModal = ref(false)
 const isMobile = ref(window.innerWidth <= 768);
 const userInfo = ref({});
+const dateRange = ref([])
 
 // const editableName = ref(eventStore.currentEvent.eventName)
 // const editableStartDate = ref(eventStore.currentEvent.startDate)
@@ -129,7 +130,7 @@ const toFlightSearch = () => {
     if (!departDate.value && !roundtripRange.value) {
         errors.value.date = 'Date is required.'
         hasError = true;
-    } 
+    }
     if (!hasError) {
 
         flightStore.clearFlights()
@@ -156,61 +157,69 @@ const toFlightSearch = () => {
             router.push({ name: 'Flight', query: { type: flightType.value } })
         )
     }
+}
 
-    const parseDate = (date) => {
-        if (!date) return null;
-        return typeof date === 'string' ? parseISO(date) : date;
-    };
+const parseDate = (date) => {
+    if (!date) return null;
+    return typeof date === 'string' ? parseISO(date) : date;
+};
 
-    const formatDateForBackend = (date) => {
-        const parsedDate = parseDate(date);
-        if (!parsedDate) return '';
-        return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
-    };
+const formatDateForBackend = (date) => {
+    console.log(date)
+    const parsedDate = parseDate(date);
+    if (!parsedDate) return '';
+    return format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
+};
 
-    // Function to handle the update of the fields for the event
-    const handleUpdate = ({ field, value }) => {
-        if (field === 'name') editableName.value = value
-        if (field === 'startDate') editableStartDate.value = value
-        if (field === 'endDate') editableEndDate.value = value
-        if (field === 'description') description.value = value
-        console.log("HANDLE", field, value)
+// Function to handle the update of the fields for the event
+const handleUpdate = ({ field, value }) => {
+    if (field === 'name') editableName.value = value
+    if (field === 'startDate') editableStartDate.value = value
+    if (field === 'endDate') editableEndDate.value = value
+    if (field === 'description') description.value = value
+    console.log("HANDLE", field, value)
+}
+
+const saveChanges = async () => {
+    console.log('Event ID:', eventStore.currentEvent.id)
+    console.log('Editable Name:', editableName.value)
+    console.log('Description:', description.value)
+    console.log('DATE SET TO:', editableStartDate.value)
+    console.log(dateRange.value[0])
+    const updatedEvent = {
+        name: editableName.value || eventStore.currentEvent.eventName,
+        // startDate: formatDateForBackend(editableStartDate.value),
+        startDate: dateRange.value[0]
+            ? formatDateForBackend(dateRange.value[0])
+            : formatDateForBackend(editableStartDate.value),
+        // endDate: formatDateForBackend(editableEndDate.value),
+        endDate: dateRange.value[1]
+            ? formatDateForBackend(dateRange.value[1])
+            : formatDateForBackend(editableEndDate.value),
+        description: description.value,
     }
+    try {
+        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedEvent),
+            credentials: 'include'
+        })
 
-    const saveChanges = async () => {
-        console.log('Event ID:', eventStore.currentEvent.id)
-        console.log('Editable Name:', editableName.value)
-        console.log('Description:', description.value)
-        console.log('DATE SET TO:', editableStartDate.value)
-        const updatedEvent = {
-            name: editableName.value || eventStore.currentEvent.eventName,
-            startDate: formatDateForBackend(editableStartDate.value),
-            endDate: formatDateForBackend(editableEndDate.value),
-            description: description.value,
+        if (response.ok) {
+            const result = await response.json()
+            console.log('Event created successfully:', result)
+            router.push({ name: 'Home' }) // Redirect to home or another page
+        } else {
+            console.error('Failed to update event:', await response.json())
         }
-        try {
-            const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedEvent),
-                credentials: 'include'
-            })
-
-            if (response.ok) {
-                const result = await response.json()
-                console.log('Event created successfully:', result)
-                eventStore.setCurrentEvent(result)
-                router.push({ name: 'Home' }) // Redirect to home or another page
-            } else {
-                console.error('Failed to update event:', await response.json())
-            }
-        } catch (error) {
-            console.error('Error updating event:', error)
-        }
+    } catch (error) {
+        console.error('Error updating event:', error)
     }
 }
+
 // Function to check and load event data from localStorage
 const checkAndLoadEvent = async () => {
     if (route?.query?.eventID) {
@@ -417,7 +426,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -446,7 +455,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
     <template v-if="editView && !isMobile">
         <div class="event-page-desktop">
             <div class="home-header__text-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton />
             </div>
             <!-- <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                 :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
@@ -456,7 +465,8 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 backgroundImage: `var(--gradient), url(${eventStore.currentEvent.pictureLink}), url(${pictureLink})`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center'}">
+                backgroundPosition: 'center'
+            }">
                 <div class="event-desktop-contentBox__info">
                     <div class="event-desktop-contentBox__textField">
                         <input type="text" v-model="eventName" :placeholder="editableName" required />
@@ -474,7 +484,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                     <input type="file" id="file-upload" accept="image/*" @change="handleImageUpload" />
                 </div>
             </div>
-                
+
             <div class="editEvent-desktop-content">
                 <div class="event-date-desktop">
                     <h2>Date</h2>
@@ -483,7 +493,8 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                         :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
                     </VueDatePicker>
                     <h2>Description</h2>
-                    <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description" v-model="description" required />
+                    <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description"
+                        v-model="description" required />
                 </div>
 
                 <div class="event-people-desktop">
@@ -526,7 +537,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
     <template v-if="userStore.role_id == 'Event Planner' && !editView && !isMobile">
         <div class="event-page-desktop">
             <div class="home-header-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton />
             </div>
             <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                 :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
