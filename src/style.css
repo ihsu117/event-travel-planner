@@ -2397,13 +2397,13 @@ input:checked+.slider:before {
 
 
   /*LOGIN*/
-  .login-container {
+  .login-container .login-form{
     scale: 1.25;
-    margin-top: 5rem;
+    margin-top: 3rem;
   }
 
   /*REGISTRATION*/
-  .register-form{
+  .register-container .register-form{
     scale: 1.1;
     margin-top: 3rem;
   }  
