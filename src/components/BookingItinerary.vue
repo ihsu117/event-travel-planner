@@ -259,7 +259,7 @@ const statusClass = computed(() => {
                     </PFlight>
                 </div>
 
-                <div v-if="bookingData?.value?.itinerary?.itinerary.length > 1">
+                <div v-if="bookingData?.itinerary?.itinerary?.length > 1" class="itnry-container">
                     <h1>Returning Itinerary</h1>
                     <div v-for="(itinerary, index) in returnItineraries" :key="index">
                         <PFlight design="desktop-itinerary" v-bind="itinerary" :airline="itinerary.carrier"

@@ -352,7 +352,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: left;
-  width: 100%;
+  width: 90%;
   gap: 1rem;
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -1720,7 +1720,10 @@ input:checked+.slider:before {
     gap: 1%;
     line-height: 1;
     width: 100%;
-    padding-left: 1%;
+  }
+
+  .home-header__text-desktop p:first-child {
+    margin-left: 2rem;
   }
 
   .role-bubble {

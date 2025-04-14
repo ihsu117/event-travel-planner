@@ -24,6 +24,7 @@ const router = useRouter()
 const eventName = ref('')
 const description = ref('')
 const destinationCode = ref('')
+const destinationField = ref('')
 const startDate = ref('')
 const endDate = ref('')
 const dateRange = ref([])
@@ -44,6 +45,7 @@ const userInfo = ref({});
 const latitude = ref('');
 const longitude = ref('');
 const toastMessage = ref('');
+const errors = ref({ename: '', dest: '', date: '', budget: '', desc: ''});
 
 const organizations = ref([])
 
@@ -192,6 +194,7 @@ const createEvent = async () => {
         openToast()
         return
     }
+
     try {
         const eventData = {
             name: eventName.value,
@@ -230,11 +233,34 @@ const createEvent = async () => {
 }
 
 const createEventDesktop = async () => {
-    if (eventName.value === '' || description.value === '' || startDate.value === '' || endDate.value === '' || maxBudget.value === '') {
-        toastMessage.value = 'Please fill in all fields.'
-        openToast()
+    var flag = false;
+    errors.value = {ename: '', desc: '', budget: '', dest: '', date: ''}
+
+    if(!dateRange.value[0] || !dateRange.value[1]) {
+        errors.value.date = true;
+        flag = true
+    }
+    if(description.value == '') {
+        errors.value.desc = true;
+        flag = true
+    }
+    if(eventName.value == '') {
+        errors.value.ename = true;
+        flag = true
+    }
+    if(maxBudget.value == '') {
+        errors.value.budget = true;
+        flag = true
+    }
+    if(latitude.value == '' || longitude.value == '' || destinationField.value == '') {
+        errors.value.dest = true;
+        flag = true
+    }
+
+    if(flag) {
         return
     }
+
     try {
         const eventData = {
             name: eventName.value,
@@ -478,6 +504,15 @@ const backgroundImageStyle = computed(() => {
                 <div class="event-desktop-contentBox__info">
                     <div class="event-desktop-contentBox__textField">
                         <input type="text" v-model="eventName" placeholder="Event Name" required />
+                        <div :class="['error-container', { show: errors.ename }]">
+                            <svg v-if="errors.ename" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 16 16">
+                                <path fill="#FEB96E" fill-rule="evenodd"
+                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p v-if="errors.ename" class="input-error">Event Name is required!</p>
+                        </div>
                     </div>
                     <h2>Hosted By {{ userStore.org.name }}</h2> <!-- Organization name -->
                 </div>
@@ -504,17 +539,44 @@ const backgroundImageStyle = computed(() => {
                             :placeholder="'mm/dd/yyyy - mm/dd/yyyy'" exactMatch="true"
                             :config="{ closeOnAutoApply: false, keepActionRow: true }" auto-apply hide-input-icon>
                         </VueDatePicker>
+                        <div :class="['error-container', { show: errors.date }]">
+                            <svg v-if="errors.date" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 16 16">
+                                <path fill="#FEB96E" fill-rule="evenodd"
+                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p v-if="errors.date" class="input-error">Date is required!</p>
+                        </div>
                     </div>
                     <div class="planner-event-budget">
                         <h2>Budget</h2>
                         <PTextField class="evTopMargin" label="Max Budget" v-model="maxBudget" placeholder="$00000" required />
+                        <div :class="['error-container', { show: errors.budget }]">
+                            <svg v-if="errors.budget" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 16 16">
+                                <path fill="#FEB96E" fill-rule="evenodd"
+                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p v-if="errors.budget" class="input-error">Budget is required!</p>
+                        </div>
                     </div>
                     <div class="planner-event-destination">
                         <h2>Destination</h2>
-                        <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
+                        <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us" v-model="destinationField"
                             classname="form-control" placeholder="Destination Airport"
                             v-on:placechanged="handlePlaceChanged" required>
                         </vue-google-autocomplete>
+                        <div :class="['error-container', { show: errors.dest }]">
+                            <svg v-if="errors.dest" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 16 16">
+                                <path fill="#FEB96E" fill-rule="evenodd"
+                                    d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p v-if="errors.dest" class="input-error">Destination is required!</p>
+                        </div>
                     </div>
                 </div>
 
@@ -522,6 +584,15 @@ const backgroundImageStyle = computed(() => {
                     <h2>Description</h2>
                     <PTextField class="evTopMargin" design="textarea" :maxlength=400 label="Description"
                         v-model="description" required />
+                    <div :class="['error-container', { show: errors.desc }]">
+                        <svg v-if="errors.desc" class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                            height="16" viewBox="0 0 16 16">
+                            <path fill="#FEB96E" fill-rule="evenodd"
+                                d="M8 14.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m1-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25-6.25a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <p v-if="errors.desc" class="input-error">Description is required!</p>
+                    </div>
                 </div>
                 <br>
                 <br>
