@@ -1717,7 +1717,6 @@ input:checked+.slider:before {
     gap: 1%;
     line-height: 1;
     width: 100%;
-    padding-left: 1%;
   }
 
   .role-bubble {
