@@ -24,6 +24,7 @@ const router = useRouter()
 const eventName = ref('')
 const description = ref('')
 const destinationCode = ref('')
+const destinationField = ref('')
 const startDate = ref('')
 const endDate = ref('')
 const dateRange = ref([])
@@ -235,7 +236,7 @@ const createEventDesktop = async () => {
     var flag = false;
     errors.value = {ename: '', desc: '', budget: '', dest: '', date: ''}
 
-    if(startDate.value == '' || endDate.value == '') {
+    if(!dateRange.value[0] || !dateRange.value[1]) {
         errors.value.date = true;
         flag = true
     }
@@ -251,7 +252,7 @@ const createEventDesktop = async () => {
         errors.value.budget = true;
         flag = true
     }
-    if(destinationCode.value == '') {
+    if(latitude.value == '' || longitude.value == '' || destinationField.value == '') {
         errors.value.dest = true;
         flag = true
     }
@@ -563,7 +564,7 @@ const backgroundImageStyle = computed(() => {
                     </div>
                     <div class="planner-event-destination">
                         <h2>Destination</h2>
-                        <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us"
+                        <vue-google-autocomplete class="p-textfield" id="map" types="airport" country="us" v-model="destinationField"
                             classname="form-control" placeholder="Destination Airport"
                             v-on:placechanged="handlePlaceChanged" required>
                         </vue-google-autocomplete>
