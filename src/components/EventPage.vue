@@ -463,6 +463,35 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton />
             </div>
 
+            <div class="desktop-body-wrapper">
+                <!-- <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
+                :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
+                :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header" /> -->
+
+                <div class="event-desktop-contentBox" :style="{
+                    backgroundImage: `var(--gradient), url(${eventStore.currentEvent.pictureLink}), url(${pictureLink})`,
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center'
+                }">
+                    <div class="event-desktop-contentBox__info">
+                        <div class="event-desktop-contentBox__textField">
+                            <input type="text" v-model="editableName" :placeholder="editableName" required />
+                        </div>
+                        <h2>Hosted By {{ userStore.org.name }}</h2> <!-- Organization name -->
+                    </div>
+                    <div class="file-input-wrapper">
+                        <label for="file-upload" class="custom-file-label">
+                            <span>Replace Image</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                    d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4z" />
+                            </svg>
+                        </label>
+                        <input type="file" id="file-upload" accept="image/*" @change="handleImageUpload" />
+                    </div>
+                </div>
+            </div>
             <div class="editEvent-desktop-content">
                 <div class="event-date-desktop">
                     <h2>Date</h2>
