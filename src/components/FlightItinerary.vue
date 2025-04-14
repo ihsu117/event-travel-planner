@@ -18,6 +18,8 @@ const matchingReturnOptions = ref(null)
 const eventStore = useEventStore()
 const ancillariesComponent = ref(null)
 
+const loading = ref(false)
+
 const isMobile = ref(window.innerWidth <= 768);
 
 const updateScreenSize = () => {
@@ -44,6 +46,7 @@ const handleGoToSummary = () => {
 }
 
 const confirmPurchase = async () => {
+  loading.value = true;
   const flightData = {
     depart_loc: flightStore.currentFlight.origin,
     arrive_loc: flightStore.currentFlight.destination,
@@ -78,6 +81,7 @@ const confirmPurchase = async () => {
     router.push({ name: 'Event' });
   } catch (error) {
     console.error('Error during purchase confirmation:', error);
+    loading.value = false;
     // Optionally, handle errors (show an error message, etc.)
   }
 };
@@ -400,6 +404,16 @@ console.log("ITINERARIES: ", itineraries.value)
 
       </div>
 
+    </div>
+  </template>
+
+  <!-- Loading Modal -->
+  <template v-if="loading">
+    <div class="modal-overlay" id="mfa"></div>
+    <div class="modal" id="mfa" :class="{ expanded: !loading }">
+      <div class="loading-spinner" v-show="loading">
+        <span class="loader"></span>
+      </div>
     </div>
   </template>
 </template>
