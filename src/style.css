@@ -2190,12 +2190,12 @@ input:checked+.slider:before {
 
 @media screen and (min-width: 1920px) {
 
-  .home-desktop h1 {
+  /* .home-desktop h1 {
     margin-top: 3%;
     text-align: left;
     justify-content: left;
 
-  }
+  } */
 
 
   /* HOMEPAGES */
@@ -2221,37 +2221,37 @@ input:checked+.slider:before {
   }
 
   /* REGISTRATION */
-  .register-form {
+  /* .register-form {
     align-self: flex-start;
     margin-left: 10rem;
     /* background: var(--top-gradient); */
-    margin: 1.5rem 3rem 0.5rem 3rem;
+    /* margin: 1.5rem 3rem 0.5rem 3rem;
     padding: 0.5rem 3rem 0.5rem 3rem;
     height: 95vh;
-    border-radius: 0.9375rem;
+    border-radius: 0.9375rem; */
     /* box-shadow: var(--drop-shadow); */
-  }
+  /* } */
 
-  .exit-icon {
+  /* .exit-icon {
     position: absolute;
-    left: 29rem;
+    left: 29rem; */
     /* 11px */
-    top: 0.75rem;
+    /* top: 0.75rem; */
     /* 11px */
-    cursor: pointer;
-  }
+    /* cursor: pointer; */
+  /* } */
   
   /* LOGIN */
-  .login-container {
+  /* .login-container {
     width: 25rem;
     align-self: flex-start;
     margin-left: 10rem;
     /* background: var(--top-gradient); */
-    margin: 1.5rem 3rem 0.5rem 3rem;
+    /* margin: 1.5rem 3rem 0.5rem 3rem;
     padding: 0.5rem 3rem 0.5rem 3rem;
     height: 95vh;
-    border-radius: 0.9375rem;
+    border-radius: 0.9375rem; */
     /* box-shadow: var(--drop-shadow); */
-  }
+  /* }  */
   
 }
