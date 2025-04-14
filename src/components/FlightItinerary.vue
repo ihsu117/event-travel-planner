@@ -241,7 +241,7 @@ console.log("ITINERARIES: ", itineraries.value)
           <div class="flight-itinerary-button">
             <PButton
               v-if="!(flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1) && $route?.query?.type !== 'return' && $route?.query?.type !== 'returnItinerary'"
-              design="shop" label="Hold" :price="flightStore.currentFlight.price" @click="confirmPurchase()">
+              design="shop" label="Hold" :price="Math.ceil(flightStore.currentFlight.price)" @click="confirmPurchase()">
             </PButton>
             <PButton
               v-if="flightStore.currentFlight.itinerary[0].itinerary && flightStore.currentFlight.itinerary.length > 1 && $route?.query?.type !== 'return'"

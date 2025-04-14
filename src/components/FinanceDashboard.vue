@@ -79,6 +79,12 @@ const checkAndLoadEvent = () => {
 onMounted(async () => {
     loading.value = true;
     checkAndLoadEvent()
+    await loadEventHistory();
+    await getFlightsData();
+    loading.value = false;
+})
+
+const getFlightsData = async() => {
     try {
         const response = await api.apiFetch(`/flights/eventflights/${eventStore.currentEvent.id}`, {
             method: 'GET',
@@ -89,13 +95,11 @@ onMounted(async () => {
         })
         if (response.ok) {
             flightStore.setEventFlightResults(response.json())
-            await loadEventHistory();
-            loading.value = false;
         }
     } catch (error) {
         console.error('Failed to fetch flights:', error)
     }
-})
+}
 
 //Send flightID back with approval
 const updateFlight = async (selection) => {
@@ -115,6 +119,8 @@ const updateFlight = async (selection) => {
             })
         })
         if (response.ok) {
+            await getFlightsData();
+            await loadEventHistory();
             console.log("booked flight")
         }
     } catch (error) {
@@ -217,7 +223,7 @@ const getEventHistory = async () => {
             }
         });
         if (response.ok) {
-            return await response.json(); // Return the parsed JSON response
+            return await response.json();
         } else {
             console.error('Failed to fetch event history:', await response.text());
             return null; // Return null if the response is not OK
@@ -249,8 +255,7 @@ const updateScreenSize = () => {
 //Fetch from the API
 onMounted(async () => {
     window.addEventListener('resize', updateScreenSize);
-}
-)
+})
 
 
 onUnmounted(() => {
@@ -505,14 +510,16 @@ const formatTimestamp = (timestamp) => {
                     </div>
                         <div v-if="eventHistory.length > 0">
                             <div class="finance-approval-cont">
-                                <div v-for="(event, index) in eventHistory" :key="index">
-                                    {{ formatTimestamp(event.lastEdited)}} 
-                                    {{ event.updater.firstName }}
-                                    {{ event.updater.lastName }}
-                                    {{event.originalBudget || 'N/A'}} 
-                                    {{event.updatedBudget || 'N/A'}}
-                                    {{event.updatedAutoApprove}}
-                                    {{event.updatedAutoApprovethreshold  || 'Disabled'}}
+                                <div v-for="(event, index) in eventHistory" class="history-card" :key="index">
+                                    <h4>{{ formatTimestamp(event.lastEdited)}}</h4>
+                                    <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
+                                    <p v-if="event.updatedBudget != null">Budget Update: {{event.originalBudget}} -> {{event.updatedBudget}}</p>
+                                    <p v-if="event.updatedAutoApprovethreshold != null">AA Threshold: {{event.originalAutoApproveThreshold}} -> {{event.updatedAutoApprovethreshold}}</p>
+                                    <div v-if="event.approvedFlight != null" class="approved-card">
+                                        <p>Order #: {{ event.approvedFlight.order_id || 'NA'}}</p>
+                                        <p>Flight #: {{ event.approvedFlight.flight_number || 'NA'}}</p>
+                                        <p>Cost: ${{ event.approvedFlight.price }}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
