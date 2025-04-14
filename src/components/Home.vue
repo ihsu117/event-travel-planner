@@ -625,6 +625,8 @@ const handleHScroll = (e) => {
         </div>
     </template>
 
+    <!--ORG CREATE MODAL-->
+
     <template v-if="orgModal">
         <div class="modal-overlay" @click="orgModalClose"></div>
         <div class="modal modal-container">

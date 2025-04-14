@@ -2308,11 +2308,14 @@ input:checked+.slider:before {
   }
 }
 
-/* @media screen and (min-width: 1920px) {
+@media screen and (min-width: 1920px) {
   .home-desktop__admin-body {
-    align-self: flex-start;
+    width: 70rem;
+    max-width: 95%;
+    scale: 1.25;
+    margin-top: 5rem;
   }
-} */
+}
 
 /*SITE ADMIN HOME PAGE CSS =====================================================================================*/
 
@@ -2391,5 +2394,18 @@ input:checked+.slider:before {
     border-radius: 0.9375rem; */
   /* box-shadow: var(--drop-shadow); */
   /* }  */
+
+
+  /*LOGIN*/
+  .login-container {
+    scale: 1.25;
+    margin-top: 5rem;
+  }
+
+  /*REGISTRATION*/
+  .register-form{
+    scale: 1.1;
+    margin-top: 3rem;
+  }  
 
 }
