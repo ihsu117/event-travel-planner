@@ -2131,6 +2131,11 @@ input:checked+.slider:before {
     max-height: 70rem;
   }
 
+  .modal-header .csvUploadError {
+    color: var(--pos-yellow);
+    margin: auto 0;
+  }
+
   .planner-event {
     display: flex;
     flex-direction: column;
