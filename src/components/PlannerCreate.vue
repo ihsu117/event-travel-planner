@@ -201,9 +201,9 @@ const createEvent = async () => {
             description: description.value,
             startDate: formatDateForBackend(startDate.value),
             endDate: formatDateForBackend(endDate.value),
-            destinationCode: destinationCode.value,
-            // lat: latitude.value,
-            // long: longitude.value,
+            // destinationCode: destinationCode.value,
+            lat: latitude.value,
+            long: longitude.value,
             pictureLink: pictureLink.value, // Send the base64-encoded image
             maxBudget: maxBudget.value,
             financeMan: {},
