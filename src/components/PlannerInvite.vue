@@ -554,7 +554,7 @@ const handleCSVButtonClick = () => {
     <template v-else>
         <div class="modal-header">
             <h2>Attendee</h2>
-            <div class="submit-invite-button">
+            <div v-if="!isMobile" class="submit-invite-button">
                 <PButton label="Send Invites" @click="submitChange" design="gradient"></PButton>
             </div>
         </div>
@@ -563,6 +563,7 @@ const handleCSVButtonClick = () => {
                 @back-click="() => handleBack('Home')" />
 
             <div class="event-invite-plan">
+                <PButton v-if="isMobile" label="Send Invites" @click="submitChange" design="gradient"></PButton>
                 <div class="user-list-container">
                     <h2>Finance Managers</h2>
                     <div class="p-event__container">
