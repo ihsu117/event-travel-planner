@@ -36,10 +36,11 @@ const uploadedFile = ref('')
 const invitedUsers = ref([])
 const csvUploadError = ref('')
 
-const orgId = computed(() => route.params.orgId || props.modalOrgId)
+const orgId = computed(() => route.params.orgId || props.modalOrgId || userStore.org.id)
 const role_id = ref('Attendee')
 const isOrgListPage = computed(() => route.path.includes(`/org/list/${orgId.value}`))
-const isAdmin = computed(() => userStore.role_id === 'Org Admin' || userStore.role_id === 'Site Admin')
+const isAdmin = computed(() => userStore.role_id === 'Org Admin')
+const isSiteAdmin = computed(() => userStore.role_id === 'Site Admin')
 console.log('Organization ID:', orgId.value)
 
 // Modal-specific reactive: do not include modal display logic here.
@@ -67,7 +68,9 @@ const adminAddUser = async () => {
             console.log('User created successfully:', result)
             emailInput.value = ''
             adminGetUsers()
+            closeModal()
         } else {
+            closeModal()
             console.error('Failed to create user:', await response.json())
         }
     } catch (error) {
@@ -102,8 +105,10 @@ const addNewAttendee = async (email) => {
                 const result = await response.json()
                 emailInput.value = ''
                 console.log('User created successfully:', result)
+                closeModal()
             } else {
                 console.error('FAILED to create user:', await response.json())
+                closeModal()
             }
 
         } catch (error) {
@@ -467,7 +472,7 @@ const handleCSVButtonClick = () => {
 
 <template>
 
-    <template v-if="isAdmin">
+    <template v-if="isAdmin || isSiteAdmin">
         <div v-if="!isMobile" class="modal-header">
             <h2>Users of {{ props.orgName }}</h2>
             <div class="user-list-buttons">
@@ -476,7 +481,7 @@ const handleCSVButtonClick = () => {
                 <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
                 <!-- The button triggers the form submission -->
                 <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
-                <p v-if="fileInput">uploaded {{ file }}</p>
+                <p v-if="fileInput">{{ file }}</p>
             </div>
         </div>
 
@@ -491,7 +496,7 @@ const handleCSVButtonClick = () => {
                 <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
                 <!-- The button triggers the form submission -->
                 <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
-                <p v-if="uploadedFile">uploaded {{ uploadedFile }}</p>
+                <p v-if="uploadedFile">{{ uploadedFile }}</p>
             </div>
 
 
@@ -564,7 +569,7 @@ const handleCSVButtonClick = () => {
 
                         <PFinanceBlock design="invite"
                             v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
-                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                            :key="user.user_id" :name="getDisplayName(user)" :email="user.email"
                             :profileImage="user.profile_picture"
                             :class="{ selected: isFinanceManagerSelected(user.user_id) }"
                             @click="selectFinanceManager(user.user_id)" required />
@@ -578,8 +583,7 @@ const handleCSVButtonClick = () => {
                     <div class="p-event__container">
                         <PButton design="planner" @click="openModal" label="Add User"></PButton>
                         <PFinanceBlock design="invite" v-for="user in remainingUsers" :key="user.user_id"
-                            :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
-                            :email="user.email" :profileImage="user.profile_picture"
+                            :name="getDisplayName(user)" :email="user.email" :profileImage="user.profile_picture"
                             :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
 
                         <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"

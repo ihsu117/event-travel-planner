@@ -321,7 +321,7 @@ const handleHScroll = (e) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -404,7 +404,7 @@ const handleHScroll = (e) => {
                 </div>
                 <hr>
             </div>
-            
+
 
         </div>
     </template>
@@ -467,7 +467,7 @@ const handleHScroll = (e) => {
                 <hr>
 
             </div>
-            
+
 
         </div>
     </template>
@@ -599,18 +599,9 @@ const handleHScroll = (e) => {
 
                 <!--Organizations-->
 
-                <div class="home-desktop__admin-buttonGrid">
-                    <div v-if="filteredOrganizations.length > 0" class="p-event__wrapper--NoGradient">
-                        <PButton label="Create Organization" @click="orgModalOpen()" design="planner"></PButton>
-                        <div v-if="loading" class="spinner">
-                            <div class="loading-spinner" v-show="loading">
-                                <span class="loader"></span>
-                            </div>
-                        </div>
-                        <!--Dynamic Organizations (Filtered)-->
-                        <PEvent design="org-block" :key="userStore.org.id" :id="userStore.org.id"
-                            :organization="userStore.org" @click="inviteModalOpen(userStore.org.id, userStore.org.name)" />
-                    </div>
+                <div class="home-desktop__admin-search">
+                    <PEvent design="org-block" :id="userStore.id" :organization="userStore.org"
+                        @click="inviteModalOpen(userStore.id, userStore.org.name)" />
                 </div>
             </div>
         </div>
@@ -650,7 +641,7 @@ const handleHScroll = (e) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -681,9 +672,9 @@ const handleHScroll = (e) => {
 
     <template v-if="orgModal">
         <div class="modal-overlay" @click="orgModalClose"></div>
-        <div class="modal modal-container" id="orgModalContainer">
-            <div class="modal-profile" id="orgModal">
-                <div class="headerText"><p>Create Organization</p></div>
+        <div class="modal modal-container">
+            <div class="modal-profile">
+                <h4>Create Organization</h4>
                 <PTextField label="Organization Name" v-model="orgName" placeholder="Enter organization name" />
                 <PButton label="Create" design="gradient-small" @click="createOrg()" />
             </div>
