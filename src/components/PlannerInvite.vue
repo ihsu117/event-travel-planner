@@ -36,10 +36,11 @@ const uploadedFile = ref('')
 const invitedUsers = ref([])
 const csvUploadError = ref('')
 
-const orgId = computed(() => route.params.orgId || props.modalOrgId)
+const orgId = computed(() => route.params.orgId || props.modalOrgId || userStore.org.id)
 const role_id = ref('Attendee')
 const isOrgListPage = computed(() => route.path.includes(`/org/list/${orgId.value}`))
-const isAdmin = computed(() => userStore.role_id === 'Org Admin' || userStore.role_id === 'Site Admin')
+const isAdmin = computed(() => userStore.role_id === 'Org Admin')
+const isSiteAdmin = computed(() => userStore.role_id === 'Site Admin')
 console.log('Organization ID:', orgId.value)
 
 // Modal-specific reactive: do not include modal display logic here.
@@ -467,7 +468,7 @@ const handleCSVButtonClick = () => {
 
 <template>
 
-    <template v-if="isAdmin">
+    <template v-if="isAdmin || isSiteAdmin">
         <div v-if="!isMobile" class="modal-header">
             <h2>Users of {{ props.orgName }}</h2>
             <div class="user-list-buttons">

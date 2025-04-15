@@ -321,7 +321,7 @@ const handleHScroll = (e) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
@@ -404,7 +404,7 @@ const handleHScroll = (e) => {
                 </div>
                 <hr>
             </div>
-            
+
 
         </div>
     </template>
@@ -467,7 +467,7 @@ const handleHScroll = (e) => {
                 <hr>
 
             </div>
-            
+
 
         </div>
     </template>
@@ -599,9 +599,9 @@ const handleHScroll = (e) => {
 
                 <!--Organizations-->
 
-                <div class="home-desktop__admin-search">              
-                        <PEvent design="org-block" :id="userStore.id"
-                            :organization="userStore.org" @click="inviteModalOpen(userStore.id, userStore.org.name)" />
+                <div class="home-desktop__admin-search">
+                    <PEvent design="org-block" :id="userStore.id" :organization="userStore.org"
+                        @click="inviteModalOpen(userStore.id, userStore.org.name)" />
                 </div>
             </div>
         </div>
@@ -641,7 +641,7 @@ const handleHScroll = (e) => {
                             <div class="profile-content">
                                 <h5>Phone</h5>
                                 <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-                                    }}</p>
+                                }}</p>
                             </div>
 
                             <div class="profile-content">
