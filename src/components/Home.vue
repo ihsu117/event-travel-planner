@@ -581,6 +581,48 @@ const handleHScroll = (e) => {
         </div>
     </template>
 
+    <template v-if="isAdmin && !isMobile">
+        <div class="home-desktop">
+            <div class="home-header-desktop">
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' />
+            </div>
+            <div class="home-desktop__admin-body">
+                <div class="home-desktop__admin-search">
+                    <h1>Organizations</h1>
+                    <div class="home-desktop__admin-searchHeader">
+                        <label for="searchBox">Search</label>
+                        <PTextField id='searchBox' label="Search" v-model="searchQuery"
+                            placeholder="Organization Name" />
+                    </div>
+                    <hr>
+                </div>
+
+                <!--Organizations-->
+
+                <div class="home-desktop__admin-buttonGrid">
+                    <div v-if="filteredOrganizations.length > 0" class="p-event__wrapper--NoGradient">
+                        <PButton label="Create Organization" @click="orgModalOpen()" design="planner"></PButton>
+                        <div v-if="loading" class="spinner">
+                            <div class="loading-spinner" v-show="loading">
+                                <span class="loader"></span>
+                            </div>
+                        </div>
+                        <!--Dynamic Organizations (Filtered)-->
+                        <PEvent design="org-block" :key="userStore.org.id" :id="userStore.org.id"
+                            :organization="userStore.org" @click="inviteModalOpen(userStore.org.id, userStore.org.name)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="isAdmin && !isMobile && isInviteVisible" class="planner-invite-modal">
+            <div class="modal-overlay" @click="inviteModalClose"></div>
+            <div class="modal modal-container">
+                <PlannerInvite :modalOrgId="inviteModalID" :orgName="inviteModalName"></PlannerInvite>
+            </div>
+        </div>
+    </template>
+
 
     <!-------------------------------------------------------------------MOBILE VIEW------------------------------------------------------------------->
 

@@ -211,7 +211,7 @@ const saveChanges = async () => {
         if (response.ok) {
             const result = await response.json()
             console.log('Event created successfully:', result)
-            router.push({ name: 'Home' }) // Redirect to home or another page
+            router.push({ name: 'Home' })
         } else {
             console.error('Failed to update event:', await response.json())
         }
@@ -460,7 +460,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
     <template v-if="editView && !isMobile">
         <div class="event-page-desktop" id="editView">
             <div class="home-header__text-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton />
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
             </div>
 
             <div class="desktop-body-wrapper">
@@ -551,7 +551,7 @@ const formatTimeForDisplay = (dateTimeStart, dateTimeEnd) => {
     <template v-if="userStore.role_id == 'Event Planner' && !editView && !isMobile">
         <div class="event-page-desktop">
             <div class="home-header-desktop">
-                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton />
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
             </div>
 
             <div class="desktop-body-wrapper">

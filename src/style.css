@@ -1672,6 +1672,26 @@ input:checked+.slider:before {
     margin-left: -4rem;
   }
 
+  .user-list-buttons-mobile{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 5%;
+  }
+
+  .user-list-buttons-mobile button {
+    margin: 2%;
+    width: 15rem;
+    height: 3rem;
+    padding-top: 2%;
+  }
+
+  .divider {
+    opacity: 0.4;
+    margin-bottom: 15%;
+  }
+
 }
 
 /*---------------DESKTOP------------------*/

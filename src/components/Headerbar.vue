@@ -17,6 +17,10 @@ const props = defineProps({
     backButton: {
         type: Boolean,
         default: false
+    },
+    backLocation: {
+        type: String,
+        default: 'Home'
     }
 })
 
@@ -24,7 +28,7 @@ const userStore = useUserStore()
 const router = useRouter()
 
 const goHome = () => {
-    router.push({ name: 'Home' })
+    router.push({ name: {backLocation} })
 }
 
 const handleBack = () => {
