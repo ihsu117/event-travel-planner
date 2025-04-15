@@ -13,7 +13,8 @@ export const useUserStore = defineStore('user', {
     dob: '',
     title: '',
     KTN: '',
-    users: []
+    users: [],
+    search_key: ''
   }),
 
   actions: {
@@ -53,6 +54,41 @@ export const useUserStore = defineStore('user', {
       localStorage.setItem('user', JSON.stringify(this.$state))
     },
 
+    setUserList(userData) {
+      if (Array.isArray(userData) && userData.length >= 1) {
+        // Handle array of users
+        this.users = userData.map(user => ({
+          user_id: user.id,
+          first_name: user.firstName,
+          last_name: user.lastName,
+          org_id: user.org_id,
+          org: user.org,
+          role_id: user.role,
+          profile_picture: user.profilePic,
+          email: user.email,
+          dob: user.dob,
+          title: user.title,
+          KTN: user.KTN
+        }))
+        console.log('Setting users data:', this.users)
+      } else {
+        const user = userData.user
+        console.log('Setting user data:', user)
+        this.user_id = user.id
+        this.first_name = user.first_name
+        this.last_name = user.last_name
+        this.org_id = user.org_id
+        this.org = user.org
+        this.role_id = user.role_id
+        this.profile_picture = user.profile_picture
+        this.email = user.email
+        this.dob = user.dob,
+        this.title = user.title,
+        this.KTN = user.KTN
+        console.log('User state updated:', this.$state)
+      }
+    },
+
     loadUser() {
       const user = localStorage.getItem('user')
       if (user) {
@@ -90,9 +126,15 @@ export const useUserStore = defineStore('user', {
       this.dob = '',
       this.title = '',
       this.KTN = '',
-      this.users = [];
+      this.users = [],
+      this.search_key = '';
       localStorage.removeItem('user')
       console.log('User state cleared')
+    },
+
+    clearUserList() {
+      this.users = []
+      console.log('User list cleared')
     }
   }
 })

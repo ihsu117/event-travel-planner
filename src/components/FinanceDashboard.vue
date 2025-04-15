@@ -1,22 +1,30 @@
 <script setup>
 import { useEventStore } from '../stores/eventStore'
 import { useFlightStore } from '../stores/flightStore'
+import { useUserStore } from '../stores/userStore'
 import { useRouter } from 'vue-router'
-import { PEvent, PTextField, PFlight, PButton } from '@poseidon-components'
-import { computed, ref, onMounted } from 'vue'
+import { PEvent, PTextField, PFlight, PButton, PProfilePic } from '@poseidon-components'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { checkAuth } from '../assets/scripts/checkAuth.js'
 import api from '../assets/scripts/api.js'
+import HeaderBar from './Headerbar.vue'
+import { format, parseISO } from 'date-fns';
+
 
 const eventStore = useEventStore()
 const flightStore = useFlightStore()
+const userStore = useUserStore()
 const router = useRouter()
+const userInfo = ref({});
+const loading = ref(false)
 
-const isModalVisible = ref(false)
+const isApproveModalVisible = ref(false)
 const flightSelected = ref(null)
 
 const isEditModalVisible = ref(false)
-const modalBudget = ref('')
-const modalAuto = ref()
-const modalThreshold = ref(0)
+const editModalBudget = ref('')
+const editModalAuto = ref()
+const editModalThreshold = ref('')
 
 const openEditModal = () => {
     isEditModalVisible.value = true
@@ -26,9 +34,18 @@ const closeEditModal = () => {
     isEditModalVisible.value = false
 }
 
+//Computed properties to check the role of the user
+const isAttendee = computed(() => userStore.role_id === 'Attendee')
+const isFinance = computed(() => userStore.role_id === 'Finance Manager')
+const isEventPlanner = computed(() => userStore.role_id === 'Event Planner')
+const isAdmin = computed(() => userStore.role_id === 'Org Admin')
+const isSiteAdmin = computed(() => userStore.role_id === 'Site Admin')
+console.log('Role:', userStore.role_id)
+
 // Function to save the updated value
 const saveUpdatedValue = async () => {
-    try {
+    if (editModalBudget.value) {
+        try {
         const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
             method: 'PUT',
             credentials: 'include',
@@ -36,9 +53,9 @@ const saveUpdatedValue = async () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                maxBudget: modalBudget.value,
-                autoApprove: Boolean(modalAuto.value),
-                autoApproveThreshold: Number(modalThreshold.value) || 0
+                maxBudget: editModalBudget.value,
+                autoApprove: Boolean(editModalAuto.value),
+                autoApproveThreshold: Number(editModalThreshold.value) || 0
             })
         })
         if (response.ok) {
@@ -51,17 +68,74 @@ const saveUpdatedValue = async () => {
     } catch (error) {
         console.error('Error updating value:', error)
     }
+    } else {
+        try {
+        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                maxBudget: eventStore.currentEvent.maxBudget,
+                autoApprove: Boolean(editModalAuto.value),
+                autoApproveThreshold: Number(editModalThreshold.value) || 0
+            })
+        })
+        if (response.ok) {
+            closeEditModal()
+            checkAndLoadEvent()
+            window.location.reload()
+        } else {
+            console.error('Failed to update value:', await response.text())
+        }
+    } catch (error) {
+        console.error('Error updating value:', error)
+    }
+    }
+    
 }
 
-const checkAndLoadEvent = () => {
+// const checkAndLoadEvent = () => {
+//     const eventData = localStorage.getItem('currentEvent');
+//     if (eventData) {
+//         eventStore.loadCurrentEvent();
+//     }
+// }
+
+const checkAndLoadEvent = async () => {
     const eventData = localStorage.getItem('currentEvent');
     if (eventData) {
         eventStore.loadCurrentEvent();
     }
-}
+    try {
+        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            const eventData = await response.json();
+            eventStore.setCurrentEvent(eventData); // Update the eventStore with fresh data
+        } else {
+            console.error('Failed to fetch current event:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error fetching current event:', error);
+    }
+};
 
 onMounted(async () => {
+    loading.value = true;
     checkAndLoadEvent()
+    await loadEventHistory();
+    await getFlightsData();
+    loading.value = false;
+})
+
+const getFlightsData = async() => {
     try {
         const response = await api.apiFetch(`/flights/eventflights/${eventStore.currentEvent.id}`, {
             method: 'GET',
@@ -72,15 +146,14 @@ onMounted(async () => {
         })
         if (response.ok) {
             flightStore.setEventFlightResults(response.json())
-
         }
     } catch (error) {
         console.error('Failed to fetch flights:', error)
     }
-})
+}
 
 //Send flightID back with approval
-const updateFlight = async () => {
+const updateFlight = async (selection) => {
     console.log(flightSelected)
     try {
         const response = await api.apiFetch('/flights/booking', {
@@ -90,11 +163,15 @@ const updateFlight = async () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                flightID: flightSelected.value.flightID,
-                price: flightSelected.value.price
+                id: flightSelected.value.flightID,
+                price: flightSelected.value.price,
+                eventID: eventStore.currentEvent.id,
+                selection: Boolean(selection)
             })
         })
-        if(response.ok) {
+        if (response.ok) {
+            await getFlightsData();
+            await loadEventHistory();
             console.log("booked flight")
         }
     } catch (error) {
@@ -103,32 +180,111 @@ const updateFlight = async () => {
 }
 
 // Function to open the modal
-const openModal = (flight) => {
+const openApproveModal = (flight) => {
+    console.log(flight);
     flightSelected.value = flight
-    isModalVisible.value = true
+    isApproveModalVisible.value = true
 }
 
 // Function to close the modal
-const closeModal = () => {
-    isModalVisible.value = false
+const closeApproveModal = () => {
+    isApproveModalVisible.value = false
     flightSelected.value = null
 }
 
 // Function to handle modal option selection
-const handleModalOption = (option) => {
+const handleApproveModalOption = (option) => {
     console.log(`Selected option: ${option}`)
 
-    if(option == "Approve") {
-        updateFlight()
+    if (option == "Approve") {
+        updateFlight(1)
+    } else {
+        updateFlight(0)
     }
 
-    closeModal()
+    closeApproveModal()
 }
 
 //Function to handle the back button
 const handleBack = (targetRoute) => {
     router.push({ name: targetRoute });
 }
+
+// Function to handle exporting event history
+const exportEventHistory = async () => {
+    try {
+        const response = await api.apiFetch(`/events/history/${eventStore.currentEvent.id}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                // Optional: Specify accepted content type if needed
+                // 'Accept': 'text/csv' 
+            }
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            // Determine filename (you might get this from Content-Disposition header or set a default)
+            a.download = `event_history_${eventStore.currentEvent.eventName}_ID:${eventStore.currentEvent.id}.csv`; 
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            console.log('Event history exported successfully.');
+        } else {
+            console.error('Failed to export event history:', response.status, await response.text());
+            // Handle error display to the user if needed
+        }
+    } catch (error) {
+        console.error('Error exporting event history:', error);
+        // Handle error display to the user if needed
+    }
+};
+
+// var eventHistory = ref([])
+const eventHistory = ref([]); // Reactive variable to store the event history
+
+const loadEventHistory = async () => {
+    try {
+        const response = await getEventHistory(); // Call the API function
+        if (response && response.history) {
+            eventHistory.value = response.history; // Update the reactive variable
+            console.log('Event history loaded:', eventHistory.value);
+        } else {
+            console.warn('No history found in the response.');
+            eventHistory.value = []; // Set to an empty array if no history is found
+        }
+    } catch (error) {
+        console.error('Failed to load event history:', error);
+        eventHistory.value = []; // Handle errors by resetting the variable
+    }
+};
+
+const getEventHistory = async () => {
+    try {
+        const response = await api.apiFetch(`/events/${eventStore.currentEvent.id}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error('Failed to fetch event history:', await response.text());
+            return null; // Return null if the response is not OK
+        }
+    } catch (error) {
+        console.error('Failed to fetch event history:', error);
+        return null; // Return null in case of an error
+    }
+};
+
 
 const budgetColor = computed(() => {
     const budgetThreshold = eventStore.currentEvent.maxBudget * 0.3;
@@ -141,41 +297,344 @@ const budgetColor = computed(() => {
     }
 });
 
-console.log(eventStore.currentEvent.id)
+const isMobile = ref(window.innerWidth <= 768);
+
+const updateScreenSize = () => {
+    isMobile.value = window.innerWidth <= 768;
+};
+
+//Fetch from the API
+onMounted(async () => {
+    window.addEventListener('resize', updateScreenSize);
+})
+
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateScreenSize);
+});
+
+//THE USER PROFILE MODAL
+const fetchUserData = async () => {
+    try {
+        const response = await api.apiFetch(`/user/${userStore.user_id}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            userInfo.value = await response.json();
+        } else {
+            console.error('Failed to fetch user data');
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+};
+
+
+const handleOrgClick = (org) => {
+    router.push({ name: 'OrgList', params: { orgId: org.id } });
+}
+
+const isModalVisible = ref(false)
+
+// Function to open the modal
+const openModal = async () => {
+    await fetchUserData();
+    isModalVisible.value = true
+}
+
+// Function to close the modal
+const closeModal = () => {
+    isModalVisible.value = false
+}
+
+
+
+// Function to handle modal option selection
+const handleModalOption = async (option) => {
+    console.log(`Selected option: ${option}`)
+    if (option === 'Logout') {
+        try {
+            const response = await api.apiFetch('/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                userStore.$reset() // Reset the user store
+                localStorage.clear() // Clear local storage
+                router.push({ name: 'Login' }) // Redirect to login page
+            }
+        } catch (error) {
+            console.error('Failed to logout:', error)
+        }
+    } else if (option === 'Edit') {
+        router.push({ name: 'EditUser' })
+    }
+    closeModal()
+}
+
+const formatTimestamp = (timestamp) => {
+  if (!timestamp) return 'Invalid Date'; // Handle null or undefined timestamps
+  return new Date(timestamp).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  });
+};
+
 </script>
 
 <template>
-    <div class="phone-container">
+    <!-- -----------------------------------------------------------MODAL------------------------------------------------------->
+    <template v-if="isModalVisible && !isMobile">
+        <div>
+            <div class="modal-overlay" @click="closeModal"></div>
+            <div class="modal modal-container">
+                <div class="modal-profile">
+                    <div class="modal-profile-img-name">
+                        <h4>{{ userStore.first_name }} {{ userStore.last_name }}</h4>
+                        <PProfilePic design="big" :profileImage='userStore.profile_picture' />
+                        <div class="modal-profile-title-org">
+                            <h5>{{ userStore.role_id }}</h5>
+                            <p>{{ userStore.org.name }}</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-profile-info-container">
+                        <div class="modal-profile-info">
+                            <div class="profile-content">
+                                <h5>Email</h5>
+                                <p>{{ userStore.email }}</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Phone</h5>
+                                <p>{{ userInfo.phoneNum.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+                                    }}</p>
+                            </div>
+
+                            <div class="profile-content">
+                                <h5>Gender</h5>
+                                <p v-if="userInfo.gender == 'm'">Male</p>
+                                <p v-else>Female</p>
+                            </div>
+                            <div class="profile-content">
+                                <h5>Date of Birth</h5>
+                                <p>{{ format(userInfo.dob, 'MMMM do, yyyy') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-profile-options">
+                        <PButton label="Edit" design="gradient-small" @click="() => handleModalOption('Edit')" />
+                        <PButton label="Logout" design="gradient-small" @click="() => handleModalOption('Logout')" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- -----------------------------------------------------------DESKTOP------------------------------------------------------->
+    <template v-if="!isMobile && (isFinance || isEventPlanner || isAdmin || isSiteAdmin)">
+        <div class="finance-dashboard-desktop">
+            <div class="home-header-desktop">
+                <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
+            </div>
+            <div class="desktop-body-wrapper">
+                <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
+                :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
+                :pictureLink="eventStore.currentEvent.pictureLink" design="desktop-header"
+                @back-click="() => handleBack('Home')" />
+
+                <div class="finance-desktop-content">
+                    <div class="finance-event-info">
+                        <div class="finance-event-desc">
+                            <h2>Description</h2>
+                            <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
+                        </div>
+                        <div class="budget-card">
+                            <div class="budget-card-header">
+                                <h3>Event Budget Settings</h3>
+                                <svg @click="openEditModal" class="budget-edit-icon" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M8.707 19.707L18 10.414L13.586 6l-9.293 9.293a1 1 0 0 0-.263.464L3 21l5.242-1.03c.176-.044.337-.135.465-.263M21 7.414a2 2 0 0 0 0-2.828L19.414 3a2 2 0 0 0-2.828 0L15 4.586L19.414 9z" />
+                                </svg>
+                            </div>
+                            <div class="budget-card-row">
+                                <span class="budget-card-label">Budget:</span>
+                                <span class="budget-card-value budget-green">
+                                    {{ new Intl.NumberFormat('en-US', {
+                                        style: 'currency', currency: 'USD'
+                                    }).format(eventStore.currentEvent.maxBudget) }}
+                                </span>
+                            </div>
+                            <div class="budget-card-row">
+                                <span class="budget-card-label">Auto Approve:</span>
+                                <span class="budget-card-value">
+                                    {{ eventStore.currentEvent.autoapprove ? 'Enabled' : 'Disabled' }}
+                                </span>
+                            </div>
+                            <div class="budget-card-row" v-if="eventStore.currentEvent.autoapprove">
+                                <span class="budget-card-label">Threshold:</span>
+                                <span class="budget-card-value">
+                                    {{ new Intl.NumberFormat('en-US', {
+                                        style: 'currency', currency: 'USD'
+                                    }).format(eventStore.currentEvent.autoapprove_threshold) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div v-if="isEditModalVisible">
+                            <div class="modal-overlay" @click="closeEditModal"></div>
+                            <div class="modal budget-modal">
+                                <h2 class="modal-title">Set Budget</h2>
+
+                                <label class="modal-label" for="budget-amount">Amount</label>
+                                <PTextField v-model="editModalBudget" id="budget-amount" class="modal-input" type="number"
+                                    placeholder="Enter amount" />
+
+                                <label class="modal-label">Auto Approve</label>
+                                <label class="switch">
+                                    <input type="checkbox" v-model="editModalAuto" />
+                                    <span class="slider round"></span>
+                                </label>
+
+                                <div v-if="editModalAuto" class="threshold-container">
+                                    <label class="modal-label" for="threshold">Threshold</label>
+                                    <PTextField v-model="editModalThreshold" id="threshold" class="modal-input" type="number"
+                                        placeholder="Enter threshold" />
+                                </div>
+
+                                <div class="modal-options">
+                                    <PButton design="gradient-small" label="Save" @click="saveUpdatedValue"></PButton>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="isApproveModalVisible">
+                            <div class="modal-overlay" @click="closeApproveModal"></div>
+                            <div class="modal">
+
+                                <!-- <div>{{flightSelected}}</div> -->
+                                <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
+                                    :price="flightSelected.price" :airline="flightSelected.airline" :flightDate="flightSelected.flightDate"
+                                    :logoURL="flightSelected.itinerary.logoURL" :flightDepTime="flightSelected.flightDepTime"
+                                    :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" :passangerName="flightSelected.owner"
+                                    design="finance" style=""></PFlight>
+
+                                <div class="modal-options">
+                                    <h2 class="modal-approve" @click="handleApproveModalOption('Approve')">Approve</h2>
+                                    <h2 class="modal-deny" @click="handleApproveModalOption('Deny')">Deny</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="finance-items-cont">
+                        <div class="finance-item">
+                            <h3>Waiting for Approval</h3>
+                            <div v-if="flightStore.flightResults.length > 0" class="finance-approval-cont" >
+                                <PFlight v-for="(flight, index) in flightStore.flightResults"
+                                    :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
+                                    :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
+                                    :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
+                                    :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
+                                    :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
+                                    :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.itinerary.logoURL"
+                                    :flightID="String(flight.flightID)" @click="openApproveModal(flight)" />
+                            </div>
+
+                            <div v-else style="color: black;">
+                                <p>No approvals at the moment! :)</p>
+                            </div>
+                        </div>
+
+                        <div class="finance-item">
+                            <div class="finance-flight-title">
+                                <h3>Transaction History</h3>
+                                <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
+                            </div>
+
+                            <div v-if="eventHistory.length > 0" class="finance-approval-cont" >
+                                <div v-for="(event, index) in eventHistory" class="history-card" :key="index">
+                                    <div v-if="event.updatedBudget != null || event.updatedAutoApproveThreshold != null">
+                                        <h4>Budget Changed</h4>
+                                        <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
+                                        <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
+                                        <p v-if="event.updatedBudget != null">Budget Update: {{event.originalBudget}} -> {{event.updatedBudget}}</p>
+                                        <p v-if="event.updatedAutoApproveThreshold != null">AA Threshold: {{event.originalAutoApproveThreshold}} -> {{event.updatedAutoApproveThreshold}}</p>
+                                    </div>
+                                    <div v-if="event.approvedFlight.order_id != null" class="approved-card">
+                                        <h4>Flight Approved</h4>
+                                        <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
+                                        <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
+                                        <p>Order #: {{ event.approvedFlight.order_id }}</p>
+                                        <p>Cost: ${{ event.approvedFlight.price }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div v-else style="color: black;">
+                                <p>No approvals at the moment! :)</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </template>
+
+    <!-- ----------------------------------------------------------MOBILE------------------------------------------------------->
+    <template v-if="isMobile && (isFinance || isEventPlanner || isAdmin || isSiteAdmin)">
         <div class="finance-dashboard">
-            <div>
-                <PEvent :organization="eventStore.currentEvent.organization" :name="eventStore.currentEvent.name"
+                <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                     :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
                     :pictureLink="eventStore.currentEvent.pictureLink" design="header"
                     @back-click="() => handleBack('Home')" />
-            </div>
             <div class="content-grid">
                 <h1>Description</h1>
                 <div class="event-description">
                     <p>{{ eventStore.currentEvent.description || 'No description available.' }}</p>
                 </div>
-                <div class="budget-container">
-                    <h1>Budget: </h1>
-                    <h2 :style="{ color: budgetColor }">${{
-                        eventStore.currentEvent.maxBudget }}</h2>
-                    <div>
-                        <h1>Auto Approve</h1>
-                        <h3>{{ eventStore.currentEvent.autoapprove }}</h3>
+                <div class="budget-card">
+                    <div class="budget-card-header">
+                        <h3>Event Budget Settings</h3>
+                        <svg @click="openEditModal" class="budget-edit-icon" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M8.707 19.707L18 10.414L13.586 6l-9.293 9.293a1 1 0 0 0-.263.464L3 21l5.242-1.03c.176-.044.337-.135.465-.263M21 7.414a2 2 0 0 0 0-2.828L19.414 3a2 2 0 0 0-2.828 0L15 4.586L19.414 9z" />
+                        </svg>
                     </div>
-                    <div v-if="eventStore.currentEvent.autoapprove">
-                        <h1>Threshold</h1>
-                        <h3>{{ eventStore.currentEvent.autoapprove_threshold }}</h3>
+                    <div class="budget-card-row">
+                        <span class="budget-card-label">Budget:</span>
+                        <span class="budget-card-value budget-green">
+                            {{ new Intl.NumberFormat('en-US', {
+                                style: 'currency', currency: 'USD'
+                            }).format(eventStore.currentEvent.maxBudget) }}
+                        </span>
                     </div>
-                    <svg @click="openEditModal('Threshold', eventStore.currentEvent.autoapprove_threshold, 'autoapprove_threshold')"
-                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                            d="M8.707 19.707L18 10.414L13.586 6l-9.293 9.293a1 1 0 0 0-.263.464L3 21l5.242-1.03c.176-.044.337-.135.465-.263M21 7.414a2 2 0 0 0 0-2.828L19.414 3a2 2 0 0 0-2.828 0L15 4.586L19.414 9z" />
-                    </svg>
+                    <div class="budget-card-row">
+                        <span class="budget-card-label">Auto Approve:</span>
+                        <span class="budget-card-value">
+                            {{ eventStore.currentEvent.autoapprove ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+                    <div class="budget-card-row" v-if="eventStore.currentEvent.autoapprove">
+                        <span class="budget-card-label">Threshold:</span>
+                        <span class="budget-card-value">
+                            {{ new Intl.NumberFormat('en-US', {
+                                style: 'currency', currency: 'USD'
+                            }).format(eventStore.currentEvent.autoapprove_threshold) }}
+                        </span>
+                    </div>
                 </div>
+
                 <div class="flight-container">
                     <h3>Waiting for Approval</h3>
                     <div class="p-event__container">
@@ -184,73 +643,89 @@ console.log(eventStore.currentEvent.id)
                             :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
-                            :flightType="flight.flightType" :flightClass="flight.flightClass"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" :flightID="flight.flightID"
-                            @click="openModal(flight)" />
+                            :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.itinerary.logoURL"
+                            :flightID="flight.flightID" @click="openApproveModal(flight)" />
                     </div>
                 </div>
 
                 <div class="flight-container">
                     <h3>Transaction History</h3>
-                    <PButton design="gradient-small" label="Get Report" @click=""></PButton>
-                    <div class="p-event__container">
-                        <PFlight v-for="(flight, index) in flightStore.flightResults"
+                    <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
+                    <!-- <div class="p-event__container">
+                        <PFlight v-for="(flight, index) in eventHistory"
                             :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
                             :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
                             :seatNumber="flight.seatNumber" :seatAvailable="flight.seatAvailable" :price="flight.price"
-                            :flightType="flight.flightType" :flightClass="flight.flightClass"
-                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL" :flightID="flight.flightID"
-                            @click="openModal(flight)" />
+                            :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
+                            :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
+                            :flightID="flight.flightID" @click="openApproveModal(flight)" />
+                    </div> -->
+                    <div class="p-event__container">
+                        <div v-for="(event, index) in eventHistory" class="history-card" :key="index">
+                            <div v-if="event.updatedBudget != null || event.updatedAutoApprovethreshold != null">
+                                <h4>Budget Changed</h4>
+                                <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
+                                <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
+                                <p v-if="event.updatedBudget != null">Budget Update: {{event.originalBudget}} -> {{event.updatedBudget}}</p>
+                                <p v-if="event.updatedAutoApprovethreshold != null">AA Threshold: {{event.originalAutoApproveThreshold}} -> {{event.updatedAutoApprovethreshold}}</p>
+                            </div>
+                            <div v-if="event.approvedFlight.order_id != null" class="approved-card">
+                                <h4>Flight Approved</h4>
+                                <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
+                                <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
+                                <p>Order #: {{ event.approvedFlight.order_id }}</p>
+                                <p>Cost: ${{ event.approvedFlight.price }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div v-if="isEditModalVisible">
                     <div class="modal-overlay" @click="closeEditModal"></div>
-                    <div class="modal">
+                    <div class="modal budget-modal">
+                        <h2 class="modal-title">Set Budget</h2>
 
-                        <div>
-                            <h2>Budget</h2>
-                            <input v-model="modalBudget" type="text" />
-                        </div>
+                        <label class="modal-label" for="budget-amount">Amount</label>
+                        <PTextField v-model="editModalBudget" id="budget-amount" class="modal-input" type="number"
+                            placeholder="Enter amount" />
 
-                        <div>
-                            <h2>Auto Approve</h2>
-                            <input v-model="modalAuto" name="modalAuto" type="radio" id="autoapprove-yes"
-                                :value="true" />
-                            <label for="autoapprove-yes">Yes</label>
-                            <input v-model="modalAuto" name="modalAuto" type="radio" id="autoapprove-no"
-                                :value="false" />
-                            <label for="autoapprove-no">No</label>
-                        </div>
+                        <label class="modal-label">Auto Approve</label>
+                        <label class="switch">
+                            <input type="checkbox" v-model="editModalAuto" />
+                            <span class="slider round"></span>
+                        </label>
 
-                        <div v-if="modalAuto">
-                            <h2>Threshold</h2>
-                            <input v-model="modalThreshold" type="text" />
+                        <div v-if="editModalAuto" class="threshold-container">
+                            <label class="modal-label" for="threshold">Threshold</label>
+                            <PTextField v-model="editModalThreshold" id="threshold" class="modal-input" type="number"
+                                placeholder="Enter threshold" />
                         </div>
 
                         <div class="modal-options">
-                            <button @click="saveUpdatedValue">Save</button>
+                            <PButton design="gradient-small" label="Save" @click="saveUpdatedValue"></PButton>
                         </div>
                     </div>
                 </div>
 
-                <div v-if="isModalVisible">
-                    <div class="modal-overlay" @click="closeModal"></div>
+                <div v-if="isApproveModalVisible">
+                    <div class="modal-overlay" @click="closeApproveModal"></div>
                     <div class="modal">
                         <PFlight v-if="flightSelected" :flightClass="flightSelected.flightClass"
                             :price="flightSelected.price" :airline="flightSelected.airline"
                             :logoURL="flightSelected.logoURL" :flightDepTime="flightSelected.flightDepTime"
-                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" design="finance" style=""></PFlight>
+                            :flightArrTime="flightSelected.flightArrTime" :flightID="flightSelected.flightID" :passangerName="flightSelected.owner"
+                            design="finance" style=""></PFlight>
 
                         <div class="modal-options">
-                            <h2 class="modal-approve" @click="handleModalOption('Approve')">Approve</h2>
-                            <h2 class="modal-deny" @click="handleModalOption('Deny')">Deny</h2>
+                            <h2 class="modal-approve" @click="handleApproveModalOption('Approve')">Approve</h2>
+                            <h2 class="modal-deny" @click="handleApproveModalOption('Deny')">Deny</h2>
                         </div>
                     </div>
                 </div>
 
             </div>
         </div>
-    </div>
+    </template>
 </template>

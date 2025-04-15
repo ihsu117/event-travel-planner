@@ -16,4 +16,11 @@ const userStore = useUserStore()
 userStore.loadUser()
 checkAuth()
 
-app.mount('#app')
+const gmapsAPI = document.createElement('script')
+gmapsAPI.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_gmaps_api_key}&libraries=places`
+gmapsAPI.async = true
+gmapsAPI.defer = true
+gmapsAPI.onload = () => {
+    app.mount('#app')
+}
+document.head.appendChild(gmapsAPI)
