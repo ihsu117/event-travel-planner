@@ -681,9 +681,9 @@ const handleHScroll = (e) => {
 
     <template v-if="orgModal">
         <div class="modal-overlay" @click="orgModalClose"></div>
-        <div class="modal modal-container">
-            <div class="modal-profile">
-                <h4>Create Organization</h4>
+        <div class="modal modal-container" id="orgModalContainer">
+            <div class="modal-profile" id="orgModal">
+                <div class="headerText"><p>Create Organization</p></div>
                 <PTextField label="Organization Name" v-model="orgName" placeholder="Enter organization name" />
                 <PButton label="Create" design="gradient-small" @click="createOrg()" />
             </div>
