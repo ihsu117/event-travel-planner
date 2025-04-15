@@ -674,10 +674,6 @@ body {
   color: black;
 }
 
-.finance-dashboard p {
-  color: black;
-}
-
 .finance-dashboard h1 {
   background: var(--top-gradient);
   -webkit-background-clip: text;
