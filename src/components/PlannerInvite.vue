@@ -396,7 +396,6 @@ const addByCSV = () => {
                 const errorData = await response.json();
                 console.error("API Error:", errorData);
                 csvErrorMessage("API Error:" + JSON.stringify(errorData));
-                adminGetUsers()
                 return;
             }
 
@@ -482,7 +481,7 @@ const handleCSVButtonClick = () => {
                 <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
                 <!-- The button triggers the form submission -->
                 <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
-                <p v-if="fileInput">uploaded {{ file }}</p>
+                <p v-if="fileInput">{{ file }}</p>
             </div>
         </div>
 
@@ -497,7 +496,7 @@ const handleCSVButtonClick = () => {
                 <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
                 <!-- The button triggers the form submission -->
                 <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
-                <p v-if="uploadedFile">uploaded {{ uploadedFile }}</p>
+                <p v-if="uploadedFile">{{ uploadedFile }}</p>
             </div>
 
 
@@ -587,7 +586,7 @@ const handleCSVButtonClick = () => {
                             :name="getDisplayName(user)" :email="user.email" :profileImage="user.profile_picture"
                             :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
 
-                        <PFinanceBlock design="invite" v-for="user in newUsers" :key="user.email" :email="user.email"
+                        <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
                             :profileImage="user.profile_picture" :class="{ selected: isNewUserSelected(user.email) }"
                             @click="selectNewUser(user.email)" />
                     </div>
