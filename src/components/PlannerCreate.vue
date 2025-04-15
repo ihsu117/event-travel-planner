@@ -288,7 +288,7 @@ const createEventDesktop = async () => {
         if (response.ok) {
             const result = await response.json()
             console.log('Event created successfully:', result)
-            toEventPage(result.eventId)
+            router.push({ name: 'Home' })
 
         } else {
             console.error('Failed to create event:', await response.json())

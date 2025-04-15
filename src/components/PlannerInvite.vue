@@ -32,6 +32,7 @@ const emailInput = ref('')
 const inviteEmail = ref('')
 const isModalVisible = ref(false)
 const fileInput = ref(null)
+const uploadedFile = ref('')
 const invitedUsers = ref([])
 const csvUploadError = ref('')
 
@@ -426,6 +427,11 @@ const getDisplayName = (user) => {
     return name || user.email;
 }
 
+const handleFileChange = (event) => {
+    const file = event.target.files[0]
+    uploadedFile.value = file ? file.name : ''
+}
+
 onMounted(() => {
     window.addEventListener('resize', updateScreenSize);
     if (!isAdmin.value) {
@@ -462,20 +468,32 @@ const handleCSVButtonClick = () => {
 <template>
 
     <template v-if="isAdmin">
-        <div class="modal-header">
+        <div v-if="!isMobile" class="modal-header">
             <h2>Users of {{ props.orgName }}</h2>
             <div class="user-list-buttons">
-                <h3 class="csvUploadError">{{csvUploadError.value}}</h3>
+                <h3 class="csvUploadError">{{ csvUploadError.value }}</h3>
                 <PButton design="planner" @click="openModal" label="Add User"></PButton>
                 <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
                 <!-- The button triggers the form submission -->
                 <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
+                <p v-if="fileInput">uploaded {{ file }}</p>
             </div>
-
         </div>
+
+
         <div class="planner-event">
             <PEvent v-if="isMobile" design="small-header" eventName="Invitations"
                 @back-click="() => handleBack('Home')" />
+
+            <div v-if="isMobile" class="user-list-buttons-mobile">
+                <h3 class="csvUploadError">{{ csvUploadError.value }}</h3>
+                <PButton design="planner" @click="openModal" label="Add User"></PButton>
+                <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
+                <!-- The button triggers the form submission -->
+                <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
+                <p v-if="uploadedFile">uploaded {{ uploadedFile }}</p>
+            </div>
+
 
             <div class="event-invite">
                 <div class="user-list-container">
@@ -532,8 +550,8 @@ const handleCSVButtonClick = () => {
         <div class="modal-header">
             <h2>Attendee</h2>
             <div class="submit-invite-button">
-                    <PButton label="Send Invites" @click="submitChange" design="gradient"></PButton>
-                </div>
+                <PButton label="Send Invites" @click="submitChange" design="gradient"></PButton>
+            </div>
         </div>
         <div class="planner-event">
             <PEvent v-if="isMobile" design="small-header" eventName="Invitations"
@@ -581,7 +599,7 @@ const handleCSVButtonClick = () => {
                             :email="user.email" :profileImage="user.profilePic" />
                     </div>
                 </div>
-                
+
             </div>
         </div>
 

@@ -674,10 +674,6 @@ body {
   color: black;
 }
 
-.finance-dashboard p {
-  color: black;
-}
-
 .finance-dashboard h1 {
   background: var(--top-gradient);
   -webkit-background-clip: text;
@@ -1685,6 +1681,26 @@ input:checked+.slider:before {
     margin-left: -4rem;
   }
 
+  .user-list-buttons-mobile{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 5%;
+  }
+
+  .user-list-buttons-mobile button {
+    margin: 2%;
+    width: 15rem;
+    height: 3rem;
+    padding-top: 2%;
+  }
+
+  .divider {
+    opacity: 0.4;
+    margin-bottom: 15%;
+  }
+
 }
 
 /*---------------DESKTOP------------------*/
@@ -2549,6 +2565,45 @@ input:checked+.slider:before {
   }
 
 }
+
+#orgModal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+#orgModal .headerText {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-top: 0;
+  background: var(--top-gradient);
+  width: 112%;
+  height: 5rem;
+  z-index: 999;
+  margin-top: -3rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+#orgModal .headerText p {
+  margin-top: 1.5em;
+  color: var(--pos-grey);
+}
+#orgModal .p-textfield {
+  margin: 1rem 0 1rem 0;
+}
+ #orgModalContainer {
+  background-color: var(--pos-inner-yellow);
+  height: 12rem;
+}
+#orgModalContainer .p-button {
+  width: 90%;
+  max-width: 90%;
+}
+
 
 @media screen and (min-width: 1441px) {
   .lv-constraint {
