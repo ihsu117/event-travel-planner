@@ -656,8 +656,8 @@ const formatTimestamp = (timestamp) => {
                 <div class="flight-container">
                     <h3>Transaction History</h3>
                     <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
-                    <div class="p-event__container">
-                        <PFlight v-for="(flight, index) in flightStore.flightResults"
+                    <!-- <div class="p-event__container">
+                        <PFlight v-for="(flight, index) in eventHistory"
                             :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
                             :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
                             :flightDepTime="flight.flightDepTime" :flightArrTime="flight.flightArrTime"
@@ -665,6 +665,24 @@ const formatTimestamp = (timestamp) => {
                             :flightType="flight.flightType" :flightClass="flight.flightClass" :passangerName="flight.owner"
                             :flightGate="flight.flightGate" :airline="flight.airline" :logoURL="flight.logoURL"
                             :flightID="flight.flightID" @click="openApproveModal(flight)" />
+                    </div> -->
+                    <div class="p-event__container">
+                        <div v-for="(event, index) in eventHistory" class="history-card" :key="index">
+                            <div v-if="event.updatedBudget != null || event.updatedAutoApprovethreshold != null">
+                                <h4>Budget Changed</h4>
+                                <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
+                                <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
+                                <p v-if="event.updatedBudget != null">Budget Update: {{event.originalBudget}} -> {{event.updatedBudget}}</p>
+                                <p v-if="event.updatedAutoApprovethreshold != null">AA Threshold: {{event.originalAutoApproveThreshold}} -> {{event.updatedAutoApprovethreshold}}</p>
+                            </div>
+                            <div v-if="event.approvedFlight.order_id != null" class="approved-card">
+                                <h4>Flight Approved</h4>
+                                <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
+                                <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
+                                <p>Order #: {{ event.approvedFlight.order_id }}</p>
+                                <p>Cost: ${{ event.approvedFlight.price }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
