@@ -442,7 +442,6 @@ const formatTimestamp = (timestamp) => {
             <div class="home-header-desktop">
                 <HeaderBar :openModal="openModal" :profileImage='userStore.profile_picture' backButton/>
             </div>
-
             <div class="desktop-body-wrapper">
                 <PEvent :organization="eventStore.currentEvent.org" :eventName="eventStore.currentEvent.eventName"
                 :startDate="eventStore.currentEvent.startDate" :endDate="eventStore.currentEvent.endDate"
@@ -533,11 +532,11 @@ const formatTimestamp = (timestamp) => {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="finance-items-cont">
                         <div class="finance-item">
                             <h3>Waiting for Approval</h3>
-                            <div class="finance-approval-cont">
+                            <div v-if="flightStore.flightResults.length > 0" class="finance-approval-cont" >
                                 <PFlight v-for="(flight, index) in flightStore.flightResults"
                                     :key="`${flight.origin}-${flight.flightDepTime}-${index}`" design="finance"
                                     :flightDate="flight.flightDate" :origin="flight.origin" :destination="flight.destination"
@@ -548,46 +547,43 @@ const formatTimestamp = (timestamp) => {
                                     :flightID="String(flight.flightID)" @click="openApproveModal(flight)" />
                             </div>
 
-                            <div v-if="!loading && flightStore.flightResults.length == 0" style="color: black;">
+                            <div v-else style="color: black;">
                                 <p>No approvals at the moment! :)</p>
                             </div>
                         </div>
 
-                    <div class="finance-items-cont">
                         <div class="finance-item">
                             <div class="finance-flight-title">
                                 <h3>Transaction History</h3>
                                 <PButton design="gradient-small" label="Get Report" @click="exportEventHistory"></PButton>
                             </div>
-                        </div>
-                            <div v-if="eventHistory.length > 0">
-                                <div class="finance-approval-cont">
 
-                                    <div v-for="(event, index) in eventHistory" class="history-card" :key="index">
-                                        <div v-if="event.updatedBudget != null || event.updatedAutoApprovethreshold != null">
-                                            <h4>Budget Changed</h4>
-                                            <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
-                                            <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
-                                            <p v-if="event.updatedBudget != null">Budget Update: {{event.originalBudget}} -> {{event.updatedBudget}}</p>
-                                            <p v-if="event.updatedAutoApprovethreshold != null">AA Threshold: {{event.originalAutoApproveThreshold}} -> {{event.updatedAutoApprovethreshold}}</p>
-                                        </div>
-                                        <div v-if="event.approvedFlight.order_id != null" class="approved-card">
-                                            <h4>Flight Approved</h4>
-                                            <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
-                                            <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
-                                            <p>Order #: {{ event.approvedFlight.order_id }}</p>
-                                            <p>Cost: ${{ event.approvedFlight.price }}</p>
-                                        </div>
+                            <div v-if="eventHistory.length > 0" class="finance-approval-cont" >
+                                <div v-for="(event, index) in eventHistory" class="history-card" :key="index">
+                                    <div v-if="event.updatedBudget != null || event.updatedAutoApproveThreshold != null">
+                                        <h4>Budget Changed</h4>
+                                        <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
+                                        <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
+                                        <p v-if="event.updatedBudget != null">Budget Update: {{event.originalBudget}} -> {{event.updatedBudget}}</p>
+                                        <p v-if="event.updatedAutoApproveThreshold != null">AA Threshold: {{event.originalAutoApproveThreshold}} -> {{event.updatedAutoApproveThreshold}}</p>
                                     </div>
-
+                                    <div v-if="event.approvedFlight.order_id != null" class="approved-card">
+                                        <h4>Flight Approved</h4>
+                                        <h5>{{ formatTimestamp(event.lastEdited)}}</h5>
+                                        <p>Created By: {{ event.updater.firstName }} {{ event.updater.lastName }}</p>
+                                        <p>Order #: {{ event.approvedFlight.order_id }}</p>
+                                        <p>Cost: ${{ event.approvedFlight.price }}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div v-else>
-                                <p style="color: black; justify-self: center;">No event history available.</p>
+                        
+                            <div v-else style="color: black;">
+                                <p>No approvals at the moment! :)</p>
                             </div>
-                    </div>
+                        </div>
 
                     </div>
+
                 </div>
             </div>
 
