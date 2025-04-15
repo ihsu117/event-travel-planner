@@ -392,6 +392,7 @@ const addByCSV = () => {
                 const errorData = await response.json();
                 console.error("API Error:", errorData);
                 csvErrorMessage("API Error:" + JSON.stringify(errorData));
+                adminGetUsers()
                 return;
             }
 
@@ -565,7 +566,7 @@ const handleCSVButtonClick = () => {
 
                         <PFinanceBlock design="invite"
                             v-for="user in userStore.users.filter(user => user.role_id === 'Finance Manager')"
-                            :key="user.user_id" :name="user.first_name + ' ' + user.last_name" :email="user.email"
+                            :key="user.user_id" :name="getDisplayName(user)" :email="user.email"
                             :profileImage="user.profile_picture"
                             :class="{ selected: isFinanceManagerSelected(user.user_id) }"
                             @click="selectFinanceManager(user.user_id)" required />
@@ -579,11 +580,10 @@ const handleCSVButtonClick = () => {
                     <div class="p-event__container">
                         <PButton design="planner" @click="openModal" label="Add User"></PButton>
                         <PFinanceBlock design="invite" v-for="user in remainingUsers" :key="user.user_id"
-                            :name="(user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.email"
-                            :email="user.email" :profileImage="user.profile_picture"
+                            :name="getDisplayName(user)" :email="user.email" :profileImage="user.profile_picture"
                             :class="{ selected: isUserSelected(user.user_id) }" @click="selectUser(user.user_id)" />
 
-                        <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
+                        <PFinanceBlock design="invite" v-for="user in newUsers" :key="user.email" :email="user.email"
                             :profileImage="user.profile_picture" :class="{ selected: isNewUserSelected(user.email) }"
                             @click="selectNewUser(user.email)" />
                     </div>
