@@ -478,10 +478,11 @@ const handleCSVButtonClick = () => {
             <div class="user-list-buttons">
                 <h3 class="csvUploadError">{{ csvUploadError.value }}</h3>
                 <PButton design="planner" @click="openModal" label="Add User"></PButton>
-                <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
+                <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required
+                    @change="handleFileChange" />
                 <!-- The button triggers the form submission -->
                 <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
-                <p v-if="fileInput">{{ file }}</p>
+                <p v-if="uploadedFile">{{ uploadedFile }}</p>
             </div>
         </div>
 
@@ -493,7 +494,8 @@ const handleCSVButtonClick = () => {
             <div v-if="isMobile" class="user-list-buttons-mobile">
                 <h3 class="csvUploadError">{{ csvUploadError.value }}</h3>
                 <PButton design="planner" @click="openModal" label="Add User"></PButton>
-                <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required />
+                <input type="file" ref="fileInput" name="file" accept=".csv" style="display: none" required
+                    @change="handleFileChange" />
                 <!-- The button triggers the form submission -->
                 <PButton label="Add User by .CSV" type="submit" design="planner" @click="handleCSVButtonClick" />
                 <p v-if="uploadedFile">{{ uploadedFile }}</p>
@@ -553,7 +555,7 @@ const handleCSVButtonClick = () => {
 
     <template v-else>
         <div class="modal-header">
-            <h2>Attendee</h2>
+            <h2 v-if="!isMobile">Attendee</h2>
             <div v-if="!isMobile" class="submit-invite-button">
                 <PButton label="Send Invites" @click="submitChange" design="gradient"></PButton>
             </div>
@@ -563,7 +565,7 @@ const handleCSVButtonClick = () => {
                 @back-click="() => handleBack('Home')" />
 
             <div class="event-invite-plan">
-                <PButton v-if="isMobile" label="Send Invites" @click="submitChange" design="gradient"></PButton>
+
                 <div class="user-list-container">
                     <h2>Finance Managers</h2>
                     <div class="p-event__container">
@@ -574,6 +576,9 @@ const handleCSVButtonClick = () => {
                             :profileImage="user.profile_picture"
                             :class="{ selected: isFinanceManagerSelected(user.user_id) }"
                             @click="selectFinanceManager(user.user_id)" required />
+                    </div>
+                    <div v-if="!loading && userStore.users.length == 0" style="color: black;">
+                        <p>No Attendees Invited Yet</p>
                     </div>
                 </div>
                 <hr class="divider" />
@@ -590,6 +595,11 @@ const handleCSVButtonClick = () => {
                         <PFinanceBlock design="new-user" v-for="user in newUsers" :key="user.email" :email="user.email"
                             :profileImage="user.profile_picture" :class="{ selected: isNewUserSelected(user.email) }"
                             @click="selectNewUser(user.email)" />
+
+                        <div v-if="(!loading && remainingUsers.length == 0) && (!loading && newUsers.length == 0)"
+                            style="color: black;">
+                            <p>No Attendees Invited Yet</p>
+                        </div>
                     </div>
                 </div>
 
@@ -602,9 +612,13 @@ const handleCSVButtonClick = () => {
                         <PFinanceBlock design="invite" v-for="user in invitedUsers" :key="user.id"
                             :name="(user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : user.email"
                             :email="user.email" :profileImage="user.profilePic" />
+
+                        <div v-if="!loading && invitedUsers.length == 0" style="color: black;">
+                            <p>No Attendees Invited Yet</p>
+                        </div>
                     </div>
                 </div>
-
+                <PButton v-if="isMobile" label="Send Invites" @click="submitChange" design="gradient"></PButton>
             </div>
         </div>
 

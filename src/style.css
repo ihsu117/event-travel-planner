@@ -1165,6 +1165,14 @@ body {
   /* 10px */
 }
 
+.user-list-container h2 {
+  margin: 0.625rem;
+  background: var(--top-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .planner-event .p-event__container {
   padding-top: 0.9375rem;
   /* 15px */
