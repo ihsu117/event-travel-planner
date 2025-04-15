@@ -68,7 +68,9 @@ const adminAddUser = async () => {
             console.log('User created successfully:', result)
             emailInput.value = ''
             adminGetUsers()
+            closeModal()
         } else {
+            closeModal()
             console.error('Failed to create user:', await response.json())
         }
     } catch (error) {
@@ -103,8 +105,10 @@ const addNewAttendee = async (email) => {
                 const result = await response.json()
                 emailInput.value = ''
                 console.log('User created successfully:', result)
+                closeModal()
             } else {
                 console.error('FAILED to create user:', await response.json())
+                closeModal()
             }
 
         } catch (error) {
