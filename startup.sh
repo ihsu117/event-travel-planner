@@ -1,53 +1,56 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Define paths
-BACKEND_DIR="/home/poseidon/event-travel-planner/backend"
-FRONTEND_DIR="/home/poseidon/event-travel-planner"
-NODE_PATH="/home/poseidon/.nvm/versions/node/v22.13.1/bin/node"
-NPM_PATH="/home/poseidon/.nvm/versions/node/v22.13.1/bin/npm"
+# Figure out where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Check if a branch name is passed as an argument, else prompt the user
+# Point FRONTEND_DIR at the directory this script lives in,
+# and BACKEND_DIR at its "backend" subfolder
+FRONTEND_DIR="$SCRIPT_DIR"
+BACKEND_DIR="$SCRIPT_DIR/backend"
+
+# If you still want to pin a Node version via nvm, source nvm here:
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Check for branch argument (default to main)
 if [ $# -eq 0 ]; then
     read -p "Enter the branch name (default: main): " BRANCH
-    BRANCH=${BRANCH:-main}  # Default to 'main' if no input
+    BRANCH=${BRANCH:-main}
 else
-    BRANCH=$1  # Use the argument passed to the script
+    BRANCH=$1
 fi
 
-# Function to update a repository
+# Update a repo given by its path
 update_repo() {
     local dir=$1
-    echo "Updating repo in $dir..."
+    echo "Updating repo in $dir…"
     cd "$dir" || exit
     git reset --hard
     git pull origin "$BRANCH"
-    git submodule update
-    source "$HOME/.nvm/nvm.sh"
+    git submodule update --init --recursive
+    # ensure correct Node version is active, if you use an .nvmrc
+    [ -f .nvmrc ] && nvm use
     npm install
 }
 
-# Function to run "npm i" in PoseidonDesignSys
+# Install PoseidonDesignSys within the frontend tree
 pds_npm_install() {
-    local dir=$FRONTEND_DIR
-    echo "Running 'npm i' in PoseidonDesignSys"
-    cd "$dir/Poseidon-Design-System/PoseidonDesignSys" || exit
-    source "$HOME/.nvm/nvm.sh"
+    echo "Installing PoseidonDesignSys…"
+    cd "$FRONTEND_DIR/Poseidon-Design-System/PoseidonDesignSys" || exit
+    [ -f .nvmrc ] && nvm use
     npm install
 }
 
-
-# Update the backend and frontend repositories
+# Do the updates
 update_repo "$BACKEND_DIR"
 update_repo "$FRONTEND_DIR"
 pds_npm_install
 
-# Start backend server in a new terminal window with interactive shell
-echo "Starting backend in a new terminal..."
-gnome-terminal -- bash -i -c "cd $BACKEND_DIR && $NODE_PATH ./server.js; exec bash" &
+# Launch servers in new terminals
+echo "Starting backend in a new terminal…"
+gnome-terminal -- bash -i -c "cd \"$BACKEND_DIR\" && node server.js; exec bash" &
 
-# Start frontend server (test mode) in a new terminal window with interactive shell
-echo "Starting frontend (test mode) in a new terminal..."
-gnome-terminal -- bash -i -c "cd $FRONTEND_DIR && $NPM_PATH run dev; exec bash" &
+echo "Starting frontend (test mode) in a new terminal…"
+gnome-terminal -- bash -i -c "cd \"$FRONTEND_DIR\" && npm run dev; exec bash" &
 
 echo "Both servers started successfully!"
-
